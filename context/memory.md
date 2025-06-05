@@ -55,6 +55,13 @@ wave_view/
 ## Open Questions
 None - package is ready for publication!
 
+## Recent Issues Resolved
+- **Import Issue Fixed**: Updated demo script to use proper package import (`import wave_view as wv`) instead of hacky sys.path manipulation
+- **Package Installation**: Confirmed package is properly installed in development mode (pip install -e .)
+- **X-Axis Positioning Fixed**: Fixed x-axis positioning by correcting Y-axis domain calculation and improving UX. All y-axes now properly anchor to x-axis with intuitive stacking order.
+- **Y-Axis Order UX Fixed**: Reversed Y-axis processing order so first Y-axis in config appears at TOP of plot (intuitive reading order), not bottom. This matches user expectations.
+- **Comprehensive Testing Added**: Created full test suite covering all API functionality, edge cases, and configuration formats
+
 ## Next Steps
 - Polish documentation for PyPI
 - Consider GitHub Actions for CI/CD

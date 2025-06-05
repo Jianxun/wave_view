@@ -15,6 +15,11 @@
 - [X] Verify all tests pass (18/18 ✅)
 - [X] Test package installation (pip install -e .)
 - [X] Validate core API functionality
+- [X] Fix demo script import issue (context recovery session)
+- [X] Fix x-axis positioning to appear at bottom of figure (with range slider preserved)
+- [X] Create comprehensive test suite for systematic API validation
+- [X] Fix Y-axis domain calculation (removed incorrect reverse() call)
+- [X] Fix Y-axis order UX - first in config now appears at top of plot (intuitive reading order)
 
 ## Backlog - Sprint 2 & Beyond
 
