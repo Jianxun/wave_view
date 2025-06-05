@@ -1,0 +1,66 @@
+---
+description: Guidelines for Python development workflow with test-driven development and multi-session continuity - reference when planning tasks, writing tests, or implementing features
+globs: 
+alwaysApply: false
+---
+# Python Project Development Guidelines
+
+These guidelines establish a consistent approach for Python development using test-driven practices across multiple chat sessions. AI agents should reference these guidelines when:
+
+- Planning work for new features or tasks
+- Implementing test-driven development
+- Maintaining cross-session continuity
+- Performing code refactoring
+- Troubleshooting failed tests
+- Completing tasks and updating project context
+
+This project follows a task-based and test-driven development approach across multiple chat sessions.
+
+## Development Workflow
+
+### 1. Task Selection and Planning
+- Start each session by reviewing the `context/todo.md` file
+- Select a specific task from the Current Sprint section
+- Break down complex tasks into smaller subtasks as needed
+
+### 2. Test-Driven Development Cycle
+- Write tests first that define the expected behavior
+- Implement the minimum code needed to pass tests
+- Run tests to verify functionality
+- Refactor while maintaining test coverage
+
+### 3. Python-Specific Practices
+- Follow PEP 8 style guidelines
+- Use type hints to improve code readability and IDE support
+- Organize imports alphabetically with standard library first
+- Prefer explicit over implicit code
+- Document functions and classes with docstrings
+
+## Testing Organization
+- Organize test files as `test_*.py` in the `/tests/` directory
+- Use pytest for test execution and assertions
+- For complex components, create subdirectories: `/tests/{component}/`
+- Save test fixtures in separate files or a fixtures directory
+
+## Cross-Session Continuity
+- Update context files at the end of each session:
+  - `context/memory.md`: Record decisions, state changes, and knowledge
+  - `context/todo.md`: Update task status and add new tasks
+- Begin each new session with context review
+
+## Refactoring Guidelines
+- Schedule regular refactoring sessions in the todo list
+- Focus on one aspect per refactoring session (e.g., organization, performance)
+- Maintain test coverage during refactoring
+- Document architectural changes in `context/memory.md`
+
+## When Tests Fail
+- Troubleshoot and fix all errors and warnings
+- Record challenging bugs and their solutions in `context/memory.md`
+
+## When Tasks Are Completed
+1. Update the todo list to mark task completion
+2. Update the memory file to reflect current project state
+3. Consider adding a new task for refactoring if appropriate
+4. Commit changes with a descriptive message
+5. End the session or move to the next task

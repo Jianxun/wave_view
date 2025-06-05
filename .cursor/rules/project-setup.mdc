@@ -1,0 +1,217 @@
+---
+description: This rule provides comprehensive guidelines for initializing and configuring new Python projects with consistent structure and best practices. AI agents should request this rule when:  - Setting up a new Python project from scratch - Discussing project structure and organization - Implementing virtual environment management - Creating standard configuration files - Managing dependencies with requirements.txt
+globs: 
+alwaysApply: false
+---
+# Project Setup
+## Project Structure
+
+Standard project structure:
+```
+project_name/
+├── .cursor/           # Cursor AI rules
+│   └── rules/         # MDC rule files
+├── .git/              # Git repository
+├── .gitignore         # Git ignore patterns
+├── README.md          # Project documentation
+├── requirements.txt   # Project dependencies
+├── venv/              # Virtual environment (not committed)
+├── context/           # Context tracking
+│   ├── memory.md      # Project state and decisions
+│   └── todo.md        # Task tracking
+├── src/               # Source code
+│   └── project_name/  # Main package
+│       ├── __init__.py
+│       └── main.py
+└── tests/             # Test suite
+    └── __init__.py
+```
+
+## Initialization Steps
+
+1. **Project Directory**:
+   ```bash
+   mkdir project_name && cd project_name
+   ```
+
+2. **Virtual Environment**:
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ```
+
+3. **Git Repository**:
+   ```bash
+   git init
+   ```
+
+4. **Context Directory**:
+   ```bash
+   mkdir -p context
+   ```
+
+5. **Source Structure**:
+   ```bash
+   mkdir -p src/project_name tests
+   touch src/project_name/__init__.py src/project_name/main.py tests/__init__.py
+   ```
+
+## Virtual Environment Management
+
+### Creating and Activating
+
+```bash
+# Create virtual environment
+python -m venv venv
+
+# Activate on Unix/macOS
+source venv/bin/activate
+
+# Activate on Windows
+venv\Scripts\activate
+
+# Verify activation (should show path to virtual env python)
+which python  # Unix/macOS
+where python  # Windows
+```
+
+### Deactivating
+
+```bash
+deactivate
+```
+
+## Dependency Management
+
+### Working with requirements.txt
+
+```bash
+# Install dependencies from requirements.txt
+pip install -r requirements.txt
+
+# Add a new package
+pip install package_name
+pip freeze > requirements.txt
+
+# Update all packages to their latest versions
+pip install -U -r requirements.txt
+pip freeze > requirements.txt
+
+# List installed packages
+pip list
+```
+
+### Common requirements.txt Format
+
+```
+# Core dependencies
+requests>=2.28.0
+pyyaml>=6.0
+
+# Development tools
+pytest>=7.0.0
+black>=22.0.0
+flake8>=4.0.0
+```
+
+## Standard Configuration Files
+
+### `.gitignore`
+```
+# Virtual Environment
+venv/
+env/
+ENV/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Testing
+.coverage
+htmlcov/
+.pytest_cache/
+
+# OS specific
+.DS_Store
+Thumbs.db
+```
+
+### `README.md`
+```
+# Project Name
+
+Brief description of the project
+
+## Setup
+
+1. Clone the repository
+2. Create and activate virtual environment:
+   
+   For Unix/macOS:
+   
+       python -m venv venv
+       source venv/bin/activate
+   
+   For Windows:
+   
+       python -m venv venv
+       venv\Scripts\activate
+   
+3. Install dependencies:
+   
+       pip install -r requirements.txt
+
+## Usage
+
+Describe how to use the project
+
+## Testing
+
+Run tests with:
+
+    pytest
+
+## License
+
+Specify the license
+```
+
+## Development Best Practices
+
+- Use a consistent code style (Black for formatting, Flake8 for linting)
+- Write tests for all new features (pytest)
+- Document all functions, classes, and modules
+- Keep dependencies updated and minimal
+- Follow semantic versioning for releases
+
+## CI/CD Considerations
+
+Consider setting up:
+- GitHub Actions for automated testing
+- CodeCov for test coverage
+- ReadTheDocs for documentation hosting

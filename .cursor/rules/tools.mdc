@@ -1,0 +1,149 @@
+---
+description: Documentation for utility tools to aid in development - reference when needing to use LLM API, web scraping, search, or screenshot capabilities
+globs: 
+alwaysApply: false
+---
+# Tools
+
+Python-based tools to aid in development and maintenance tasks.
+All tools should be saved under the `tools/` directory.
+
+## Available Tools
+
+### 1. LLM API (`llm_api.py`)
+
+Access to multiple large language models through a unified API. Supports text and image inputs.
+
+#### Supported Providers:
+- OpenAI (default, model: gpt-4o)
+- Azure OpenAI (model: configured via AZURE_OPENAI_MODEL_DEPLOYMENT in .env file, defaults to gpt-4o-ms)
+- DeepSeek (model: deepseek-chat)
+- Anthropic (model: claude-3-sonnet-20240229)
+- Gemini (model: gemini-pro)
+- Local LLM (model: Qwen/Qwen2.5-32B-Instruct-AWQ)
+
+#### Command Line Usage:
+```bash
+venv/bin/python ./tools/llm_api.py --prompt "Your question here" --provider "anthropic"
+```
+
+#### Programmatic Usage:
+```python
+from tools.llm_api import query_llm
+
+response = query_llm(
+    "What is the capital of France?",
+    provider="openai"  # or "anthropic", "azure", "deepseek", "gemini", "local"
+)
+print(response)
+```
+
+#### Image Support:
+```python
+response = query_llm(
+    "Describe this image",
+    provider="openai",
+    image_path="path/to/image.png"
+)
+```
+
+### 2. Screenshot Utilities (`screenshot_utils.py`)
+
+Capture screenshots of web pages for testing or verification.
+
+#### Command Line Usage:
+```bash
+venv/bin/python tools/screenshot_utils.py URL [--output OUTPUT] [--width WIDTH] [--height HEIGHT]
+```
+
+#### Programmatic Usage:
+```python
+from tools.screenshot_utils import take_screenshot_sync
+
+screenshot_path = take_screenshot_sync(
+    'https://example.com',
+    'screenshot.png',
+    width=1280,
+    height=800
+)
+```
+
+### 3. Web Scraper (`web_scraper.py`)
+
+Fetch and parse content from web pages with concurrent request support.
+
+#### Command Line Usage:
+```bash
+venv/bin/python ./tools/web_scraper.py --max-concurrent 3 URL1 URL2 URL3
+```
+
+#### Programmatic Usage:
+```python
+from tools.web_scraper import scrape_urls
+
+results = scrape_urls(
+    ['https://example.com', 'https://example.org'],
+    max_concurrent=3
+)
+for url, content in results.items():
+    print(f"URL: {url}")
+    print(content)
+```
+
+### 4. Search Engine (`search_engine.py`)
+
+Perform web searches and retrieve results.
+
+#### Command Line Usage:
+```bash
+venv/bin/python ./tools/search_engine.py "your search keywords"
+```
+
+#### Programmatic Usage:
+```python
+from tools.search_engine import search
+
+results = search("your search keywords")
+for result in results:
+    print(f"URL: {result['url']}")
+    print(f"Title: {result['title']}")
+    print(f"Snippet: {result['snippet']}")
+    print()
+```
+
+## Integration Example
+
+Complete workflow combining multiple tools:
+
+```python
+from tools.search_engine import search
+from tools.web_scraper import scrape_url
+from tools.screenshot_utils import take_screenshot_sync
+from tools.llm_api import query_llm
+
+# 1. Search for relevant information
+search_results = search("Python web automation")
+top_url = search_results[0]['url']
+
+# 2. Scrape the content
+content = scrape_url(top_url)
+
+# 3. Take a screenshot
+screenshot_path = take_screenshot_sync(top_url, 'search_result.png')
+
+# 4. Ask LLM to analyze
+analysis = query_llm(
+    f"Analyze this webpage about Python web automation: {content[:500]}...",
+    provider="anthropic",
+    image_path=screenshot_path
+)
+print(analysis)
+```
+
+## Adding New Tools
+
+When adding a new tool:
+1. Create the tool in the `tools/` directory
+2. Add documentation in this rule file with clear usage instructions
+3. Include examples of how to invoke the tool
+4. Update the integration example if appropriate
