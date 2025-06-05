@@ -1,28 +1,63 @@
 # Project Todo List
 
-## Current Sprint
-- [X] Set up project structure
-- [X] Create virtual environment and requirements.txt
-- [X] Create plotly widget experiment notebook
-- [ ] Research SPICE file formats and parsing libraries
-- [ ] Research Jupyter widget frameworks (ipywidgets vs alternatives)
-- [ ] Create basic project documentation
-- [ ] Implement basic SPICE file reader
-- [ ] Create simple waveform plotting functionality
-- [ ] Design widget interface mockup
+## Current Sprint - Core Waveform Visualization
+- [ ] Create main package structure (`wave_view/`)
+- [ ] Implement `SpiceData` class (core/reader.py) - basic SPICE file reading
+- [ ] Implement `PlotConfig` class (core/config.py) - YAML configuration handling
+- [ ] Port plotting logic to `SpicePlotter` class (core/plotter.py)
+- [ ] Create main API functions in `__init__.py` (`plot()`, `load_spice()`)
+- [ ] Add multi-figure configuration support
+- [ ] Create basic unit tests for core functionality
+- [ ] Test package installation and imports
 
-## Backlog
-- [ ] Implement interactive waveform navigation (zoom, pan)
-- [ ] Add measurement tools (cursors, calculations)
-- [ ] Support multiple waveform overlays
-- [ ] Add waveform export functionality
+## Sprint 2 - Signal Discovery & Exploration
+- [ ] Integrate `SpiceSignalExplorer` class into core package
+- [ ] Add signal categorization and metadata extraction 
+- [ ] Implement `SpiceExplorer` API (`wv.SpiceExplorer()`)
+- [ ] Create signal discovery convenience functions (`wv.explore_signals()`, `wv.suggest_config()`)
+- [ ] Add Jupyter integration with rich HTML displays
+- [ ] Implement interactive signal selector widgets
+- [ ] Add configuration validation and suggestions
+- [ ] Create signal search and filtering capabilities
+
+## Sprint 3 - Advanced Features
+- [ ] Add signal processing utilities (core/processor.py)
+- [ ] Create YAML template generators (utils/templates.py)
+- [ ] Add export functionality (HTML, PNG, PDF)
+- [ ] Create example configurations (examples/configs/)
+- [ ] Build example Jupyter notebooks (examples/notebooks/)
+- [ ] Implement batch plotting functionality (`plot_batch`, `plot_multi`)
+
+## Future Backlog
+- [ ] Interactive widget integration with ipywidgets
+- [ ] Quick plot with auto-detection (`quick_plot`)
+- [ ] Configuration builder class (`ConfigBuilder`)
 - [ ] Performance optimization for large datasets
-- [ ] Add unit tests for core functionality
-- [ ] Create example notebooks demonstrating usage
-- [ ] Package for distribution (PyPI)
+- [ ] Advanced signal processing functions (FFT, filtering, etc.)
+- [ ] Custom measurement tools (cursors, calculations)
+- [ ] Package for PyPI distribution
+- [ ] Comprehensive documentation and tutorials
 
 ## Completed Tasks
 - [X] Initialize project directory structure
 - [X] Create context management system
 - [X] Set up project structure with virtual environment and requirements.txt
-- [X] Create experimental notebook for testing plotly widgets 
+- [X] Create experimental notebook for testing plotly widgets
+- [X] **Research SPICE file formats and parsing libraries** (spicelib confirmed)
+- [X] **Create working prototype** (prototype/script/plot.py)
+- [X] **Test prototype with real SPICE data** (Ring_Oscillator_7stage.raw)
+- [X] **Fix browser rendering issues** (Plotly configuration)
+- [X] **Design package architecture** (core classes and API)
+- [X] **Create implementation plan** (doc/implementation_plan.md)
+- [X] **Analyze configuration file strategies** (single vs multi-figure)
+- [X] **Prototype signal discovery API** (signal_explorer.py, jupyter_signal_browser.py)
+- [X] **Document signal discovery features** (doc/signal_discovery_api.md)
+
+## Implementation Notes
+- **Focus**: Core visualization first, then discovery features
+- Prototype proved the technical approach works well
+- spicelib + Plotly + YAML configuration is a solid foundation
+- Multi-figure YAML format is clean and intuitive
+- Browser integration works properly with `pio.renderers.default = "browser"`
+- Signal discovery prototypes ready for integration in Sprint 2
+- Ready to begin systematic implementation of the main package 
