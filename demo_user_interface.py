@@ -64,7 +64,7 @@ def main():
         },
         "Y": [
             {
-                "label": "Supply & Output Voltages (V)",
+                "label": "Voltages (V)",
                 "signals": {
                     "VDD": "v(vdd)",
                     "Output": "v(bus06)",

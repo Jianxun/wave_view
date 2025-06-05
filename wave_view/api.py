@@ -40,8 +40,8 @@ def plot(raw_file: str,
         >>> fig = wv.plot("simulation.raw", "config.yaml")
         >>> fig = wv.plot("simulation.raw", show=False)  # Return without showing
     """
-    # Configure Plotly to open in browser (like prototype)
-    pio.renderers.default = "browser"
+    # Auto-detect environment and set appropriate renderer
+    _configure_plotly_renderer()
     
     # Create plotter and load data
     plotter = SpicePlotter(raw_file)
@@ -62,6 +62,63 @@ def plot(raw_file: str,
         fig.show()
     
     return fig
+
+
+def _configure_plotly_renderer():
+    """
+    Configure Plotly renderer based on environment.
+    
+    - Jupyter notebooks: Use default (inline) renderer
+    - Standalone scripts: Use browser renderer
+    """
+    try:
+        # Check if we're in a Jupyter environment
+        if _is_jupyter_environment():
+            # Let Plotly use its default renderer for notebooks (usually 'plotly_mimetype' or 'notebook')
+            # Don't override the default
+            pass
+        else:
+            # For standalone scripts, use browser
+            pio.renderers.default = "browser"
+    except Exception:
+        # If we can't detect, default to browser (safer for standalone)
+        pio.renderers.default = "browser"
+
+
+def _is_jupyter_environment() -> bool:
+    """
+    Detect if we're running in a Jupyter environment.
+    
+    Returns:
+        True if in Jupyter notebook/lab, False otherwise
+    """
+    try:
+        # Check for IPython
+        from IPython import get_ipython
+        if get_ipython() is not None:
+            # Check if it's a notebook environment
+            ipython = get_ipython()
+            if hasattr(ipython, 'kernel'):
+                return True
+    except ImportError:
+        pass
+    
+    # Check for Google Colab
+    try:
+        import google.colab
+        return True
+    except ImportError:
+        pass
+    
+    # Check for other notebook indicators
+    try:
+        import sys
+        if 'ipykernel' in sys.modules:
+            return True
+    except:
+        pass
+    
+    return False
 
 
 def load_spice(raw_file: str) -> SpiceData:

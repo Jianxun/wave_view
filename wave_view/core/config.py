@@ -21,33 +21,42 @@ class PlotConfig:
     
     def __init__(self, config_source: Union[str, Dict, List, Path]):
         """
-        Initialize PlotConfig from a file path or dictionary.
+        Initialize PlotConfig from a file path, YAML string, or dictionary.
         
         Args:
-            config_source: Path to YAML file, Path object, configuration dictionary, or list of configs
+            config_source: Path to YAML file, Path object, YAML string content, 
+                          configuration dictionary, or list of configs
             
         Raises:
             FileNotFoundError: If config file doesn't exist
-            yaml.YAMLError: If YAML file is invalid
+            yaml.YAMLError: If YAML content is invalid
             ValueError: If configuration format is invalid
         """
         self._config_source = config_source
         self._config_dir = None
         
         if isinstance(config_source, (str, Path)):
-            # Load from file
-            config_path = Path(config_source)
-            self._config_dir = config_path.parent
-            
-            if not config_path.exists():
-                raise FileNotFoundError(f"Configuration file not found: {config_path}")
-            
-            try:
-                with open(config_path, 'r') as f:
-                    self._config = yaml.safe_load(f)
-            except yaml.YAMLError as e:
-                raise yaml.YAMLError(f"Invalid YAML in config file '{config_path}': {e}")
+            # Check if it's a file path or YAML content
+            if isinstance(config_source, Path) or self._looks_like_file_path(str(config_source)):
+                # Load from file
+                config_path = Path(config_source)
+                self._config_dir = config_path.parent
                 
+                if not config_path.exists():
+                    raise FileNotFoundError(f"Configuration file not found: {config_path}")
+                
+                try:
+                    with open(config_path, 'r') as f:
+                        self._config = yaml.safe_load(f)
+                except yaml.YAMLError as e:
+                    raise yaml.YAMLError(f"Invalid YAML in config file '{config_path}': {e}")
+            else:
+                # Treat as YAML string content
+                try:
+                    self._config = yaml.safe_load(config_source)
+                except yaml.YAMLError as e:
+                    raise yaml.YAMLError(f"Invalid YAML content: {e}")
+                    
         elif isinstance(config_source, (dict, list)):
             # Use dictionary or list directly
             if isinstance(config_source, list):
@@ -59,6 +68,40 @@ class PlotConfig:
         
         # Validate basic structure
         self._validate_basic_structure()
+    
+    def _looks_like_file_path(self, s: str) -> bool:
+        """
+        Determine if a string looks like a file path vs YAML content.
+        
+        Args:
+            s: String to check
+            
+        Returns:
+            True if it looks like a file path, False if it looks like YAML content
+        """
+        # If it contains newlines, it's likely YAML content
+        if '\n' in s:
+            return False
+            
+        # If it ends with common config extensions, it's likely a file path
+        if s.endswith(('.yaml', '.yml', '.json')):
+            return True
+            
+        # If it contains YAML-like syntax, it's likely content
+        yaml_indicators = [':', '-', 'title:', 'X:', 'Y:', 'signals:']
+        if any(indicator in s for indicator in yaml_indicators):
+            return False
+            
+        # If it looks like a path (contains / or \), treat as file path
+        if '/' in s or '\\' in s:
+            return True
+            
+        # If it's short and doesn't contain YAML syntax, assume file path
+        if len(s) < 50 and ':' not in s:
+            return True
+            
+        # Default: if it contains colons, assume YAML content
+        return ':' not in s
     
     def _validate_basic_structure(self):
         """Validate basic configuration structure."""

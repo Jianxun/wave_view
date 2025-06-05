@@ -258,13 +258,16 @@ class SpicePlotter:
     
     def show(self, figure_index: int = 0) -> None:
         """
-        Create and display figure in browser.
+        Create and display figure in browser or inline (environment-aware).
         
         Args:
             figure_index: Index of figure to show (for multi-figure configs)
         """
-        # Configure Plotly to open in browser (like the prototype)
-        pio.renderers.default = "browser"
+        # Import here to avoid circular import
+        from ..api import _configure_plotly_renderer
+        
+        # Configure renderer based on environment
+        _configure_plotly_renderer()
         
         fig = self.create_figure(figure_index)
         fig.show()
