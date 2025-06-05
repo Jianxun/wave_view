@@ -1,1 +1,1 @@
-# Test package for wave_view 
+"""Tests for Wave View package.""" 

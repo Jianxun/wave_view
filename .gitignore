@@ -2,6 +2,7 @@
 venv/
 env/
 ENV/
+.venv/
 
 # Python
 __pycache__/
@@ -25,17 +26,26 @@ wheels/
 .installed.cfg
 *.egg
 
-# IDE
-.idea/
-.vscode/
-*.swp
-*.swo
-
 # Testing
 .coverage
 htmlcov/
 .pytest_cache/
 .tox/
+*.cover
+.hypothesis/
+
+# Documentation
+docs/_build/
+docs/.doctrees/
+site/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+.spyderproject
+.spyproject
 
 # Jupyter Notebook
 .ipynb_checkpoints
@@ -44,7 +54,12 @@ htmlcov/
 .DS_Store
 Thumbs.db
 
-# Project specific
-*.raw
-*.log
-*.tmp 
+# Package building
+*.tar.gz
+*.whl
+
+# MyPy
+.mypy_cache/
+
+# Development tools
+.pre-commit-config.yaml 
