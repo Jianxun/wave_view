@@ -8,7 +8,9 @@ Wave View - A Python package for visualizing SPICE simulation waveforms, designe
 - **Package Structure**: Full `wave_view/` package with core modules and API
 - **Real Data Testing**: All functionality verified with Ring_Oscillator_7stage.raw file
 - **Case Normalization**: All signal names normalized to lowercase for user consistency
-- **Ready for Sprint 2**: Signal discovery and exploration features
+- **Jupyter Integration**: ✅ Auto-detection and inline plotting support
+- **YAML String Support**: ✅ Direct YAML string configurations (no files needed)
+- **Ready for Polishing**: Core functionality complete, ready for UI/UX improvements
 
 ## Key Decisions
 - **Plotly chosen** as the visualization backend for interactive plotting and browser integration
@@ -18,6 +20,8 @@ Wave View - A Python package for visualizing SPICE simulation waveforms, designe
 - **spicelib library** confirmed working for .raw file reading
 - **Flexible signal processing** with support for both raw signals (`raw.signal`) and processed signals (`data.signal`)
 - **Case-insensitive signal access**: All signal names normalized to lowercase (e.g., `V(VDD)` → `v(vdd)`)
+- **Environment-aware rendering**: Auto-detects Jupyter vs standalone for appropriate display
+- **YAML string support**: Can use inline YAML strings instead of separate config files
 
 ## Open Questions
 - Signal processing function library - which common calculations to include?
@@ -37,10 +41,23 @@ Wave View - A Python package for visualizing SPICE simulation waveforms, designe
 - ✅ **Case normalization implemented** - all signals accessible as lowercase
 - ✅ **Auto-configuration working** - can plot without config files
 - ✅ **Template generation working** - creates proper YAML configs
+- ✅ **Jupyter integration implemented** - auto-detects environment for inline plots
+- ✅ **Manual renderer control** - `wv.set_renderer()` for user control
+- ✅ **YAML string support** - use multi-line strings directly as configurations
+
+## User Experience Features
+- **Simple API**: `wv.plot(file)` for instant visualization
+- **Case-insensitive signals**: `V(VDD)`, `v(vdd)`, `V(vdd)` all work
+- **Multiple config formats**: Files, dictionaries, or YAML strings
+- **Environment detection**: Works in Jupyter notebooks and standalone scripts
+- **Manual overrides**: Full user control when auto-detection fails
+- **Comprehensive validation**: Helpful error messages and warnings
+- **Template generation**: Auto-creates configs from SPICE files
 
 ## Technical Stack Confirmed
 - **Core**: Python 3.8+, NumPy, spicelib, PyYAML
 - **Visualization**: Plotly (with browser integration)
-- **Configuration**: YAML files with validation
-- **Target Environment**: Jupyter notebooks, but also standalone Python scripts
-- **Signal Access**: Case-insensitive, normalized to lowercase 
+- **Configuration**: YAML files, strings, or dictionaries with validation
+- **Target Environment**: Jupyter notebooks (primary), but also standalone Python scripts
+- **Signal Access**: Case-insensitive, normalized to lowercase
+- **Rendering**: Environment-aware (inline for notebooks, browser for scripts) 

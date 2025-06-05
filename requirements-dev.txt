@@ -1,0 +1,26 @@
+# Development Dependencies
+# Testing
+pytest>=7.0.0
+pytest-cov>=4.0.0
+pytest-mock>=3.0.0
+
+# Code formatting and linting
+black>=22.0.0
+isort>=5.0.0
+flake8>=4.0.0
+mypy>=1.0.0
+
+# Development tools
+pre-commit>=2.0.0
+twine>=4.0.0  # For PyPI uploads
+build>=0.8.0  # For building packages
+
+# Documentation
+sphinx>=5.0.0
+sphinx-rtd-theme>=1.0.0
+myst-parser>=0.18.0
+
+# Jupyter development
+ipywidgets>=8.0.0
+jupyter>=1.0.0
+jupyterlab>=3.0.0 
