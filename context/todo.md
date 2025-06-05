@@ -1,5 +1,89 @@
 # Project Todo List
 
+## Current Sprint
+✅ **SPRINT 1 + REPO REORGANIZATION - COMPLETE**
+
+## Recently Completed ✅
+- [X] Repository reorganization for PyPI publication
+- [X] Implement src/ layout structure  
+- [X] Consolidate tests directory
+- [X] Move examples and demo files to examples/
+- [X] Create modern Python packaging (pyproject.toml)
+- [X] Add MIT LICENSE for open source
+- [X] Add development requirements (requirements-dev.txt)
+- [X] Fix broken imports after reorganization
+- [X] Verify all tests pass (18/18 ✅)
+- [X] Test package installation (pip install -e .)
+- [X] Validate core API functionality
+- [X] Fix demo script import issue (context recovery session)
+- [X] Fix x-axis positioning to appear at bottom of figure (with range slider preserved)
+- [X] Create comprehensive test suite for systematic API validation
+- [X] Fix Y-axis domain calculation (removed incorrect reverse() call)
+- [X] Fix Y-axis order UX - first in config now appears at top of plot (intuitive reading order)
+- [X] Update README.md with comprehensive installation instructions (dev mode + GitHub)
+
+## Backlog - Sprint 2 & Beyond
+
+### Documentation & Publication
+- [ ] Polish README.md for PyPI
+- [ ] Create comprehensive documentation (Sphinx)
+- [ ] Add usage examples to docs/examples/
+- [ ] Set up GitHub Actions for CI/CD
+- [ ] Publish to PyPI (python -m build, twine upload)
+
+### Signal Exploration UI (Sprint 2)
+- [ ] Implement SpiceSignalExplorer class
+- [ ] Add Jupyter widget for signal browsing
+- [ ] Create interactive signal selection interface
+- [ ] Integrate with existing plotting system
+
+### Advanced Features (Future)
+- [ ] Export functionality (PNG, PDF, SVG)
+- [ ] Performance optimization for large datasets
+- [ ] Additional signal processing functions
+- [ ] Advanced annotation and markup tools
+- [ ] Multi-simulation comparison features
+
+### Code Quality
+- [ ] Fix pytest return warnings (cosmetic only)
+- [ ] Add type hints throughout codebase
+- [ ] Improve test coverage to 100%
+- [ ] Add pre-commit hooks for code quality
+
+## Completed Tasks - Sprint 1
+
+### Core Package Implementation ✅
+- [X] Design package structure and API
+- [X] Implement SpiceData class with case-insensitive access
+- [X] Implement PlotConfig class with YAML support
+- [X] Implement SpicePlotter class with advanced features
+- [X] Create main API functions (plot, load_spice, etc.)
+- [X] Add processed signal generation capability
+- [X] Implement multi-figure plotting support
+
+### Testing & Validation ✅  
+- [X] Write comprehensive unit tests
+- [X] Write integration tests
+- [X] Test with real SPICE data
+- [X] Validate YAML configuration system
+- [X] Test Jupyter notebook integration
+- [X] Verify case-insensitive signal access
+
+### User Experience ✅
+- [X] Implement auto-configuration generation
+- [X] Add template creation functionality
+- [X] Support multiple config formats (file, dict, string)
+- [X] Auto-detect Jupyter vs standalone environments
+- [X] Add manual renderer control
+- [X] Create helpful error messages and validation
+
+### Project Setup ✅
+- [X] Set up development environment
+- [X] Configure testing framework
+- [X] Establish code organization patterns
+- [X] Document API design decisions
+- [X] Create example usage scenarios
+
 ## Current Sprint - Package Polishing & User Experience
 - [ ] Enhanced plotting aesthetics and themes
 - [ ] Interactive widgets and controls (zoom, pan, measurements)

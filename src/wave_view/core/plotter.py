@@ -163,8 +163,9 @@ class SpicePlotter:
         x_data = _get_signal_data(x_config["signal_key"])
         x_axis_title = x_config.get("label", x_config["signal_key"])
 
-        # Prepare Y-axes
+        # Prepare Y-axes (reverse order so first in config appears at top)
         y_axes_config = plot_config.get("Y", [])
+        y_axes_config = list(reversed(y_axes_config))  # First in config → Top of plot
         num_y_axes = len(y_axes_config)
         if num_y_axes == 0:
             print("Warning: No Y axes defined in plot_config.")
@@ -183,7 +184,8 @@ class SpicePlotter:
                 y_axis_domains.append([current_bottom, domain_top])
                 current_bottom = domain_top + gap
         
-        y_axis_domains.reverse()  # Plotly lays out from bottom to top
+        # Do NOT reverse - first Y-axis should be at bottom (domain starts at 0)
+        # y_axis_domains.reverse()  # This was causing first Y-axis to appear at top
 
         layout_update_dict = {}
         plotly_y_axis_ids = []  # To keep track of yaxis, yaxis2, etc.
@@ -199,9 +201,8 @@ class SpicePlotter:
             layout_update_dict[axis_layout_key] = {
                 "title": y_axis_cfg.get("label", f"Y-Axis {plotly_axis_id_num}"),
                 "domain": y_axis_domains[i],
+                "anchor": "x"  # All y-axes anchor to x-axis for proper positioning
             }
-            if i > 0:  # Anchor subsequent axes to the main x-axis
-                layout_update_dict[axis_layout_key]["anchor"] = "x"
 
             # Add traces for this Y-axis
             for legend_name, signal_key_val in y_axis_cfg.get("signals", {}).items():

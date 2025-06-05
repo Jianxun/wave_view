@@ -1,16 +1,8 @@
-
 # %%
-import sys
-import os
-
-# Add the package to path (in real usage, this would be: pip install wave_view)
-sys.path.insert(0, './wave_view')
-
 import wave_view as wv
 
-
 # Use the test data we have available
-spice_file = "prototype/script/Ring_Oscillator_7stage.raw"
+spice_file = "../data/Ring_Oscillator_7stage.raw"
 
 data = wv.load_spice(spice_file)
 

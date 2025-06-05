@@ -1,101 +1,262 @@
 # Wave View
 
-A prototype spice simulation waveform viewer widget for IPython notebooks.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 
-## Overview
+A Python package for visualizing SPICE simulation waveforms with interactive Plotly-based plotting, designed for seamless integration with Jupyter notebooks.
 
-Wave View provides an interactive widget for visualizing and analyzing SPICE simulation waveforms directly within Jupyter/IPython notebook environments. This tool allows circuit designers and engineers to examine simulation results with familiar plotting and measurement capabilities.
+## ✨ Features
 
-## Features (Planned)
+- 📊 **Interactive Plotly Visualization**: Modern, web-based plots with zoom, pan, and hover
+- 🔧 **Simple API**: Plot waveforms with a single function call
+- ⚙️ **YAML Configuration**: Flexible, reusable plotting configurations
+- 📏 **Multi-Figure Support**: Create complex layouts with subplots
+- 🔤 **Case-Insensitive Signal Access**: Access signals regardless of case (`V(VDD)` = `v(vdd)`)
+- 🧮 **Processed Signals**: Generate derived signals with lambda functions
+- 📓 **Jupyter-First Design**: Auto-detection and inline plotting
+- 🎛️ **Advanced Plotting**: Full control with `SpicePlotter` class
+- 📋 **Template Generation**: Auto-create configurations from SPICE files
 
-- 📊 Interactive waveform plotting
-- 🔍 Zoom and pan navigation
-- 📏 Measurement tools (cursors, calculations)
-- 📂 Support for common SPICE output formats
-- 🔄 Multiple waveform overlays
-- 📤 Export functionality
-- ⚡ Optimized for large datasets
+## 🚀 Quick Start
 
-## Setup
+### Installation
 
-1. Clone the repository:
-   ```bash
-   git clone <repository-url>
-   cd wave_view
-   ```
+#### Option 1: Install from PyPI (Coming Soon)
+```bash
+pip install wave_view
+```
 
-2. Create and activate virtual environment:
-   
-   **For Unix/macOS:**
-   ```bash
-   python -m venv venv
-   source venv/bin/activate
-   ```
-   
-   **For Windows:**
-   ```bash
-   python -m venv venv
-   venv\Scripts\activate
-   ```
+#### Option 2: Install from GitHub (Latest)
+```bash
+# Install latest version directly from GitHub
+pip install git+https://github.com/jianxun/wave_view.git
 
-3. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
+# Or install a specific branch/tag
+pip install git+https://github.com/jianxun/wave_view.git@main
+pip install git+https://github.com/jianxun/wave_view.git@v0.1.0
+```
 
-## Usage
+#### Option 3: Development Installation
+```bash
+# Clone the repository
+git clone https://github.com/your-username/wave_view.git
+cd wave_view
+
+# Create and activate virtual environment (recommended)
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# Install in development mode (editable install)
+pip install -e .
+
+# Install development dependencies (optional)
+pip install -r requirements-dev.txt
+```
+
+#### Verify Installation
+```bash
+python -c "import wave_view as wv; print(f'Wave View {wv.__version__} installed successfully!')"
+```
+
+### Basic Usage
 
 ```python
-from wave_view import WaveformViewer
+import wave_view as wv
 
-# Create a new viewer instance
-viewer = WaveformViewer()
+# Simple plotting - just provide a SPICE file
+fig = wv.plot("simulation.raw")
 
-# Load SPICE simulation data
-viewer.load_data("simulation_results.raw")
+# With configuration file
+fig = wv.plot("simulation.raw", "config.yaml")
 
-# Add signals to plot
-viewer.add_signal("vout")
-viewer.add_signal("vin")
-
-# Display the waveforms
-viewer.plot()
+# Direct configuration
+config = {
+    "figures": [{
+        "title": "Voltage Analysis",
+        "signals": ["v(vdd)", "v(vout)", "v(vin)"],
+        "y_axis": {"title": "Voltage (V)"}
+    }]
+}
+fig = wv.plot("simulation.raw", config)
 ```
 
-## Development
+### Advanced Usage
 
-This project follows test-driven development practices. Run tests with:
+```python
+import wave_view as wv
+
+# Load SPICE data
+data = wv.load_spice("simulation.raw")
+print(f"Found {len(data.signals)} signals")
+
+# Advanced plotting with SpicePlotter
+plotter = wv.SpicePlotter("simulation.raw")
+
+# Add processed signals
+plotter.add_processed_signal("power", lambda d: d["v(vdd)"] * d["i(vdd)"])
+
+# Load configuration and plot
+plotter.load_config("plot_config.yaml")
+fig = plotter.create_figure()
+```
+
+## 📖 Documentation
+
+### Configuration Format
+
+Wave View uses YAML configuration files for flexible plotting:
+
+```yaml
+figures:
+  - title: "Supply Voltages"
+    signals: ["v(vdd)", "v(vss)"]
+    y_axis:
+      title: "Voltage (V)"
+      range: [0, 5]
+    
+  - title: "Output Analysis"
+    signals: ["v(vout)", "v(vin)"]
+    y_axis:
+      title: "Voltage (V)"
+    subplot_row: 2
+```
+
+### Auto-Configuration
+
+Generate configuration templates automatically:
+
+```python
+# Create a template from your SPICE file
+wv.create_config_template("config.yaml", "simulation.raw")
+
+# Validate configuration
+warnings = wv.validate_config("config.yaml", "simulation.raw")
+```
+
+### Jupyter Integration
+
+Wave View automatically detects Jupyter environments and displays plots inline:
+
+```python
+# In Jupyter notebook - displays automatically
+wv.plot("simulation.raw")
+
+# Manual renderer control
+wv.set_renderer("notebook")  # or "browser", "png", etc.
+```
+
+## 📁 Examples
+
+The `examples/` directory contains:
+
+- **`examples/scripts/`**: Python script examples
+- **`examples/notebooks/`**: Jupyter notebook tutorials  
+- **`examples/data/`**: Sample SPICE files for testing
+
+## 🛠️ Development
+
+### Setup Development Environment
 
 ```bash
+# Clone the repository
+git clone https://github.com/your-username/wave_view.git
+cd wave_view
+
+# Create and activate virtual environment
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# Install in development mode with all dependencies
+pip install -e .
+pip install -r requirements-dev.txt
+
+# Verify development setup
+python -c "import wave_view as wv; print('Development setup complete!')"
+```
+
+### Run Tests
+
+```bash
+# Run all tests
 pytest
+
+# With coverage
+pytest --cov=wave_view --cov-report=html
+
+# Run specific test file
+pytest tests/test_basic.py -v
 ```
 
-Format code with:
+### Code Quality
+
 ```bash
+# Format code
 black src/ tests/
-```
 
-Lint code with:
-```bash
+# Sort imports
+isort src/ tests/
+
+# Lint code
 flake8 src/ tests/
+
+# Type checking
+mypy src/
 ```
 
-## Project Status
+## 🏗️ Project Structure
 
-🚧 **Under Development** - This is a prototype project in early development phase.
+```
+wave_view/
+├── src/wave_view/           # Main package
+│   ├── core/               # Core functionality
+│   │   ├── reader.py       # SPICE file reading
+│   │   ├── config.py       # Configuration handling
+│   │   └── plotter.py      # Plotting logic
+│   ├── utils/              # Utility functions
+│   └── api.py              # Main API
+├── tests/                  # Test suite
+├── examples/               # Usage examples
+├── docs/                   # Documentation
+└── pyproject.toml          # Package configuration
+```
 
-Current implementation status:
-- [x] Project structure setup
-- [x] Basic class framework
-- [ ] SPICE file parsing
-- [ ] Waveform plotting
-- [ ] Interactive features
-- [ ] Widget integration
+## 📋 Requirements
 
-## Contributing
+- **Python**: 3.8+
+- **Core Dependencies**:
+  - `plotly` >= 5.0.0 (Interactive plotting)
+  - `numpy` >= 1.20.0 (Numerical operations)
+  - `PyYAML` >= 6.0 (Configuration files)
+  - `spicelib` >= 1.0.0 (SPICE file reading)
 
-This is a prototype project. Contributions and suggestions are welcome!
+## 🤝 Contributing
 
-## License
+Contributions are welcome! Please:
 
-TBD - License to be determined. 
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Make your changes
+4. Add tests for new functionality
+5. Ensure all tests pass (`pytest`)
+6. Commit your changes (`git commit -m 'Add amazing feature'`)
+7. Push to the branch (`git push origin feature/amazing-feature`)
+8. Open a Pull Request
+
+## 📜 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🔗 Links
+
+- **Documentation**: [Coming Soon]
+- **PyPI Package**: [Coming Soon]  
+- **Issue Tracker**: [GitHub Issues](https://github.com/your-username/wave_view/issues)
+- **Changelog**: [CHANGELOG.md](CHANGELOG.md)
+
+## 🏷️ Version
+
+Current version: **0.1.0** (Alpha)
+
+---
+
+**Wave View** - Making SPICE waveform visualization simple and interactive! 🌊📈 
