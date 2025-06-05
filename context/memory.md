@@ -61,6 +61,7 @@ None - package is ready for publication!
 - **X-Axis Positioning Fixed**: Fixed x-axis positioning by correcting Y-axis domain calculation and improving UX. All y-axes now properly anchor to x-axis with intuitive stacking order.
 - **Y-Axis Order UX Fixed**: Reversed Y-axis processing order so first Y-axis in config appears at TOP of plot (intuitive reading order), not bottom. This matches user expectations.
 - **Comprehensive Testing Added**: Created full test suite covering all API functionality, edge cases, and configuration formats
+- **Documentation Updated**: Enhanced README.md with comprehensive installation instructions including development mode and GitHub installation options
 
 ## Next Steps
 - Polish documentation for PyPI

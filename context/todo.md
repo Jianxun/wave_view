@@ -20,6 +20,7 @@
 - [X] Create comprehensive test suite for systematic API validation
 - [X] Fix Y-axis domain calculation (removed incorrect reverse() call)
 - [X] Fix Y-axis order UX - first in config now appears at top of plot (intuitive reading order)
+- [X] Update README.md with comprehensive installation instructions (dev mode + GitHub)
 
 ## Backlog - Sprint 2 & Beyond
 

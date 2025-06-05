@@ -21,15 +21,41 @@ A Python package for visualizing SPICE simulation waveforms with interactive Plo
 
 ### Installation
 
+#### Option 1: Install from PyPI (Coming Soon)
 ```bash
 pip install wave_view
 ```
 
-Or for development:
+#### Option 2: Install from GitHub (Latest)
 ```bash
+# Install latest version directly from GitHub
+pip install git+https://github.com/jianxun/wave_view.git
+
+# Or install a specific branch/tag
+pip install git+https://github.com/jianxun/wave_view.git@main
+pip install git+https://github.com/jianxun/wave_view.git@v0.1.0
+```
+
+#### Option 3: Development Installation
+```bash
+# Clone the repository
 git clone https://github.com/your-username/wave_view.git
 cd wave_view
+
+# Create and activate virtual environment (recommended)
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# Install in development mode (editable install)
 pip install -e .
+
+# Install development dependencies (optional)
+pip install -r requirements-dev.txt
+```
+
+#### Verify Installation
+```bash
+python -c "import wave_view as wv; print(f'Wave View {wv.__version__} installed successfully!')"
 ```
 
 ### Basic Usage
@@ -132,16 +158,20 @@ The `examples/` directory contains:
 ### Setup Development Environment
 
 ```bash
+# Clone the repository
 git clone https://github.com/your-username/wave_view.git
 cd wave_view
 
-# Create virtual environment
+# Create and activate virtual environment
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 
-# Install in development mode
+# Install in development mode with all dependencies
 pip install -e .
 pip install -r requirements-dev.txt
+
+# Verify development setup
+python -c "import wave_view as wv; print('Development setup complete!')"
 ```
 
 ### Run Tests
