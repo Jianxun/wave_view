@@ -1,14 +1,16 @@
 # Project Todo List
 
 ## Current Sprint - Core Waveform Visualization
-- [ ] Create main package structure (`wave_view/`)
-- [ ] Implement `SpiceData` class (core/reader.py) - basic SPICE file reading
-- [ ] Implement `PlotConfig` class (core/config.py) - YAML configuration handling
-- [ ] Port plotting logic to `SpicePlotter` class (core/plotter.py)
-- [ ] Create main API functions in `__init__.py` (`plot()`, `load_spice()`)
-- [ ] Add multi-figure configuration support
-- [ ] Create basic unit tests for core functionality
-- [ ] Test package installation and imports
+- [X] Create main package structure (`wave_view/`)
+- [X] Implement `SpiceData` class (core/reader.py) - basic SPICE file reading with case-insensitive access
+- [X] Implement `PlotConfig` class (core/config.py) - YAML configuration handling with multi-figure support
+- [X] Port plotting logic to `SpicePlotter` class (core/plotter.py)
+- [X] Create main API functions in `__init__.py` (`plot()`, `load_spice()`)
+- [X] Add multi-figure configuration support
+- [X] Create basic unit tests for core functionality
+- [X] Test package installation and imports
+- [X] Add case-insensitive signal name normalization (all lowercase)
+- [X] Create integration tests with real SPICE data
 
 ## Sprint 2 - Signal Discovery & Exploration
 - [ ] Integrate `SpiceSignalExplorer` class into core package
