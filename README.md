@@ -5,7 +5,7 @@
 
 A Python package for visualizing SPICE simulation waveforms with interactive Plotly-based plotting, designed for seamless integration with Jupyter notebooks.
 
-![Demo]examples/screenshots/wave_view_demo.png
+![Demo](examples/screenshots/wave_view_demo.png)
 
 ## ✨ Features
 
