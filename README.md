@@ -5,6 +5,8 @@
 
 A Python package for visualizing SPICE simulation waveforms with interactive Plotly-based plotting, designed for seamless integration with Jupyter notebooks.
 
+![Demo]examples/screenshots/wave_view_demo.png
+
 ## ✨ Features
 
 - 📊 **Interactive Plotly Visualization**: Modern, web-based plots with zoom, pan, and hover
@@ -39,7 +41,7 @@ pip install git+https://github.com/jianxun/wave_view.git@v0.1.0
 #### Option 3: Development Installation
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/wave_view.git
+git clone https://github.com/jianxun/wave_view.git
 cd wave_view
 
 # Create and activate virtual environment (recommended)
