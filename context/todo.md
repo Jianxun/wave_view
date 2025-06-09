@@ -1,9 +1,33 @@
 # Project Todo List
 
 ## Current Sprint
-✅ **SPRINT 1 + REPO REORGANIZATION - COMPLETE**
+
+### 🧪 Test Suite Development (High Priority)
+Based on development guidelines, comprehensive test-driven development needed for new features:
+
+- [ ] **Update existing tests** for new processed_data API in plot() function
+- [ ] **Create comprehensive tests** for log scale functionality (X and Y axes)  
+- [ ] **Add integration tests** for processed_data + log scale combinations
+- [ ] **Create parametrized tests** for different scale types (linear, log)
+- [ ] **Test edge cases** - invalid scale values, missing processed signals, etc.
+- [ ] **Organize test structure** according to development guidelines (test_*.py in /tests/)
+- [ ] **Ensure pytest compliance** and proper test discovery
+- [ ] **Validate all demo scripts** work correctly as integration tests
+- [ ] **Update test coverage** to include new API features
+- [ ] **Document test patterns** for future development sessions
 
 ## Recently Completed ✅
+
+### 🚀 Major API Enhancements (This Session)
+- [X] **Processed Data API Enhancement**: Modified plot() function to accept processed_data parameter
+- [X] **Clean User Interface**: Eliminated need for users to access internal SpicePlotter class
+- [X] **YAML Integration**: Processed signals referenced with "data." prefix in configurations
+- [X] **Log Scale Support**: Added logarithmic axis scaling for both X and Y axes
+- [X] **Bode Plot Support**: Perfect for frequency response plots with log frequency axis
+- [X] **Comprehensive Examples**: Created demo_log_scale.py and updated demo_ota_5t.py
+- [X] **Validation Testing**: Verified log scales properly applied to Plotly figures
+
+### 📦 Repository & Package Foundation  
 - [X] Repository reorganization for PyPI publication
 - [X] Implement src/ layout structure  
 - [X] Consolidate tests directory
@@ -12,12 +36,10 @@
 - [X] Add MIT LICENSE for open source
 - [X] Add development requirements (requirements-dev.txt)
 - [X] Fix broken imports after reorganization
-- [X] Verify all tests pass (18/18 ✅)
-- [X] Test package installation (pip install -e .)
+- [X] Package installable via pip install -e . ✅
 - [X] Validate core API functionality
 - [X] Fix demo script import issue (context recovery session)
 - [X] Fix x-axis positioning to appear at bottom of figure (with range slider preserved)
-- [X] Create comprehensive test suite for systematic API validation
 - [X] Fix Y-axis domain calculation (removed incorrect reverse() call)
 - [X] Fix Y-axis order UX - first in config now appears at top of plot (intuitive reading order)
 - [X] Update README.md with comprehensive installation instructions (dev mode + GitHub)
