@@ -198,11 +198,17 @@ class SpicePlotter:
 
             axis_layout_key = f"yaxis{plotly_axis_id_num}"
 
-            layout_update_dict[axis_layout_key] = {
+            y_axis_layout = {
                 "title": y_axis_cfg.get("label", f"Y-Axis {plotly_axis_id_num}"),
                 "domain": y_axis_domains[i],
                 "anchor": "x"  # All y-axes anchor to x-axis for proper positioning
             }
+            
+            # Add log scale support for Y-axis
+            if y_axis_cfg.get("scale") == "log":
+                y_axis_layout["type"] = "log"
+            
+            layout_update_dict[axis_layout_key] = y_axis_layout
 
             # Add traces for this Y-axis
             for legend_name, signal_key_val in y_axis_cfg.get("signals", {}).items():
@@ -219,11 +225,17 @@ class SpicePlotter:
         layout_update_dict["height"] = plot_config.get("plot_height", 600 if num_y_axes <= 1 else 300 * num_y_axes)
         layout_update_dict["dragmode"] = plot_config.get("default_dragmode", "zoom")
 
-        layout_update_dict["xaxis"] = {
+        x_axis_layout = {
             "title": x_axis_title,
             "rangeslider": {"visible": plot_config.get("show_rangeslider", True)},
             "domain": [0, 1]  # X-axis spans the full width
         }
+        
+        # Add log scale support for X-axis
+        if x_config.get("scale") == "log":
+            x_axis_layout["type"] = "log"
+        
+        layout_update_dict["xaxis"] = x_axis_layout
 
         # Configure zoom buttons
         if plot_config.get("show_zoom_buttons", True) and num_y_axes > 0:

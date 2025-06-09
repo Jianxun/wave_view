@@ -6,6 +6,7 @@ including the main plot() function and utility functions for configuration.
 """
 
 from typing import Union, Dict, List, Tuple, Optional, Any
+import numpy as np
 import plotly.graph_objects as go
 import plotly.io as pio
 import yaml
@@ -19,6 +20,7 @@ from .core.plotter import SpicePlotter
 def plot(raw_file: str, 
          config: Union[str, Dict, None] = None,
          show: bool = True,
+         processed_data: Optional[Dict[str, np.ndarray]] = None,
          **kwargs) -> go.Figure:
     """
     Simple plotting function for SPICE waveforms.
@@ -30,6 +32,9 @@ def plot(raw_file: str,
         raw_file: Path to SPICE .raw file
         config: Configuration file path, dictionary, or None for auto-config
         show: Whether to display the plot immediately (default: True)
+        processed_data: Optional dictionary of processed signals 
+                       {signal_name: numpy_array}. These can be referenced
+                       in config with "data.signal_name"
         **kwargs: Additional arguments passed to the plotter
         
     Returns:
@@ -39,12 +44,37 @@ def plot(raw_file: str,
         >>> import wave_view as wv
         >>> fig = wv.plot("simulation.raw", "config.yaml")
         >>> fig = wv.plot("simulation.raw", show=False)  # Return without showing
+        
+        # With processed data
+        >>> import numpy as np
+        >>> data = wv.load_spice("simulation.raw")
+        >>> processed = {
+        ...     "vdb_out": 20 * np.log10(np.abs(data.get_signal("v(out)"))),
+        ...     "power": data.get_signal("v(vdd)") * data.get_signal("i(vdd)")
+        ... }
+        >>> config = '''
+        ... title: "Analysis with Processed Data"
+        ... X: {signal_key: "raw.time", label: "Time (s)"}
+        ... Y:
+        ...   - label: "Magnitude (dB)"
+        ...     signals: {Output: "data.vdb_out"}
+        ...   - label: "Power (W)"  
+        ...     signals: {Supply: "data.power"}
+        ... '''
+        >>> fig = wv.plot("simulation.raw", config, processed_data=processed)
     """
     # Auto-detect environment and set appropriate renderer
     _configure_plotly_renderer()
     
     # Create plotter and load data
     plotter = SpicePlotter(raw_file)
+    
+    # Add processed signals if provided
+    if processed_data:
+        for signal_name, signal_array in processed_data.items():
+            if not isinstance(signal_array, np.ndarray):
+                signal_array = np.array(signal_array, dtype=float)
+            plotter._processed_signals[signal_name] = signal_array
     
     # Handle configuration
     if config is None:
