@@ -11,7 +11,9 @@ Wave View is a Python package for visualizing SPICE simulation waveforms, design
 - Package installable via pip install -e . ✅
 - **NEW**: Processed data API with clean user interface ✅
 - **NEW**: Log scale support for X and Y axes ✅
-- Tests need updating for new features ⚠️
+- **NEW**: Comprehensive unit tests for PlotConfig class (33 tests, 96% coverage) ✅
+- **NEW**: Comprehensive modular unit tests for SpicePlotter class (47 tests, 93% coverage) ✅
+- Core reader tests in progress ⏳
 
 **Repository Structure:**
 ```

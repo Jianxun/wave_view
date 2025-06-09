@@ -5,16 +5,24 @@
 ### 🧪 Test Suite Development (High Priority)
 Based on development guidelines, comprehensive test-driven development needed for new features:
 
-- [ ] **Update existing tests** for new processed_data API in plot() function
-- [ ] **Create comprehensive tests** for log scale functionality (X and Y axes)  
-- [ ] **Add integration tests** for processed_data + log scale combinations
-- [ ] **Create parametrized tests** for different scale types (linear, log)
-- [ ] **Test edge cases** - invalid scale values, missing processed signals, etc.
-- [ ] **Organize test structure** according to development guidelines (test_*.py in /tests/)
-- [ ] **Ensure pytest compliance** and proper test discovery
-- [ ] **Validate all demo scripts** work correctly as integration tests
-- [ ] **Update test coverage** to include new API features
-- [ ] **Document test patterns** for future development sessions
+- [X] **Core Config Tests Complete**: Comprehensive unit tests for PlotConfig class (33 tests, 96% coverage) ✅
+  - All initialization methods (dict, list, YAML file/string, Path objects)
+  - File vs content detection logic
+  - Configuration validation with error checking
+  - Multi-figure support, templates, raw file path resolution
+  - **NEW**: Log scale support testing
+  - **NEW**: Processed signal validation testing
+- [X] **Core Plotter Tests Complete**: Comprehensive modular unit tests for SpicePlotter class (47 tests, 93% coverage) ✅
+  - **test_plotter_basic.py**: Initialization, method chaining, properties, string representation (18 tests)
+  - **test_plotter_processed.py**: Processed signals functionality, error handling, integration (16 tests)
+  - **test_plotter_log_scale.py**: Log scale support for X/Y axes, edge cases, data integrity (13 tests)
+  - **Shared utilities**: Mock data, test configs, assertion helpers in `__init__.py`
+  - **Modular structure**: Easy to maintain, focused test files for different functionality areas
+- [ ] **Core Reader Tests**: Unit tests for SpiceData class
+- [ ] **API Integration Tests**: Test new processed_data parameter and log scale API
+- [ ] **Demo Script Validation**: Ensure all demo scripts work as integration tests
+- [ ] **Update existing integration tests** for new features
+- [ ] **Edge case testing** - invalid scale values, missing processed signals, etc.
 
 ## Recently Completed ✅
 
