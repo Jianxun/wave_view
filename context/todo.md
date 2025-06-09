@@ -18,7 +18,13 @@ Based on development guidelines, comprehensive test-driven development needed fo
   - **test_plotter_log_scale.py**: Log scale support for X/Y axes, edge cases, data integrity (13 tests)
   - **Shared utilities**: Mock data, test configs, assertion helpers in `__init__.py`
   - **Modular structure**: Easy to maintain, focused test files for different functionality areas
-- [ ] **Core Reader Tests**: Unit tests for SpiceData class
+- [X] **Core Reader Tests Complete**: Comprehensive modular unit tests for SpiceData class (56 tests, 100% coverage) ✅
+  - **test_reader_real_file.py**: Real SPICE file integration testing with Ring_Oscillator_7stage.raw (18 tests)
+  - **test_reader_basic.py**: Core functionality with mocked spicelib for consistent testing (22 tests)
+  - **test_reader_edge_cases.py**: Error handling, special signal names, edge cases (16 tests)
+  - **Shared utilities**: Real file helpers, mock creators, assertion utilities in `__init__.py`
+  - **Real-world validation**: Tests with actual 66-signal SPICE file (2228 time points, 0-2μs simulation)
+  - **Complete error coverage**: File system errors, signal not found, data type edge cases
 - [ ] **API Integration Tests**: Test new processed_data parameter and log scale API
 - [ ] **Demo Script Validation**: Ensure all demo scripts work as integration tests
 - [ ] **Update existing integration tests** for new features
