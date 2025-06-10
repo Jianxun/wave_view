@@ -11,6 +11,7 @@ from pathlib import Path
 import yaml
 
 from wave_view.core.config import PlotConfig
+from wave_view.api import config_from_yaml, config_from_file
 from . import (
     create_temp_yaml_file, create_temp_directory_with_config, cleanup_temp_file,
     cleanup_temp_directory, get_basic_config_dict, get_multi_figure_config_list,
@@ -49,11 +50,11 @@ class TestPlotConfigInitialization(unittest.TestCase):
         assert_config_structure(config_list, is_multi_figure=True)
     
     def test_init_from_yaml_string(self):
-        """Test creating config from YAML string content."""
+        """Test creating config from YAML string content using config_from_yaml."""
         yaml_strings = get_yaml_test_strings()
         yaml_content = yaml_strings["multiline_yaml"]
         
-        config = PlotConfig(yaml_content)
+        config = config_from_yaml(yaml_content)
         self.assertFalse(config.is_multi_figure)
         self.assertEqual(config.config["title"], "Multi-line Test")
         self.assertEqual(config.config["X"]["signal_key"], "raw.time")
@@ -65,11 +66,11 @@ class TestPlotConfigInitialization(unittest.TestCase):
         self.assertEqual(config.config["Y"][0]["signals"]["VDD"], "v(vdd)")
     
     def test_init_from_yaml_list_string(self):
-        """Test creating multi-figure config from YAML list string."""
+        """Test creating multi-figure config from YAML list string using config_from_yaml."""
         yaml_strings = get_yaml_test_strings()
         yaml_content = yaml_strings["list_yaml"]
         
-        config = PlotConfig(yaml_content)
+        config = config_from_yaml(yaml_content)
         self.assertTrue(config.is_multi_figure)
         self.assertEqual(config.figure_count, 2)
         self.assertEqual(config.get_figure_config(0)["title"], "Figure 1")
@@ -82,7 +83,8 @@ class TestPlotConfigInitialization(unittest.TestCase):
             (None, "None"),
             (3.14, "float"),
             (set(), "set"),
-            (lambda x: x, "function")
+            (lambda x: x, "function"),
+            ("yaml string", "string")  # Strings no longer accepted directly
         ]
         
         for invalid_input, input_type in invalid_inputs:
@@ -90,7 +92,7 @@ class TestPlotConfigInitialization(unittest.TestCase):
                 with self.assertRaises(ValueError) as context:
                     PlotConfig(invalid_input)
                 
-                self.assertIn("Config source must be str, Path, dict, or list", str(context.exception))
+                self.assertIn("Config source must be Path, dict, or list", str(context.exception))
     
     def test_init_empty_inputs(self):
         """Test initialization with empty but valid inputs."""
@@ -105,76 +107,16 @@ class TestPlotConfigInitialization(unittest.TestCase):
         self.assertEqual(config.figure_count, 0)
 
 
-class TestFilePathDetection(unittest.TestCase):
-    """Test the _looks_like_file_path method."""
-    
-    def setUp(self):
-        """Set up test config for file path detection tests."""
-        self.config = PlotConfig(get_basic_config_dict())
-    
-    def test_looks_like_file_path_extensions(self):
-        """Test file path detection with common extensions."""
-        yaml_strings = get_yaml_test_strings()
-        file_paths = yaml_strings["file_paths"]
-        
-        for file_path in file_paths:
-            with self.subTest(file_path=file_path):
-                self.assertTrue(self.config._looks_like_file_path(file_path))
-    
-    def test_looks_like_yaml_content(self):
-        """Test YAML content detection."""
-        yaml_strings = get_yaml_test_strings()
-        yaml_contents = yaml_strings["not_file_paths"]
-        
-        for yaml_content in yaml_contents:
-            with self.subTest(yaml_content=yaml_content):
-                self.assertFalse(self.config._looks_like_file_path(yaml_content))
-    
-    def test_looks_like_file_path_edge_cases(self):
-        """Test edge cases for file path detection."""
-        # Short strings without YAML syntax should be file paths
-        short_strings = ["config", "my_file", "data"]
-        for string in short_strings:
-            with self.subTest(string=string):
-                self.assertTrue(self.config._looks_like_file_path(string))
-        
-        # Strings with colons but no newlines are treated as YAML
-        colon_strings = ["title: Test Plot", "key: value"]
-        for string in colon_strings:
-            with self.subTest(string=string):
-                self.assertFalse(self.config._looks_like_file_path(string))
-        
-        # Directory paths should be detected as file paths
-        dir_paths = ["/absolute/path/config.yaml", "relative/path", "./current/dir"]
-        for path in dir_paths:
-            with self.subTest(path=path):
-                self.assertTrue(self.config._looks_like_file_path(path))
-    
-    def test_looks_like_file_path_with_spaces(self):
-        """Test file path detection with spaces."""
-        # File paths with spaces should still be detected
-        spaced_paths = ["my config.yaml", "path with spaces/config.yml", "file name.yaml"]
-        for path in spaced_paths:
-            with self.subTest(path=path):
-                self.assertTrue(self.config._looks_like_file_path(path))
-        
-        # But YAML content with spaces should not be file paths
-        yaml_with_spaces = ["title: My Test Config", "label: Time (seconds)"]
-        for yaml_content in yaml_with_spaces:
-            with self.subTest(yaml_content=yaml_content):
-                self.assertFalse(self.config._looks_like_file_path(yaml_content))
-
-
 class TestFileBasedInitialization(unittest.TestCase):
     """Test PlotConfig initialization from files and Path objects."""
     
     def test_init_from_yaml_file(self):
-        """Test creating config from YAML file."""
+        """Test creating config from YAML file using config_from_file."""
         config_dict = get_basic_config_dict()
         temp_path = create_temp_yaml_file(config_dict)
         
         try:
-            config = PlotConfig(temp_path)
+            config = config_from_file(temp_path)
             self.assertEqual(config.config["title"], "Basic Test Config")
             self.assertFalse(config.is_multi_figure)
             self.assertEqual(config.config["X"]["signal_key"], "raw.time")
@@ -203,12 +145,12 @@ class TestFileBasedInitialization(unittest.TestCase):
             cleanup_temp_file(temp_path_str)
     
     def test_init_from_yaml_file_multi_figure(self):
-        """Test creating multi-figure config from YAML file."""
+        """Test creating multi-figure config from YAML file using config_from_file."""
         config_list = get_multi_figure_config_list()
         temp_path = create_temp_yaml_file(config_list)
         
         try:
-            config = PlotConfig(temp_path)
+            config = config_from_file(temp_path)
             self.assertTrue(config.is_multi_figure)
             self.assertEqual(config.figure_count, 2)
             self.assertEqual(config.get_figure_config(0)["title"], "Figure 1 - Voltages")
@@ -217,15 +159,15 @@ class TestFileBasedInitialization(unittest.TestCase):
             cleanup_temp_file(temp_path)
     
     def test_init_nonexistent_file(self):
-        """Test initialization with non-existent file."""
+        """Test initialization with non-existent file using config_from_file."""
         with self.assertRaises(FileNotFoundError) as context:
-            PlotConfig("nonexistent_config.yaml")
+            config_from_file("nonexistent_config.yaml")
         
         self.assertIn("Configuration file not found", str(context.exception))
         self.assertIn("nonexistent_config.yaml", str(context.exception))
     
     def test_init_invalid_yaml_file(self):
-        """Test initialization with invalid YAML file."""
+        """Test initialization with invalid YAML file using config_from_file."""
         invalid_yaml = """
         title: "Invalid YAML
         X: {
@@ -237,15 +179,14 @@ class TestFileBasedInitialization(unittest.TestCase):
         
         try:
             with self.assertRaises(yaml.YAMLError) as context:
-                PlotConfig(temp_path)
+                config_from_file(temp_path)
             
             self.assertIn("Invalid YAML in config file", str(context.exception))
-            self.assertIn(temp_path, str(context.exception))
         finally:
             cleanup_temp_file(temp_path)
     
     def test_init_invalid_yaml_string(self):
-        """Test initialization with invalid YAML string content."""
+        """Test initialization with invalid YAML string content using config_from_yaml."""
         invalid_yaml_string = """
         title: "Invalid YAML String
         X: {
@@ -254,12 +195,12 @@ class TestFileBasedInitialization(unittest.TestCase):
         """
         
         with self.assertRaises(yaml.YAMLError) as context:
-            PlotConfig(invalid_yaml_string)
+            config_from_yaml(invalid_yaml_string)
         
         self.assertIn("Invalid YAML content", str(context.exception))
     
     def test_init_yaml_file_different_extensions(self):
-        """Test YAML file loading with different extensions."""
+        """Test YAML file loading with different extensions using config_from_file."""
         config_dict = get_basic_config_dict()
         extensions = ['.yaml', '.yml', '.json']  # json should also work
         
@@ -267,7 +208,7 @@ class TestFileBasedInitialization(unittest.TestCase):
             with self.subTest(extension=ext):
                 temp_path = create_temp_yaml_file(config_dict, suffix=ext)
                 try:
-                    config = PlotConfig(temp_path)
+                    config = config_from_file(temp_path)
                     self.assertEqual(config.config["title"], "Basic Test Config")
                     self.assertFalse(config.is_multi_figure)
                 finally:

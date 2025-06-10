@@ -13,6 +13,7 @@ import os
 
 from wave_view.core.config import PlotConfig
 from wave_view.core.plotter import SpicePlotter
+from wave_view.api import config_from_yaml, config_from_file
 
 
 class TestPlotConfig(unittest.TestCase):
@@ -68,7 +69,7 @@ class TestPlotConfig(unittest.TestCase):
         self.assertIn("Y", config.config)
     
     def test_yaml_file_config(self):
-        """Test loading config from YAML file."""
+        """Test loading config from YAML file using config_from_file."""
         config_content = """
         title: "Test YAML Config"
         X:
@@ -85,7 +86,7 @@ class TestPlotConfig(unittest.TestCase):
             temp_path = f.name
         
         try:
-            config = PlotConfig(temp_path)
+            config = config_from_file(temp_path)
             self.assertEqual(config.config["title"], "Test YAML Config")
             self.assertFalse(config.is_multi_figure)
         finally:
@@ -147,9 +148,9 @@ class TestErrorHandling(unittest.TestCase):
     """Test error handling in core components."""
     
     def test_invalid_config_file(self):
-        """Test handling of invalid config files."""
+        """Test handling of invalid config files using config_from_file."""
         with self.assertRaises(FileNotFoundError):
-            PlotConfig("nonexistent_config.yaml")
+            config_from_file("nonexistent_config.yaml")
     
     def test_invalid_config_structure(self):
         """Test handling of invalid config structure."""
