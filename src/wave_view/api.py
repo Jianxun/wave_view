@@ -86,6 +86,15 @@ def config_from_yaml(yaml_string: str) -> PlotConfig:
     except yaml.YAMLError as e:
         raise yaml.YAMLError(f"Invalid YAML content: {e}")
     
+    # Check for multi-figure configuration (YAML list) and reject it
+    if isinstance(config_dict, list):
+        raise ValueError(
+            "Multi-figure configurations are no longer supported. "
+            "The YAML string contains a list of figures. "
+            "Please create separate YAML configurations for each figure and "
+            "call plot() multiple times instead."
+        )
+    
     return PlotConfig(config_dict)
 
 

@@ -119,25 +119,7 @@ def create_processed_signals_config():
     })
 
 
-def create_multi_figure_config():
-    """
-    Create a multi-figure test configuration.
-    
-    Returns:
-        PlotConfig object with multiple figures
-    """
-    return PlotConfig([
-        {
-            "title": "Figure 1: Voltage",
-            "X": {"signal_key": "raw.time", "label": "Time (s)"},
-            "Y": [{"label": "Voltage", "signals": {"VDD": "v(vdd)"}}]
-        },
-        {
-            "title": "Figure 2: Current", 
-            "X": {"signal_key": "raw.time", "label": "Time (s)"},
-            "Y": [{"label": "Current", "signals": {"IDD": "i(vdd)"}}]
-        }
-    ])
+
 
 
 def assert_figure_structure(fig, expected_traces=1, title="Basic Test Plot"):

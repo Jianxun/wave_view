@@ -15,11 +15,10 @@ class PlotConfig:
     """
     Manages plot configuration from YAML files or dictionaries.
     
-    Supports both single-figure and multi-figure configurations, with validation
-    and helpful error messages for common configuration issues.
+    Provides validation and helpful error messages for common configuration issues.
     """
     
-    def __init__(self, config_source: Union[Dict, List, Path]):
+    def __init__(self, config_source: Union[Dict, Path]):
         """
         Initialize PlotConfig from a file path or configuration data.
         
@@ -27,8 +26,7 @@ class PlotConfig:
         (config_from_file, config_from_yaml, config_from_dict) rather than directly.
         
         Args:
-            config_source: Path object to YAML file, configuration dictionary, 
-                          or list of configs
+            config_source: Path object to YAML file or configuration dictionary
             
         Raises:
             FileNotFoundError: If config file doesn't exist
@@ -48,18 +46,33 @@ class PlotConfig:
             
             try:
                 with open(config_path, 'r') as f:
-                    self._config = yaml.safe_load(f)
+                    loaded_config = yaml.safe_load(f)
             except yaml.YAMLError as e:
                 raise yaml.YAMLError(f"Invalid YAML in config file '{config_path}': {e}")
+            
+            # Reject multi-figure configurations (YAML lists)
+            if isinstance(loaded_config, list):
+                raise ValueError(
+                    f"Multi-figure configurations are no longer supported. "
+                    f"The configuration file '{config_path}' contains a list of figures. "
+                    f"Please create separate configuration files for each figure and "
+                    f"call plot() multiple times instead."
+                )
+            
+            self._config = loaded_config
                 
-        elif isinstance(config_source, (dict, list)):
-            # Use dictionary or list directly
-            if isinstance(config_source, list):
-                self._config = [cfg.copy() if isinstance(cfg, dict) else cfg for cfg in config_source]
-            else:
-                self._config = config_source.copy()
+        elif isinstance(config_source, dict):
+            # Use dictionary directly
+            self._config = config_source.copy()
+        elif isinstance(config_source, list):
+            # Explicitly reject lists
+            raise ValueError(
+                "Multi-figure configurations are no longer supported. "
+                "Please create separate PlotConfig objects for each figure and "
+                "call plot() multiple times instead."
+            )
         else:
-            raise ValueError(f"Config source must be Path, dict, or list, got {type(config_source)}")
+            raise ValueError(f"Config source must be Path or dict, got {type(config_source)}")
         
         # Validate basic structure
         self._validate_basic_structure()
@@ -68,45 +81,24 @@ class PlotConfig:
     
     def _validate_basic_structure(self):
         """Validate basic configuration structure."""
-        if isinstance(self._config, list):
-            # Multi-figure configuration
-            for i, fig_config in enumerate(self._config):
-                if not isinstance(fig_config, dict):
-                    raise ValueError(f"Figure {i} configuration must be a dictionary")
-        elif isinstance(self._config, dict):
-            # Single figure configuration
-            pass
-        else:
-            raise ValueError("Configuration must be a dictionary or list of dictionaries")
+        if not isinstance(self._config, dict):
+            raise ValueError("Configuration must be a dictionary")
     
-    @property
-    def is_multi_figure(self) -> bool:
-        """Check if this is a multi-figure configuration."""
-        return isinstance(self._config, list)
+
     
     @property
     def config(self) -> Dict[str, Any]:
         """Get the raw configuration dictionary."""
         return self._config
     
-    def get_raw_file_path(self, figure_index: int = 0) -> Optional[str]:
+    def get_raw_file_path(self) -> Optional[str]:
         """
         Get the raw file path, resolving relative paths if needed.
         
-        Args:
-            figure_index: Figure index for multi-figure configs (default: 0)
-            
         Returns:
             Absolute path to raw file, or None if not specified
         """
-        if self.is_multi_figure:
-            if figure_index >= len(self._config):
-                raise IndexError(f"Figure index {figure_index} out of range")
-            fig_config = self._config[figure_index]
-        else:
-            fig_config = self._config
-        
-        source = fig_config.get("source")
+        source = self._config.get("source")
         if not source:
             return None
         
@@ -128,38 +120,35 @@ class PlotConfig:
         """
         warnings = []
         
-        configs_to_validate = [self._config] if not self.is_multi_figure else self._config
+        config = self._config
         
-        for i, config in enumerate(configs_to_validate):
-            figure_prefix = f"Figure {i}: " if self.is_multi_figure else ""
-            
-            # Check required fields
-            if "X" not in config:
-                warnings.append(f"{figure_prefix}Missing required 'X' configuration")
-            elif not isinstance(config["X"], dict) or "signal_key" not in config["X"]:
-                warnings.append(f"{figure_prefix}X configuration must have 'signal_key'")
-            
-            if "Y" not in config:
-                warnings.append(f"{figure_prefix}Missing required 'Y' configuration")
-            elif not isinstance(config["Y"], list):
-                warnings.append(f"{figure_prefix}Y configuration must be a list")
-            else:
-                # Validate Y axis configurations
-                for j, y_config in enumerate(config["Y"]):
-                    if not isinstance(y_config, dict):
-                        warnings.append(f"{figure_prefix}Y[{j}] must be a dictionary")
-                        continue
-                    
-                    if "signals" not in y_config:
-                        warnings.append(f"{figure_prefix}Y[{j}] missing 'signals'")
-                        continue
-                    
-                    if not isinstance(y_config["signals"], dict):
-                        warnings.append(f"{figure_prefix}Y[{j}]['signals'] must be a dictionary")
-            
-            # Validate signals against SPICE data if provided
-            if spice_data:
-                warnings.extend(self._validate_signals_against_data(config, spice_data, figure_prefix))
+        # Check required fields
+        if "X" not in config:
+            warnings.append("Missing required 'X' configuration")
+        elif not isinstance(config["X"], dict) or "signal_key" not in config["X"]:
+            warnings.append("X configuration must have 'signal_key'")
+        
+        if "Y" not in config:
+            warnings.append("Missing required 'Y' configuration")
+        elif not isinstance(config["Y"], list):
+            warnings.append("Y configuration must be a list")
+        else:
+            # Validate Y axis configurations
+            for j, y_config in enumerate(config["Y"]):
+                if not isinstance(y_config, dict):
+                    warnings.append(f"Y[{j}] must be a dictionary")
+                    continue
+                
+                if "signals" not in y_config:
+                    warnings.append(f"Y[{j}] missing 'signals'")
+                    continue
+                
+                if not isinstance(y_config["signals"], dict):
+                    warnings.append(f"Y[{j}]['signals'] must be a dictionary")
+        
+        # Validate signals against SPICE data if provided
+        if spice_data:
+            warnings.extend(self._validate_signals_against_data(config, spice_data, ""))
         
         return warnings
     
@@ -198,29 +187,7 @@ class PlotConfig:
         
         return warnings
     
-    def get_figure_config(self, index: int = 0) -> Dict[str, Any]:
-        """
-        Get configuration for a specific figure.
-        
-        Args:
-            index: Figure index (0 for single-figure configs)
-            
-        Returns:
-            Figure configuration dictionary
-        """
-        if self.is_multi_figure:
-            if index >= len(self._config):
-                raise IndexError(f"Figure index {index} out of range")
-            return self._config[index]
-        else:
-            if index != 0:
-                raise IndexError("Single-figure config only has index 0")
-            return self._config
-    
-    @property
-    def figure_count(self) -> int:
-        """Get the number of figures in this configuration."""
-        return len(self._config) if self.is_multi_figure else 1
+
     
     def to_dict(self) -> Dict[str, Any]:
         """Convert configuration to dictionary."""
@@ -260,8 +227,5 @@ class PlotConfig:
     
     def __repr__(self) -> str:
         """String representation of PlotConfig."""
-        if self.is_multi_figure:
-            return f"PlotConfig({self.figure_count} figures)"
-        else:
-            title = self._config.get("title", "Untitled")
-            return f"PlotConfig('{title}')" 
+        title = self._config.get("title", "Untitled")
+        return f"PlotConfig('{title}')" 

@@ -137,31 +137,7 @@ def get_basic_config_dict():
     }
 
 
-def get_multi_figure_config_list():
-    """
-    Get a basic multi-figure configuration list for testing.
-    
-    Returns:
-        list: Multi-figure configuration structure
-    """
-    return [
-        {
-            "title": "Figure 1 - Voltages",
-            "X": {"signal_key": "raw.time", "label": "Time (s)"},
-            "Y": [
-                {"label": "Supply", "signals": {"VDD": "v(vdd)"}},
-                {"label": "Output", "signals": {"OUT": "v(out)"}}
-            ]
-        },
-        {
-            "title": "Figure 2 - Currents", 
-            "X": {"signal_key": "raw.time", "label": "Time (s)"},
-            "Y": [
-                {"label": "Supply Current", "signals": {"IDD": "i(vdd)"}},
-                {"label": "Load Current", "signals": {"ILOAD": "i(load)"}}
-            ]
-        }
-    ]
+
 
 
 def get_config_with_log_scale():
@@ -233,21 +209,14 @@ def get_config_with_source_path():
     }
 
 
-def assert_config_structure(config_dict, is_multi_figure=False):
+def assert_config_structure(config_dict):
     """
     Assert that a configuration dictionary has correct structure.
     
     Args:
         config_dict: Configuration to validate
-        is_multi_figure: Whether this should be multi-figure config
     """
-    if is_multi_figure:
-        assert isinstance(config_dict, list), "Multi-figure config should be a list"
-        for i, fig_config in enumerate(config_dict):
-            assert isinstance(fig_config, dict), f"Figure {i} should be a dictionary"
-            assert_single_figure_structure(fig_config)
-    else:
-        assert_single_figure_structure(config_dict)
+    assert_single_figure_structure(config_dict)
 
 
 def assert_single_figure_structure(fig_config):
