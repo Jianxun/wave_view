@@ -5,7 +5,7 @@ This module provides the simple API functions that most users will interact with
 including the main plot() function and utility functions for configuration.
 """
 
-from typing import Union, Dict, List, Optional, Any
+from typing import Union, Dict, List, Optional, Any, Tuple
 import numpy as np
 import plotly.graph_objects as go
 import plotly.io as pio
@@ -89,7 +89,33 @@ def config_from_yaml(yaml_string: str) -> PlotConfig:
     return PlotConfig(config_dict)
 
 
-
+def _categorize_signals(signals: List[str]) -> Tuple[List[str], List[str], List[str]]:
+    """
+    Categorize SPICE signals into voltage, current, and other signals.
+    
+    This utility function separates signals based on their naming convention:
+    - Voltage signals: start with 'v('
+    - Current signals: start with 'i('  
+    - Other signals: everything else
+    
+    Args:
+        signals: List of signal names to categorize
+        
+    Returns:
+        Tuple of (voltage_signals, current_signals, other_signals)
+        
+    Example:
+        >>> signals = ['v(out)', 'i(r1)', 'freq', 'v(in)']
+        >>> voltage, current, other = _categorize_signals(signals)
+        >>> print(voltage)  # ['v(out)', 'v(in)']
+        >>> print(current)  # ['i(r1)']
+        >>> print(other)    # ['freq']
+    """
+    voltage_signals = [s for s in signals if s.startswith('v(')]
+    current_signals = [s for s in signals if s.startswith('i(')]
+    other_signals = [s for s in signals if not s.startswith(('v(', 'i('))]
+    
+    return voltage_signals, current_signals, other_signals
 
 
 def plot(raw_file: Union[str, Path], 
@@ -223,7 +249,7 @@ def plot(raw_file: Union[str, Path],
     return fig
 
 
-def _configure_plotly_renderer():
+def _configure_plotly_renderer() -> None:
     """
     Configure Plotly renderer based on environment.
     
@@ -367,9 +393,7 @@ def explore_signals(raw_file: Union[str, Path]) -> List[str]:
     print("=" * 50)
     
     # Categorize signals for better readability
-    voltage_signals = [s for s in signals if s.startswith('v(')]
-    current_signals = [s for s in signals if s.startswith('i(')]
-    other_signals = [s for s in signals if not s.startswith(('v(', 'i('))]
+    voltage_signals, current_signals, other_signals = _categorize_signals(signals)
     
     if voltage_signals:
         print(f"Voltage signals ({len(voltage_signals)}):")

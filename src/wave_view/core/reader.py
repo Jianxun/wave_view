@@ -9,6 +9,8 @@ from typing import List, Dict, Any, Optional
 import numpy as np
 from spicelib import RawRead
 
+# Constants
+MAX_SIGNALS_TO_SHOW = 5  # Maximum number of signals to show in error messages
 
 class SpiceData:
     """
@@ -104,8 +106,8 @@ class SpiceData:
                 break
         
         if original_name is None:
-            available_signals = ', '.join(self.signals[:5])  # Show first 5 in lowercase
-            if len(self.signals) > 5:
+            available_signals = ', '.join(self.signals[:MAX_SIGNALS_TO_SHOW])  # Show first 5 in lowercase
+            if len(self.signals) > MAX_SIGNALS_TO_SHOW:
                 available_signals += f", ... ({len(self.signals)} total)"
             raise ValueError(
                 f"Signal '{name}' not found in raw file. "
