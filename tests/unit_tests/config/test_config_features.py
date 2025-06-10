@@ -25,7 +25,7 @@ class TestTemplateSystem(unittest.TestCase):
         """Test creating config from basic template."""
         config = PlotConfig.from_template("basic")
         
-        self.assertFalse(config.is_multi_figure)
+        # Template creates single-figure configuration
         self.assertIn("title", config.config)
         self.assertIn("X", config.config)
         self.assertIn("Y", config.config)
@@ -35,7 +35,7 @@ class TestTemplateSystem(unittest.TestCase):
         self.assertIsInstance(config.config["Y"], list)
         
         # Validate structure
-        assert_config_structure(config.config, is_multi_figure=False)
+        assert_config_structure(config.config)
     
     def test_from_template_invalid(self):
         """Test creating config from invalid template name."""
@@ -98,8 +98,8 @@ class TestRawFilePathHandling(unittest.TestCase):
         raw_path = config.get_raw_file_path()
         self.assertIsNone(raw_path)
     
-    def test_get_raw_file_path_multi_figure(self):
-        """Test getting raw file path from multi-figure config."""
+    def test_multi_figure_config_rejected(self):
+        """Test that multi-figure configurations are rejected."""
         multi_config = [
             {
                 "title": "Figure 1",
@@ -112,45 +112,23 @@ class TestRawFilePathHandling(unittest.TestCase):
                 "source": "./file2.raw", 
                 "X": {"signal_key": "raw.time"},
                 "Y": [{"label": "V2", "signals": {"OUT": "v(out)"}}]
-            },
-            {
-                "title": "Figure 3 - No Source",
-                "X": {"signal_key": "raw.time"},
-                "Y": [{"label": "V3", "signals": {"GND": "v(gnd)"}}]
             }
         ]
         
-        config = PlotConfig(multi_config)
+        # Multi-figure configurations should be rejected
+        with self.assertRaises(ValueError) as context:
+            PlotConfig(multi_config)
         
-        # Test valid indices
-        path1 = config.get_raw_file_path(0)
-        path2 = config.get_raw_file_path(1)
-        path3 = config.get_raw_file_path(2)
-        
-        self.assertEqual(path1, "./file1.raw")
-        self.assertEqual(path2, "./file2.raw")
-        self.assertIsNone(path3)  # No source specified
-        
-        # Test invalid index
-        with self.assertRaises(IndexError):
-            config.get_raw_file_path(3)
+        self.assertIn("Multi-figure configurations are no longer supported", str(context.exception))
     
-    def test_get_raw_file_path_default_figure_index(self):
-        """Test default figure index for single figure configs."""
+    def test_get_raw_file_path_single_figure_only(self):
+        """Test raw file path handling for single figure configs."""
         config_with_source = get_config_with_source_path()
         config = PlotConfig(config_with_source)
         
-        # Should work with and without explicit index for single figure
-        path_no_index = config.get_raw_file_path()
-        path_with_index = config.get_raw_file_path(0)
-        
-        self.assertEqual(path_no_index, path_with_index)
-        self.assertEqual(path_no_index, "./test_data.raw")
-        
-        # PlotConfig.get_raw_file_path() ignores figure index for single figure configs
-        # and returns the same path regardless of index
-        invalid_path = config.get_raw_file_path(1)
-        self.assertEqual(invalid_path, "./test_data.raw")
+        # Single figure configs should return the source path directly
+        path = config.get_raw_file_path()
+        self.assertEqual(path, "./test_data.raw")
     
     def test_get_raw_file_path_relative_resolution(self):
         """Test relative path resolution when config loaded from file."""
@@ -186,8 +164,8 @@ class TestRawFilePathHandling(unittest.TestCase):
         finally:
             cleanup_temp_directory(temp_dir)
     
-    def test_get_raw_file_path_multi_figure_relative_resolution(self):
-        """Test relative path resolution for multi-figure configs."""
+    def test_multi_figure_yaml_file_rejected(self):
+        """Test that multi-figure YAML files are rejected."""
         multi_config = [
             {
                 "title": "Figure 1",
@@ -206,17 +184,11 @@ class TestRawFilePathHandling(unittest.TestCase):
         temp_dir, config_file = create_temp_directory_with_config("multi_config.yaml", multi_config)
         
         try:
-            config = config_from_file(config_file)
+            # Multi-figure YAML files should be rejected
+            with self.assertRaises(ValueError) as context:
+                config_from_file(config_file)
             
-            path1 = config.get_raw_file_path(0)
-            path2 = config.get_raw_file_path(1)
-            
-            # First should be resolved relative to config file
-            expected_path1 = str(Path(temp_dir) / "data1.raw")
-            self.assertEqual(path1, expected_path1)
-            
-            # Second should remain absolute
-            self.assertEqual(path2, "/absolute/data2.raw")
+            self.assertIn("Multi-figure configurations are no longer supported", str(context.exception))
         finally:
             cleanup_temp_directory(temp_dir)
 
@@ -242,9 +214,9 @@ class TestLogScaleSupport(unittest.TestCase):
         warnings = config.validate()
         self.assertEqual(len(warnings), 0)
         
-        fig_config = config.get_figure_config(0)
-        self.assertEqual(fig_config["X"]["scale"], "log")
-        self.assertEqual(fig_config["X"]["signal_key"], "raw.frequency")
+        # Access config directly for single-figure support
+        self.assertEqual(config.config["X"]["scale"], "log")
+        self.assertEqual(config.config["X"]["signal_key"], "raw.frequency")
     
     def test_config_with_y_axis_log_scale(self):
         """Test configuration with Y-axis log scale."""
@@ -268,9 +240,9 @@ class TestLogScaleSupport(unittest.TestCase):
         warnings = config.validate()
         self.assertEqual(len(warnings), 0)
         
-        fig_config = config.get_figure_config(0)
-        self.assertEqual(fig_config["Y"][0]["scale"], "log")
-        self.assertNotIn("scale", fig_config["Y"][1])  # Second Y-axis doesn't have scale
+        # Access config directly for single-figure support
+        self.assertEqual(config.config["Y"][0]["scale"], "log")
+        self.assertNotIn("scale", config.config["Y"][1])  # Second Y-axis doesn't have scale
     
     def test_config_with_both_axes_log_scale(self):
         """Test configuration with both X and Y axes log scale."""
@@ -280,13 +252,13 @@ class TestLogScaleSupport(unittest.TestCase):
         warnings = config.validate()
         self.assertEqual(len(warnings), 0)
         
-        fig_config = config.get_figure_config(0)
-        self.assertEqual(fig_config["X"]["scale"], "log")
-        self.assertEqual(fig_config["Y"][0]["scale"], "log")
+        # Access config directly for single-figure support
+        self.assertEqual(config.config["X"]["scale"], "log")
+        self.assertEqual(config.config["Y"][0]["scale"], "log")
         
         # Check that it's designed for Bode plots
-        self.assertEqual(fig_config["X"]["signal_key"], "raw.frequency")
-        self.assertIn("Magnitude", fig_config["Y"][0]["label"])
+        self.assertEqual(config.config["X"]["signal_key"], "raw.frequency")
+        self.assertIn("Magnitude", config.config["Y"][0]["label"])
     
     def test_config_with_mixed_y_axis_scales(self):
         """Test configuration with mixed linear and log Y-axes."""
@@ -315,16 +287,16 @@ class TestLogScaleSupport(unittest.TestCase):
         warnings = config.validate()
         self.assertEqual(len(warnings), 0)
         
-        fig_config = config.get_figure_config(0)
+        # Access config directly for single-figure support
         
         # First Y-axis: no scale specified (defaults to linear)
-        self.assertNotIn("scale", fig_config["Y"][0])
+        self.assertNotIn("scale", config.config["Y"][0])
         
         # Second Y-axis: log scale
-        self.assertEqual(fig_config["Y"][1]["scale"], "log")
+        self.assertEqual(config.config["Y"][1]["scale"], "log")
         
         # Third Y-axis: explicit linear scale
-        self.assertEqual(fig_config["Y"][2]["scale"], "linear")
+        self.assertEqual(config.config["Y"][2]["scale"], "linear")
     
     def test_log_scale_validation(self):
         """Test that log scale configurations pass validation."""
@@ -335,10 +307,10 @@ class TestLogScaleSupport(unittest.TestCase):
         self.assertEqual(len(warnings), 0, "Log scale config should be valid")
         
         # Validate structure
-        assert_config_structure(config.config, is_multi_figure=False)
+        assert_config_structure(config.config)
     
-    def test_log_scale_multi_figure(self):
-        """Test log scale support in multi-figure configurations."""
+    def test_log_scale_multi_figure_rejection(self):
+        """Test that multi-figure log scale configurations are rejected."""
         multi_config = [
             {
                 "title": "Linear Plot",
@@ -358,21 +330,11 @@ class TestLogScaleSupport(unittest.TestCase):
             }
         ]
         
-        config = PlotConfig(multi_config)
-        warnings = config.validate()
-        self.assertEqual(len(warnings), 0)
+        # Multi-figure configurations should be rejected, even with log scales
+        with self.assertRaises(ValueError) as context:
+            PlotConfig(multi_config)
         
-        # Check individual figures
-        fig1 = config.get_figure_config(0)
-        fig2 = config.get_figure_config(1)
-        
-        # First figure: linear scales
-        self.assertNotIn("scale", fig1["X"])
-        self.assertNotIn("scale", fig1["Y"][0])
-        
-        # Second figure: log scales
-        self.assertEqual(fig2["X"]["scale"], "log")
-        self.assertEqual(fig2["Y"][0]["scale"], "log")
+        self.assertIn("Multi-figure configurations are no longer supported", str(context.exception))
 
 
 class TestAdvancedConfigurationFeatures(unittest.TestCase):
@@ -418,12 +380,11 @@ class TestAdvancedConfigurationFeatures(unittest.TestCase):
         warnings = config.validate()
         self.assertEqual(len(warnings), 0)
         
-        # Check that all metadata is preserved
-        fig_config = config.get_figure_config(0)
-        self.assertEqual(fig_config["title"], "Extensive Metadata Test")
-        self.assertEqual(fig_config["description"], "A test with many optional fields")
-        self.assertEqual(fig_config["author"], "Test Author")
-        self.assertIn("layout", fig_config)
+        # Check that all metadata is preserved (direct access for single-figure support)
+        self.assertEqual(config.config["title"], "Extensive Metadata Test")
+        self.assertEqual(config.config["description"], "A test with many optional fields")
+        self.assertEqual(config.config["author"], "Test Author")
+        self.assertIn("layout", config.config)
     
     def test_config_preservation_through_processing(self):
         """Test that configuration data is preserved through processing."""
@@ -477,17 +438,16 @@ class TestAdvancedConfigurationFeatures(unittest.TestCase):
         warnings = config.validate()
         self.assertEqual(len(warnings), 0)
         
-        # Validate that all signal types are preserved
-        fig_config = config.get_figure_config(0)
-        self.assertEqual(len(fig_config["Y"]), 3)
+        # Validate that all signal types are preserved (direct access for single-figure support)
+        self.assertEqual(len(config.config["Y"]), 3)
         
         # Check raw signals
-        raw_signals = fig_config["Y"][0]["signals"]
+        raw_signals = config.config["Y"][0]["signals"]
         self.assertIn("VDD_RAW", raw_signals)
         self.assertEqual(raw_signals["VDD_RAW"], "v(vdd)")
         
         # Check processed signals
-        processed_signals = fig_config["Y"][1]["signals"]
+        processed_signals = config.config["Y"][1]["signals"]
         self.assertIn("POWER", processed_signals)
         self.assertEqual(processed_signals["POWER"], "data.power")
     

@@ -19,11 +19,13 @@ fig = wv.plot("simulation.raw", config)  # Required config, no magic
 
 ### **Package Status** 
 - **Installation**: `pip install -e .` (development mode)
-- **Test Coverage**: ✅ **ALL TESTS PASSING**: 226 passing, 0 failing (100% pass rate)
+- **Test Coverage**: ⚠️ **PARTIAL FAILURE**: 189 passing, 31 failing (Phase 1 multi-figure removal issues)
 - **API Coverage**: 87% with comprehensive validation
 - **Overall Coverage**: 92% with comprehensive test suite
 - **Repository Structure**: Modern src/ layout ready for PyPI publication
 - **Documentation**: ✅ **COMPLETE** - Professional Sphinx documentation with comprehensive guides
+- **Current Branch**: `remove_multi_figure_support` (committed Phase 1 changes)
+- **Git Status**: All Phase 1 multi-figure removal changes committed (commit 81dfc2e)
 
 ### **Core Modules Status**
 - **SpiceData (reader.py)**: 100% coverage, case-insensitive signal access
@@ -154,27 +156,52 @@ All 23 failing tests have been successfully fixed:
 8. **Signal Reference Simplification**: Removed all `raw.` prefixes from signal references since signals default to raw file signals (e.g., `raw.time` → `time`, `raw.frequency` → `frequency`)
 
 ## Current Issues Identified
-1. **UI Polish Requirements**: Several user interface improvements needed for better user experience
-   - Zoom buttons at top of graph need disable option for cleaner interface
-   - Zoom XY button not functioning properly - doesn't shift to correct zoom mode
-   - Plot titles are left-aligned instead of center-justified
-2. **Multi-Figure Plot Support**: **DECISION MADE - REMOVE FEATURE**
-   - Current implementation incomplete: parses multi-figure configs but only plots first figure
-   - Creates API inconsistency and maintenance burden without proportional value
-   - Simple alternative exists: multiple plot() calls provide same functionality with better flexibility
-   - Removal will simplify codebase and improve API consistency
-3. **Error message enhancement opportunity** for signal name suggestions (reader.py:97-101)
+
+### **Multi-Figure Removal Progress** 🚧 **IN PROGRESS**
+**PHASE 1 COMPLETED** ✅ - Committed to `remove_multi_figure_support` branch (81dfc2e)
+- ✅ **PlotConfig Class**: Removed `is_multi_figure`, `figure_count`, `get_figure_config()` methods
+- ✅ **Factory Functions**: Updated `config_from_yaml()` and `config_from_file()` to reject YAML lists
+- ✅ **Test Suite**: Updated config tests to remove multi-figure cases (41 tests passing)
+- ✅ **Error Messages**: Added helpful migration guidance for multi-figure rejection
+
+**CRITICAL BLOCKER** ⚠️ - SpicePlotter Issue (31 tests failing)
+- **Location**: `src/wave_view/core/plotter.py` line 121
+- **Issue**: SpicePlotter still calls removed `get_figure_config()` method
+- **Fix Required**: Update plotter to access `config.config` directly for single-figure support
+- **Impact**: All plotter functionality broken until fixed
+
+### **UI Polish Requirements** (Pending Multi-Figure Completion)
+1. **Zoom Button Configuration**: Option to disable zoom buttons at top of graph
+2. **Zoom XY Functionality**: Fix broken zoom XY button behavior
+3. **Plot Title Alignment**: Center-justify plot titles instead of left alignment
+
+### **Other Issues**
+- **Error message enhancement opportunity** for signal name suggestions (reader.py:97-101)
 
 ## Open Questions
 1. **Zoom Button Configuration**: Should zoom button visibility be per-plot configurable or global setting?
 
 ## Next Steps
-1. **Multi-Figure Removal & UI Polish Sprint** (High Priority):
-   - **Phase 1**: Remove multi-figure support from PlotConfig class and tests
-   - **Phase 2**: Clean up documentation and examples
-   - **Phase 3**: Implement UI polish features (zoom buttons, title alignment, zoom XY fix)
-   - **Validation**: Ensure all tests pass and error messages are helpful
-2. **PyPI Publication**: Execute final PyPI release (package is fully prepared and ready)
-3. **Enhanced Error Messages**: Add fuzzy matching suggestions for signal name typos  
-4. **Documentation Hosting**: Consider Read the Docs or GitHub Pages for documentation hosting
-5. **Post-Release**: Monitor PyPI metrics, gather user feedback, plan next version features
+
+### **IMMEDIATE PRIORITY** 🚨
+1. **Fix SpicePlotter Issue** (BLOCKING - 31 tests failing)
+   - Update `src/wave_view/core/plotter.py` line 121 to remove `get_figure_config()` calls
+   - Change from `config.get_figure_config(figure_index)` to `config.config` direct access
+   - Verify all plotter tests pass after fix
+   - Complete Phase 1 of multi-figure removal
+
+### **Multi-Figure Removal Sprint** (High Priority)
+- **Phase 1**: ✅ **COMPLETED** - Core removal from PlotConfig class and tests  
+- **Phase 2**: Clean up documentation and examples (remove multi-figure references)
+- **Phase 3**: Final cleanup and validation
+
+### **UI Polish Sprint** (After Multi-Figure Completion)
+1. **Zoom Button Configuration**: Add option to disable zoom buttons
+2. **Zoom XY Functionality**: Fix broken zoom XY button behavior  
+3. **Plot Title Alignment**: Center-justify plot titles
+
+### **Future Work**
+1. **PyPI Publication**: Execute final PyPI release (package prepared, pending completion of current changes)
+2. **Enhanced Error Messages**: Add fuzzy matching suggestions for signal name typos
+3. **Documentation Hosting**: Consider Read the Docs or GitHub Pages for documentation hosting
+4. **Post-Release**: Monitor PyPI metrics, gather user feedback, plan next version features

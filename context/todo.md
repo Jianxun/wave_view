@@ -156,32 +156,36 @@
 ### 🗑️ **Remove Multi-Figure Support** (HIGH PRIORITY)
 **Decision Made**: Remove multi-figure feature to simplify API and reduce maintenance burden
 
-#### **Phase 1: Core Code Removal** (CRITICAL)
+#### **Phase 1: Core Code Removal** ✅ **COMPLETED - COMMITTED TO BRANCH**
+**Branch**: `remove_multi_figure_support` | **Commit**: `81dfc2e` | **Status**: Ready for Phase 2
+
 - [X] **Remove Multi-Figure Logic from PlotConfig Class** ✅ **COMPLETED**
   - Location: `src/wave_view/core/config.py`
-  - Remove: `is_multi_figure` property, `figure_count` property, `get_figure_config()` method
-  - Simplify: Constructor to only accept single config dictionaries (not lists)
-  - Update: `__repr__()` method to remove multi-figure case
-  - Ensure: Single-figure logic remains intact
+  - ✅ Removed: `is_multi_figure` property, `figure_count` property, `get_figure_config()` method
+  - ✅ Simplified: Constructor to only accept single config dictionaries (not lists)
+  - ✅ Updated: `__repr__()` method to remove multi-figure case
+  - ✅ Ensured: Single-figure logic remains intact
 
 - [X] **Remove Multi-Figure Test Cases** ✅ **COMPLETED**
-  - Location: `tests/unit_tests/config/test_config_basic.py`
-  - Remove: `test_init_from_yaml_list_string()` and related multi-figure tests
-  - Remove: `create_multi_figure_config()` helper function
-  - Update: Error message validation tests for list rejection
-  - Ensure: Tests validate that multi-figure configs are properly rejected
+  - Location: `tests/unit_tests/config/test_config_basic.py`, `test_config_validation.py`
+  - ✅ Removed: All multi-figure test cases and helper functions
+  - ✅ Updated: Error message validation tests for list rejection
+  - ✅ Ensured: Tests validate that multi-figure configs are properly rejected
+  - ✅ Results: 41 config tests now passing
 
-- [ ] **Update SpicePlotter to Remove get_figure_config() Calls** 🚧 **NEXT**
-  - Location: `src/wave_view/core/plotter.py`
-  - Issue: Plotter still calls `config.get_figure_config(figure_index)`
-  - Solution: Access `config.config` directly since only single figures are supported
-  - Impact: This is blocking all plotter tests from running
-
-- [ ] **Update PlotConfig Factory Functions** 
+- [X] **Update PlotConfig Factory Functions** ✅ **COMPLETED**
   - Location: `src/wave_view/api.py`
-  - Update: `config_from_yaml()` and `config_from_file()` to reject YAML lists
-  - Add: Clear error messages for multi-figure rejection
-  - Ensure: Backward compatibility for single-figure YAML files
+  - ✅ Updated: `config_from_yaml()` and `config_from_file()` to reject YAML lists
+  - ✅ Added: Clear error messages for multi-figure rejection with migration guidance
+  - ✅ Ensured: Backward compatibility for single-figure YAML files
+
+#### **Phase 1.5: Fix Critical Blocker** 🚨 **IMMEDIATE NEXT TASK**
+- [ ] **Update SpicePlotter to Remove get_figure_config() Calls** ⚠️ **BLOCKING**
+  - Location: `src/wave_view/core/plotter.py` line 121
+  - Issue: Plotter still calls `config.get_figure_config(figure_index)` (removed method)
+  - Solution: Access `config.config` directly since only single figures are supported  
+  - Impact: 31 tests failing, all plotter functionality broken
+  - Priority: **CRITICAL** - Must fix before proceeding to Phase 2
 
 #### **Phase 2: Documentation & Example Updates** (MEDIUM PRIORITY)  
 - [ ] **Update Documentation and Examples**
@@ -198,6 +202,21 @@
 
 #### **Phase 3: Final Cleanup & Validation** (LOW PRIORITY)
 - [ ] **Run Complete Test Suite**
+  - Verify all 220+ tests pass after multi-figure removal
+  - Confirm no remaining references to removed methods
+  - Validate error messages are helpful and accurate
+
+## Test Status Summary 
+- **Config Tests**: ✅ 41 passing (multi-figure removal complete)
+- **Plotter Tests**: ❌ 31 failing (blocked by get_figure_config() calls)
+- **Other Tests**: ✅ 189 passing
+- **Overall**: 189 passing, 31 failing (85% pass rate)
+
+## Git Status
+- **Current Branch**: `remove_multi_figure_support` 
+- **Latest Commit**: `81dfc2e` - Phase 1 multi-figure removal completed
+- **Working Directory**: Clean (all Phase 1 changes committed)
+- **Next Session Action**: Fix SpicePlotter issue to complete Phase 1
   - Verify: All tests pass after multi-figure removal
   - Fix: Any remaining test failures related to multi-figure references
   - Ensure: Test coverage remains high for remaining functionality
