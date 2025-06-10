@@ -19,7 +19,7 @@ fig = wv.plot("simulation.raw", config)  # Required config, no magic
 
 ### **Package Status** 
 - **Installation**: `pip install -e .` (development mode)
-- **Test Coverage**: ⚠️ **PARTIAL FAILURE**: 189 passing, 31 failing (Phase 1 multi-figure removal issues)
+- **Test Coverage**: ✅ **ALL PASSING**: 220 passing, 0 failing (Phase 1.5 multi-figure removal completed)
 - **API Coverage**: 87% with comprehensive validation
 - **Overall Coverage**: 92% with comprehensive test suite
 - **Repository Structure**: Modern src/ layout ready for PyPI publication
@@ -157,18 +157,18 @@ All 23 failing tests have been successfully fixed:
 
 ## Current Issues Identified
 
-### **Multi-Figure Removal Progress** 🚧 **IN PROGRESS**
-**PHASE 1 COMPLETED** ✅ - Committed to `remove_multi_figure_support` branch (81dfc2e)
+### **Multi-Figure Removal Progress** ✅ **PHASE 1.5 COMPLETED**
+**PHASE 1** ✅ - PlotConfig class and factory function updates (81dfc2e)
 - ✅ **PlotConfig Class**: Removed `is_multi_figure`, `figure_count`, `get_figure_config()` methods
 - ✅ **Factory Functions**: Updated `config_from_yaml()` and `config_from_file()` to reject YAML lists
-- ✅ **Test Suite**: Updated config tests to remove multi-figure cases (41 tests passing)
 - ✅ **Error Messages**: Added helpful migration guidance for multi-figure rejection
 
-**CRITICAL BLOCKER** ⚠️ - SpicePlotter Issue (31 tests failing)
-- **Location**: `src/wave_view/core/plotter.py` line 121
-- **Issue**: SpicePlotter still calls removed `get_figure_config()` method
-- **Fix Required**: Update plotter to access `config.config` directly for single-figure support
-- **Impact**: All plotter functionality broken until fixed
+**PHASE 1.5** ✅ **COMPLETED** - Critical SpicePlotter Fix & All Test Updates (c851d92)
+- ✅ **SpicePlotter Fix**: Updated `create_figure()` to use `config.config` directly instead of removed methods
+- ✅ **Comprehensive Test Updates**: Fixed all 31 failing tests across basic, config, and plotter test suites
+- ✅ **Multi-Figure Migration Tests**: Updated tests to verify proper rejection with helpful error messages
+- ✅ **Single-Figure API**: All tests now use direct config access pattern for single-figure support
+- ✅ **Test Results**: 220 passing, 0 failing (was 189 passing, 31 failing)
 
 ### **UI Polish Requirements** (Pending Multi-Figure Completion)
 1. **Zoom Button Configuration**: Option to disable zoom buttons at top of graph
@@ -183,16 +183,10 @@ All 23 failing tests have been successfully fixed:
 
 ## Next Steps
 
-### **IMMEDIATE PRIORITY** 🚨
-1. **Fix SpicePlotter Issue** (BLOCKING - 31 tests failing)
-   - Update `src/wave_view/core/plotter.py` line 121 to remove `get_figure_config()` calls
-   - Change from `config.get_figure_config(figure_index)` to `config.config` direct access
-   - Verify all plotter tests pass after fix
-   - Complete Phase 1 of multi-figure removal
-
 ### **Multi-Figure Removal Sprint** (High Priority)
 - **Phase 1**: ✅ **COMPLETED** - Core removal from PlotConfig class and tests  
-- **Phase 2**: Clean up documentation and examples (remove multi-figure references)
+- **Phase 1.5**: ✅ **COMPLETED** - Critical plotter fix and comprehensive test updates
+- **Phase 2**: Clean up documentation and examples (remove multi-figure references) 
 - **Phase 3**: Final cleanup and validation
 
 ### **UI Polish Sprint** (After Multi-Figure Completion)

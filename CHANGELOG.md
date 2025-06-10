@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Removed
+- **Multi-figure Support** (Breaking Change)
+  - Removed `is_multi_figure`, `figure_count`, and `get_figure_config()` methods from `PlotConfig`
+  - YAML list configurations now raise helpful error messages with migration guidance
+  - Users should create separate configurations and call `plot()` multiple times instead
+  - Simplifies API and reduces maintenance complexity
+
 ### Planned
 - GitHub Actions CI/CD pipeline
 - Comprehensive documentation site
@@ -25,7 +32,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **Interactive Plotting**
   - Plotly-based interactive visualizations
-  - Multi-figure support with subplots
   - Zoom, pan, and hover capabilities
   - Auto-configuration from SPICE files
 

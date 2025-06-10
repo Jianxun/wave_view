@@ -177,20 +177,16 @@ Here's a comprehensive configuration example showing all available options:
          VDD: "v(vdd)"
          VSS: "v(vss)"
 
-Multi-Figure Support
+Alternative Approaches
 --------------------
 
-wave_view can create multiple separate figures from a single configuration. This is useful when you want different plot layouts or when plots have very different scales.
+If you need different plot layouts, simply create separate configurations and call :func:`~wave_view.plot` multiple times:
 
-Single Figure (Default)
-~~~~~~~~~~~~~~~~~~~~~~~
+.. code-block:: python
 
-A single configuration creates one figure with multiple Y-axis groups:
-
-.. code-block:: yaml
-
-   # config.yaml - Single figure
-   title: "Combined Analysis"
+   # Create separate configurations for different analyses
+   voltage_config = wv.config_from_yaml("""
+   title: "Voltage Analysis"
    X:
      signal_key: "time"
      label: "Time (s)"
@@ -198,45 +194,26 @@ A single configuration creates one figure with multiple Y-axis groups:
      - label: "Voltage (V)"
        signals:
          OUT: "v(out)"
+         IN: "v(in)"
+   """)
+
+   current_config = wv.config_from_yaml("""
+   title: "Current Analysis"  
+   X:
+     signal_key: "time"
+     label: "Time (s)"
+   Y:
      - label: "Current (A)"
        signals:
          M1: "i(m1)"
+         M2: "i(m2)"
+   """)
 
-.. code-block:: python
+   # Create separate figures
+   voltage_fig = wv.plot("simulation.raw", voltage_config)
+   current_fig = wv.plot("simulation.raw", current_config)
 
-   config = wv.config_from_file("config.yaml")
-   fig = wv.plot("simulation.raw", config)  # Returns single figure
-
-Multiple Figures
-~~~~~~~~~~~~~~~~
-
-To create separate figures, provide a list of configurations:
-
-.. code-block:: yaml
-
-   # multi_config.yaml - Multiple figures
-   - title: "Voltage Analysis"
-     X:
-       signal_key: "time"
-       label: "Time (s)"
-     Y:
-       - label: "Voltage (V)"
-         signals:
-           OUT: "v(out)"
-   - title: "Current Analysis"
-     X:
-       signal_key: "time"
-       label: "Time (s)"
-     Y:
-       - label: "Current (A)"
-         signals:
-           M1: "i(m1)"
-           M2: "i(m2)"
-
-.. code-block:: python
-
-   config = wv.config_from_file("multi_config.yaml")
-   figures = wv.plot("simulation.raw", config)  # Returns list of figures
+This approach provides more flexibility and cleaner separation of concerns.
 
 Processed Data Integration
 --------------------------

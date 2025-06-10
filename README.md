@@ -12,7 +12,6 @@ A Python package for visualizing SPICE simulation waveforms with interactive Plo
 - 📊 **Interactive Plotly Visualization**: Modern, web-based plots with zoom, pan, and hover
 - 🔧 **Simple API**: Plot waveforms with a single function call
 - ⚙️ **YAML Configuration**: Flexible, reusable plotting configurations
-- 📏 **Multi-Figure Support**: Create complex layouts with subplots
 - 🔤 **Case-Insensitive Signal Access**: Access signals regardless of case (`V(VDD)` = `v(vdd)`)
 - 🧮 **Processed Signals**: Generate derived signals with lambda functions
 - 📓 **Jupyter-First Design**: Auto-detection and inline plotting
@@ -71,14 +70,19 @@ fig = wv.plot("simulation.raw")
 # With configuration file
 fig = wv.plot("simulation.raw", "config.yaml")
 
-# Direct configuration
-config = {
-    "figures": [{
-        "title": "Voltage Analysis",
-        "signals": ["v(vdd)", "v(vout)", "v(vin)"],
-        "y_axis": {"title": "Voltage (V)"}
-    }]
-}
+# Direct configuration  
+config = wv.config_from_yaml("""
+title: "Voltage Analysis"
+X:
+  signal_key: "time"
+  label: "Time (s)"
+Y:
+  - label: "Voltage (V)"
+    signals:
+      VDD: "v(vdd)"
+      OUT: "v(vout)"
+      IN: "v(vin)"
+""")
 fig = wv.plot("simulation.raw", config)
 ```
 
@@ -109,30 +113,38 @@ fig = plotter.create_figure()
 Wave View uses YAML configuration files for flexible plotting:
 
 ```yaml
-figures:
-  - title: "Supply Voltages"
-    signals: ["v(vdd)", "v(vss)"]
-    y_axis:
-      title: "Voltage (V)"
-      range: [0, 5]
-    
-  - title: "Output Analysis"
-    signals: ["v(vout)", "v(vin)"]
-    y_axis:
-      title: "Voltage (V)"
-    subplot_row: 2
+title: "Voltage Analysis"
+X:
+  signal_key: "time"
+  label: "Time (s)"
+Y:
+  - label: "Supply Voltages (V)"
+    signals:
+      VDD: "v(vdd)"
+      VSS: "v(vss)"
+  - label: "Signal Voltages (V)"
+    signals:
+      OUT: "v(vout)"
+      IN: "v(vin)"
 ```
 
-### Auto-Configuration
+### Configuration Validation
 
-Generate configuration templates automatically:
+Validate your configurations before plotting:
 
 ```python
-# Create a template from your SPICE file
-wv.create_config_template("config.yaml", "simulation.raw")
-
 # Validate configuration
-warnings = wv.validate_config("config.yaml", "simulation.raw")
+config = wv.config_from_yaml("""
+title: "My Plot"
+X:
+  signal_key: "time"
+Y:
+  - signals:
+      OUT: "v(out)"
+""")
+warnings = wv.validate_config(config)
+if warnings:
+    print("Warnings:", warnings)
 ```
 
 ### Jupyter Integration

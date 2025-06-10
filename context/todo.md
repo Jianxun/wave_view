@@ -179,13 +179,13 @@
   - ✅ Added: Clear error messages for multi-figure rejection with migration guidance
   - ✅ Ensured: Backward compatibility for single-figure YAML files
 
-#### **Phase 1.5: Fix Critical Blocker** 🚨 **IMMEDIATE NEXT TASK**
-- [ ] **Update SpicePlotter to Remove get_figure_config() Calls** ⚠️ **BLOCKING**
-  - Location: `src/wave_view/core/plotter.py` line 121
-  - Issue: Plotter still calls `config.get_figure_config(figure_index)` (removed method)
-  - Solution: Access `config.config` directly since only single figures are supported  
-  - Impact: 31 tests failing, all plotter functionality broken
-  - Priority: **CRITICAL** - Must fix before proceeding to Phase 2
+#### **Phase 1.5: Fix Critical Blocker** ✅ **COMPLETED**
+- [X] **Update SpicePlotter to Remove get_figure_config() Calls** ✅ **COMPLETED**
+  - Location: `src/wave_view/core/plotter.py` line 121 - Fixed
+  - Solution: Updated `create_figure()` to access `config.config` directly for single-figure support
+  - Impact: All 31 failing tests now passing, plotter functionality restored
+  - Additional: Fixed all related config tests and migration tests
+  - Result: 220 passing, 0 failing tests (was 189 passing, 31 failing)
 
 #### **Phase 2: Documentation & Example Updates** (MEDIUM PRIORITY)  
 - [ ] **Update Documentation and Examples**
