@@ -248,9 +248,31 @@ Contributions are welcome! Please:
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
+## 📚 Documentation
+
+Comprehensive documentation is available with:
+
+- **User Guides**: Installation, quickstart, and configuration
+- **API Reference**: Complete function documentation
+- **Examples**: Practical use cases and tutorials
+- **Development**: Contributing guidelines and setup
+
+### Build Documentation Locally
+
+```bash
+# Install documentation dependencies
+pip install -e ".[docs]"
+
+# Build documentation
+make docs
+
+# Serve documentation locally
+make docs-serve  # Opens at http://localhost:8000
+```
+
 ## 🔗 Links
 
-- **Documentation**: [Coming Soon]
+- **Documentation**: [Local Build Available]
 - **PyPI Package**: [Coming Soon]  
 - **Issue Tracker**: [GitHub Issues](https://github.com/your-username/wave_view/issues)
 - **Changelog**: [CHANGELOG.md](CHANGELOG.md)
