@@ -1,7 +1,7 @@
 ---
-description: Guidelines for Python development workflow with test-driven development and multi-session continuity - reference when planning tasks, writing tests, or implementing features
+description: 
 globs: 
-alwaysApply: false
+alwaysApply: true
 ---
 # Python Project Development Guidelines
 
@@ -29,7 +29,24 @@ This project follows a task-based and test-driven development approach across mu
 - Run tests to verify functionality
 - Refactor while maintaining test coverage
 
-### 3. Python-Specific Practices
+### 3. Focused Feature Development
+**CRITICAL RULE**: When making modifications to existing code, follow these principles:
+- **Single Feature Focus**: Edit only ONE focused feature at a time
+- **Immediate Test Verification**: Run specific test cases for each feature to verify correctness
+- **Test-First Development**: If no test case exists for the feature, create one before implementing
+- **Atomic Changes**: Complete one feature entirely (code + tests + verification) before moving to the next
+- **Fail Fast**: If any test fails, fix it immediately before proceeding to other features
+- **Progressive Development**: Build features incrementally rather than making large bulk changes
+
+**Implementation Process**:
+1. Identify the specific feature to implement or fix
+2. Create or locate the relevant test case
+3. Run the test to establish baseline (should fail for new features)
+4. Implement the minimal code to make the test pass
+5. Run the test again to verify success
+6. Only then move to the next feature
+
+### 4. Python-Specific Practices
 - Follow PEP 8 style guidelines
 - Use type hints to improve code readability and IDE support
 - Organize imports alphabetically with standard library first
@@ -39,7 +56,8 @@ This project follows a task-based and test-driven development approach across mu
 ## Version Control Guidelines
 - Make frequent, atomic commits with descriptive messages
 - Use conventional commit format: `type(scope): description`
-- For multi-line commit messages, create `.git_commit_message` file and use `git commit -F .git_commit_message`
+- For multi-line commit messages, **completely rewrite** `.git_commit_message` file (don't append) and use `git commit -F .git_commit_message`
+- **CRITICAL**: Always rewrite `.git_commit_message` entirely - never append to existing content (avoids duplicate commit messages)
 - Ensure `.git_commit_message` is in .gitignore to avoid tracking temporary commit files
 - Create feature branches for significant changes
 - Ensure all tests pass before committing

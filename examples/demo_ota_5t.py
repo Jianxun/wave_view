@@ -4,7 +4,7 @@ import numpy as np
 
 # %%
 
-spice_file = "../data/tb_ota_5t/test_tran/results.raw"
+spice_file = "./raw_data/tb_ota_5t/test_tran/results.raw"
 
 data = wv.load_spice(spice_file)
 
@@ -43,7 +43,7 @@ fig1 = wv.plot(spice_file, custom_config, show=True)
 # CORRECTED: AC Analysis with Processed Data using plot() function
 print("🔧 AC Analysis with Processed Data - CORRECTED")
 
-spice_file = "../data/tb_ota_5t/test_ac/results.raw"
+spice_file = "./raw_data/tb_ota_5t/test_ac/results.raw"
 data = wv.load_spice(spice_file)
 
 print(f"Total signals: {len(data.signals)}")
