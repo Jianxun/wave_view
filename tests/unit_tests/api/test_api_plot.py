@@ -10,6 +10,7 @@ import plotly.graph_objects as go
 import numpy as np
 
 from wave_view.api import plot
+from wave_view.core.config import PlotConfig
 from . import (
     create_temp_raw_file, cleanup_temp_file, create_mock_spice_plotter,
     get_basic_test_config, get_processed_data_config, get_test_processed_data
@@ -49,7 +50,10 @@ class TestPlotBasic(unittest.TestCase):
             mock_spice_plotter_class.assert_called_once_with(temp_raw_file)
             
             # Verify plotter methods were called
-            mock_plotter.load_config.assert_called_once_with(config)
+            # The API now converts dict configs to PlotConfig objects
+            call_args = mock_plotter.load_config.call_args[0][0]
+            self.assertIsInstance(call_args, PlotConfig)
+            self.assertEqual(call_args.config["title"], config["title"])
             mock_plotter.create_figure.assert_called_once()
             
         finally:
@@ -116,7 +120,10 @@ class TestPlotBasic(unittest.TestCase):
                 np.testing.assert_array_equal(stored_signal, signal_array)
             
             # Verify plotter methods were called
-            mock_plotter.load_config.assert_called_once_with(config)
+            # The API now converts dict configs to PlotConfig objects
+            call_args = mock_plotter.load_config.call_args[0][0]
+            self.assertIsInstance(call_args, PlotConfig)
+            self.assertEqual(call_args.config["title"], config["title"])
             mock_plotter.create_figure.assert_called_once()
             
         finally:

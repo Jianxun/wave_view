@@ -10,6 +10,7 @@ import os
 from pathlib import Path
 
 from wave_view.core.config import PlotConfig
+from wave_view.api import config_from_file
 from . import (
     create_temp_yaml_file, create_temp_directory_with_config, cleanup_temp_file,
     cleanup_temp_directory, get_config_with_log_scale, get_config_with_source_path,
@@ -160,7 +161,7 @@ class TestRawFilePathHandling(unittest.TestCase):
         temp_dir, config_file = create_temp_directory_with_config("test_config.yaml", config_content)
         
         try:
-            config = PlotConfig(config_file)
+            config = config_from_file(config_file)
             raw_path = config.get_raw_file_path()
             
             # Should resolve relative to config file location
@@ -177,7 +178,7 @@ class TestRawFilePathHandling(unittest.TestCase):
         temp_dir, config_file = create_temp_directory_with_config("test_config.yaml", config_content)
         
         try:
-            config = PlotConfig(config_file)
+            config = config_from_file(config_file)
             raw_path = config.get_raw_file_path()
             
             # Absolute paths should remain unchanged
@@ -205,7 +206,7 @@ class TestRawFilePathHandling(unittest.TestCase):
         temp_dir, config_file = create_temp_directory_with_config("multi_config.yaml", multi_config)
         
         try:
-            config = PlotConfig(config_file)
+            config = config_from_file(config_file)
             
             path1 = config.get_raw_file_path(0)
             path2 = config.get_raw_file_path(1)

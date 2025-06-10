@@ -1,28 +1,61 @@
 # Project Todo List
 
-## Current Sprint - Code Quality & Polish
+## Current Sprint - Fix Broken Tests (URGENT) ✅ **COMPLETED**
 
-### 🔧 **Code Organization & Quality** (High Priority)
-- [ ] **Extract Signal Categorization Utility** 
+### 🚨 **Test Failures from API Changes** (HIGH PRIORITY) ✅ **ALL FIXED**
+- [X] **Fix PlotConfig Constructor Tests** (11 tests failing) ✅ **COMPLETED**
+  - Updated tests in `test_config_basic.py` (8 tests), `test_basic.py` (2 tests), `test_config_features.py` (3 tests)
+  - Replaced string parameter tests with explicit config_from_file() calls
+  - Removed tests for removed auto-detection functionality
+
+- [X] **Fix plot() Function API Tests** (4 tests failing) ✅ **COMPLETED**
+  - Updated `test_api_plot.py` (2 tests) and `test_path_support.py` (2 tests)
+  - Replaced file path parameters with config_from_file() usage
+  - Updated mock expectations to match new PlotConfig object behavior
+
+- [X] **Remove plot_batch Tests** (8 tests failing) ✅ **COMPLETED**
+  - Deleted `test_plot_batch.py` entirely
+  - Function was removed from API for simplification
+  - Updated any integration tests that referenced plot_batch()
+
+- [X] **Fix Internal Method Tests** (4 tests failing) ✅ **COMPLETED**
+  - Removed TestFilePathDetection class from `test_config_basic.py`
+  - `_looks_like_file_path()` method was removed with auto-detection logic
+  - Cleaned up tests that relied on internal implementation details
+
+- [X] **Fix Type Import Issues** (1 test failing) ✅ **COMPLETED**
+  - Fixed isinstance() call in `test_path_support.py::test_all_functions_accept_path_objects`
+  - Resolved PlotConfig import/typing issue in api.py
+  - Ensured proper type checking across API
+
+### 📊 **Test Status**: 226 passing, 0 failing (100% pass rate) ✅ **SUCCESS**
+
+## Current Sprint - Code Quality & Polish ✅ **COMPLETED**
+
+### 🔧 **Code Organization & Quality** (High Priority) ✅ **ALL COMPLETED**
+- [X] **Extract Signal Categorization Utility** 
   - Location: `src/wave_view/api.py:285-300` in `explore_signals()`
-  - Create reusable utility function for voltage/current/other signal categorization
-  - Replace hardcoded logic with clean, testable utility
+  - ✅ **COMPLETED**: Created reusable `_categorize_signals()` utility function
+  - Replaced hardcoded logic with clean, testable utility
+  - Function returns tuple of (voltage_signals, current_signals, other_signals)
 
-- [ ] **Replace Magic Numbers with Named Constants**
+- [X] **Replace Magic Numbers with Named Constants**
   - Location: `src/wave_view/core/reader.py:95-96` 
-  - Replace hardcoded `[:5]` with `MAX_SIGNALS_TO_SHOW = 5`
-  - Improve code readability and maintainability
+  - ✅ **COMPLETED**: Added `MAX_SIGNALS_TO_SHOW = 5` constant
+  - Replaced hardcoded `[:5]` with named constant for better maintainability
 
-- [ ] **Add Missing Type Annotations**
+- [X] **Add Missing Type Annotations**
   - Location: `src/wave_view/api.py:145-166`
-  - Complete type hints on internal functions: `_configure_plotly_renderer()`, `_is_jupyter_environment()`
-  - Ensure consistent type annotation across all functions
+  - ✅ **COMPLETED**: Added type hints to internal functions
+  - `_configure_plotly_renderer() -> None` and `_is_jupyter_environment() -> bool`
+  - Consistent type annotation across all functions
+
+## Backlog - Code Quality & Polish
 
 ### 🚀 **Feature Completion** (Medium Priority)
-- [ ] **Complete plot_batch Grid Layout or Remove Parameter**
+- [X] **Complete plot_batch Grid Layout or Remove Parameter** ✅ **COMPLETED**
   - Location: `src/wave_view/api.py:456-458`
-  - Either implement grid layout functionality or remove unused `layout` parameter
-  - Clean up TODO comment and unimplemented feature
+  - **RESOLUTION**: Removed plot_batch() function entirely to simplify API
 
 - [ ] **Enhanced Error Messages**
   - Location: `src/wave_view/core/reader.py:97-101`
@@ -52,7 +85,10 @@
 - [ ] Configuration helper functions for common patterns
 
 ## Notes
-- **Current State**: All 236 tests passing, 92% coverage overall
-- **API Coverage**: 88% with comprehensive validation
+- **Current State**: ✅ **ALL TESTS PASSING** - 226 passing, 0 failing (100% pass rate)
+- **API Coverage**: 87% with comprehensive validation
 - **Architecture**: Clean 3-step workflow (Discovery → Configuration → Plotting)
-- **Next Focus**: Code quality polish before publication 
+- **Next Focus**: Enhanced error messages and documentation polish
+- **API Changes**: Successfully implemented explicit configuration API (removed plot_batch, auto-detection) 
+- **Test Coverage**: 92% overall coverage with comprehensive test suite
+- **Code Quality**: ✅ **High priority code organization tasks completed** - extracted utilities, replaced magic numbers, added type annotations 

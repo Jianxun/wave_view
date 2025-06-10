@@ -46,6 +46,7 @@ This project follows a task-based and test-driven development approach across mu
 5. Run the test again to verify success
 6. Only then move to the next feature
 
+
 ### 4. Python-Specific Practices
 - Follow PEP 8 style guidelines
 - Use type hints to improve code readability and IDE support
@@ -54,14 +55,83 @@ This project follows a task-based and test-driven development approach across mu
 - Document functions and classes with docstrings
 
 ## Version Control Guidelines
+
+### Basic Commit Practices
 - Make frequent, atomic commits with descriptive messages
 - Use conventional commit format: `type(scope): description`
 - For multi-line commit messages, **completely rewrite** `.git_commit_message` file (don't append) and use `git commit -F .git_commit_message`
-- **CRITICAL**: Always rewrite `.git_commit_message` entirely - never append to existing content (avoids duplicate commit messages)
+- **CRITICAL**: Always delete `.git_commit_message` file after committing to prevent accidental appending
 - Ensure `.git_commit_message` is in .gitignore to avoid tracking temporary commit files
-- Create feature branches for significant changes
 - Ensure all tests pass before committing
 - Tag releases with semantic versioning (major.minor.patch)
+
+### Branching Strategy
+**CRITICAL RULE**: Separate different types of work into different branches:
+
+#### Branch Types and Naming
+- **Feature branches**: `feature_name` or `api_improvements` - New functionality or enhancements
+- **Test infrastructure**: `test_suite_development` - Testing framework, test organization, TDD setup
+- **Bug fixes**: `fix_issue_description` - Bug fixes and corrections
+- **Documentation**: `docs_update_description` - Documentation-only changes
+- **Repository maintenance**: `repo_cleanup` or `dependency_updates` - Housekeeping tasks
+
+#### Branch Management Rules
+1. **Single Purpose**: Each branch should have ONE clear purpose (testing OR features OR docs, not mixed)
+2. **Descriptive Names**: Branch names should clearly indicate their scope and purpose
+3. **Foundation First**: Merge infrastructure/testing branches before feature branches that depend on them
+4. **Clean History**: Keep branch history focused - avoid mixing unrelated commits
+5. **Prompt Cleanup**: Delete merged branches immediately after successful merge
+
+### Pull Request Strategy
+**Systematic Approach to PRs**:
+
+#### PR Sequencing
+1. **Infrastructure First**: Test frameworks, development guidelines, repository organization
+2. **Core Features Second**: Main functionality that other features depend on
+3. **Enhancement Features Third**: Additional features that build on core functionality
+4. **Documentation Last**: Comprehensive documentation after features are stable
+
+#### PR Best Practices
+- **Single Responsibility**: Each PR should address one logical area of work
+- **Complete Testing**: Include all necessary tests in the same PR as the feature
+- **Clear Description**: Explain what the PR does, why it's needed, and what testing was done
+- **Breaking Changes**: Clearly document any breaking changes in PR description
+- **Review Ready**: Ensure all tests pass and code is ready for production
+
+### Repository Hygiene
+**Maintaining Clean Repository State**:
+
+#### Branch Cleanup Process
+1. **After Merge**: Immediately delete the merged branch locally: `git branch -d branch_name`
+2. **Remote Cleanup**: Use `git remote prune origin` to clean stale remote tracking branches
+3. **Verification**: Regularly check `git branch -a` to ensure clean state
+4. **Archive Only**: Keep branches only if they contain unmerged work
+
+#### Repository Maintenance
+- **Regular Audits**: Periodically review and clean up old branches
+- **Stale Branch Detection**: Identify branches with old commit dates that may be obsolete
+- **Dependency Updates**: Separate PRs for dependency updates to avoid mixing with feature work
+- **Documentation Sync**: Ensure documentation branches are kept in sync with feature development
+
+### Branch Recovery and Reorganization
+**When Things Go Wrong**:
+
+#### Common Scenarios
+- **Mixed Work Types**: If infrastructure and feature work are mixed in one branch
+- **Wrong Base Branch**: If feature branch was created from wrong starting point
+- **Commit Organization**: If commits need to be reordered or separated
+
+#### Recovery Strategies
+1. **Branch Extraction**: Create new branch from specific commit: `git checkout -b new_branch commit_hash`
+2. **Reset and Rebuild**: Reset branch to earlier state: `git reset --hard commit_hash`
+3. **Cherry-pick**: Move specific commits: `git cherry-pick commit_hash`
+4. **Interactive Rebase**: Reorder/squash commits: `git rebase -i HEAD~n`
+
+#### Prevention Best Practices
+- **Plan Before Coding**: Decide branch purpose before starting work
+- **Single Focus Sessions**: Work on one type of task per development session
+- **Regular Commits**: Commit frequently with clear messages to enable easier reorganization
+- **Context Documentation**: Keep clear notes in context files about what each branch contains
 
 ## Testing Organization
 - Organize test files as `test_*.py` in the `/tests/` directory
@@ -120,8 +190,27 @@ This project follows a task-based and test-driven development approach across mu
 - Record challenging bugs and their solutions in `context/memory.md`
 
 ## When Tasks Are Completed
-1. Update the todo list to mark task completion
-2. Update the memory file to reflect current project state
-3. Consider adding a new task for refactoring if appropriate
-4. Commit changes with a descriptive message using `.git_commit_message` file
-5. End the session or move to the next task
+1. **Verify Implementation**: Ensure all tests pass and feature works as expected
+2. **Update Context**: Update `context/todo.md` to mark task completion and `context/memory.md` to reflect current project state
+3. **Version Control**: 
+   - Commit changes with descriptive message using `.git_commit_message` file
+   - Verify branch contains only related work (single purpose)
+   - Consider if additional refactoring tasks should be added to backlog
+4. **Branch Management**:
+   - If work is complete and ready for merge, prepare for PR creation
+   - If continuing work on same branch type, proceed to next task
+   - If switching work types (e.g., from features to tests), switch branches
+5. **Clean Transition**: End session with clear context or move to next logical task
+
+## Session Management
+**Starting New Sessions**:
+- Review `context/memory.md` and `context/todo.md` to understand current state
+- Check current branch and recent commits: `git branch && git log --oneline -5`
+- Verify clean working state: `git status`
+- Plan session focus (feature work, testing, documentation, etc.)
+
+**Ending Sessions**:
+- Commit all work with clear messages
+- Update context files with progress and decisions
+- Note any pending tasks or blockers in todo list
+- Leave repository in clean state for next session
