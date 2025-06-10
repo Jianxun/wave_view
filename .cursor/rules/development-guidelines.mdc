@@ -60,7 +60,7 @@ This project follows a task-based and test-driven development approach across mu
 - Make frequent, atomic commits with descriptive messages
 - Use conventional commit format: `type(scope): description`
 - For multi-line commit messages, **completely rewrite** `.git_commit_message` file (don't append) and use `git commit -F .git_commit_message`
-- **CRITICAL**: Always rewrite `.git_commit_message` entirely - never append to existing content (avoids duplicate commit messages)
+- **CRITICAL**: Always delete `.git_commit_message` file after committing to prevent accidental appending
 - Ensure `.git_commit_message` is in .gitignore to avoid tracking temporary commit files
 - Ensure all tests pass before committing
 - Tag releases with semantic versioning (major.minor.patch)
