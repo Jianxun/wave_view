@@ -1,0 +1,167 @@
+"""
+Unit tests for wave_view API plot function.
+
+Starting with basic functionality and building incrementally.
+"""
+
+import unittest
+from unittest.mock import Mock, patch
+import plotly.graph_objects as go
+import numpy as np
+
+from wave_view.api import plot
+from . import (
+    create_temp_raw_file, cleanup_temp_file, create_mock_spice_plotter,
+    get_basic_test_config, get_processed_data_config, get_test_processed_data
+)
+
+
+class TestPlotBasic(unittest.TestCase):
+    """Test basic plot() function functionality."""
+    
+    @patch('wave_view.api.SpicePlotter')
+    @patch('wave_view.api._configure_plotly_renderer')
+    def test_plot_basic_functionality(self, mock_configure_renderer, mock_spice_plotter_class):
+        """Test basic plot() function call with dictionary config."""
+        # Set up mocks
+        mock_figure = go.Figure()
+        mock_figure.add_trace(go.Scatter(x=[1, 2, 3], y=[1, 2, 3], name="Test"))
+        
+        mock_plotter = create_mock_spice_plotter(return_figure=mock_figure)
+        mock_spice_plotter_class.return_value = mock_plotter
+        
+        # Create temporary raw file for testing 
+        temp_raw_file = create_temp_raw_file()
+        
+        try:
+            # Test basic plot call
+            config = get_basic_test_config()
+            result = plot(temp_raw_file, config, show=False)
+            
+            # Verify results
+            self.assertIsInstance(result, go.Figure)
+            self.assertEqual(len(result.data), 1)  # Should have the test trace
+            
+            # Verify that the renderer was configured
+            mock_configure_renderer.assert_called_once()
+            
+            # Verify SpicePlotter was created with the raw file
+            mock_spice_plotter_class.assert_called_once_with(temp_raw_file)
+            
+            # Verify plotter methods were called
+            mock_plotter.load_config.assert_called_once_with(config)
+            mock_plotter.create_figure.assert_called_once()
+            
+        finally:
+            cleanup_temp_file(temp_raw_file)
+
+    @patch('wave_view.api.SpicePlotter')
+    @patch('wave_view.api._configure_plotly_renderer')
+    def test_plot_with_show_true(self, mock_configure_renderer, mock_spice_plotter_class):
+        """Test plot() function with show=True calls figure.show()."""
+        # Set up mocks
+        mock_figure = Mock(spec=go.Figure)
+        mock_figure.data = [go.Scatter(x=[1, 2, 3], y=[1, 2, 3], name="Test")]
+        
+        mock_plotter = create_mock_spice_plotter(return_figure=mock_figure)
+        mock_spice_plotter_class.return_value = mock_plotter
+        
+        # Create temporary raw file for testing 
+        temp_raw_file = create_temp_raw_file()
+        
+        try:
+            # Test plot call with show=True (default)
+            config = get_basic_test_config()
+            result = plot(temp_raw_file, config)  # show=True by default
+            
+            # Verify that figure.show() was called
+            mock_figure.show.assert_called_once()
+            
+            # Verify the same figure was returned
+            self.assertEqual(result, mock_figure)
+            
+        finally:
+            cleanup_temp_file(temp_raw_file)
+
+    @patch('wave_view.api.SpicePlotter')
+    @patch('wave_view.api._configure_plotly_renderer')
+    def test_plot_with_processed_data(self, mock_configure_renderer, mock_spice_plotter_class):
+        """Test plot() function with processed_data parameter."""
+        # Set up mocks
+        mock_figure = go.Figure()
+        mock_figure.add_trace(go.Scatter(x=[1, 2, 3], y=[1, 2, 3], name="Test"))
+        
+        mock_plotter = create_mock_spice_plotter(return_figure=mock_figure)
+        mock_spice_plotter_class.return_value = mock_plotter
+        
+        # Create temporary raw file for testing 
+        temp_raw_file = create_temp_raw_file()
+        
+        try:
+            # Test plot call with processed data
+            config = get_processed_data_config()
+            processed_data = get_test_processed_data()
+            
+            result = plot(temp_raw_file, config, show=False, processed_data=processed_data)
+            
+            # Verify results
+            self.assertIsInstance(result, go.Figure)
+            
+            # Verify processed signals were added to plotter
+            # Check that processed data was added to the _processed_signals dict
+            for signal_name, signal_array in processed_data.items():
+                # The processed data should be converted to numpy arrays and stored
+                stored_signal = mock_plotter._processed_signals[signal_name]
+                self.assertIsInstance(stored_signal, np.ndarray)
+                np.testing.assert_array_equal(stored_signal, signal_array)
+            
+            # Verify plotter methods were called
+            mock_plotter.load_config.assert_called_once_with(config)
+            mock_plotter.create_figure.assert_called_once()
+            
+        finally:
+            cleanup_temp_file(temp_raw_file)
+
+    @patch('wave_view.api._create_auto_config')
+    @patch('wave_view.api.SpicePlotter')
+    @patch('wave_view.api._configure_plotly_renderer')
+    def test_plot_with_auto_config(self, mock_configure_renderer, mock_spice_plotter_class, mock_create_auto_config):
+        """Test plot() function with config=None triggers auto-configuration."""
+        # Set up mocks
+        mock_figure = go.Figure()
+        mock_figure.add_trace(go.Scatter(x=[1, 2, 3], y=[1, 2, 3], name="Test"))
+        
+        mock_spice_data = Mock()
+        mock_spice_data.signals = ["time", "v(vdd)", "v(out)"]
+        
+        mock_plotter = create_mock_spice_plotter(mock_spice_data, mock_figure)
+        mock_spice_plotter_class.return_value = mock_plotter
+        
+        # Mock auto-config creation
+        auto_config = get_basic_test_config()
+        auto_config["title"] = "Auto-generated SPICE Plot"
+        mock_create_auto_config.return_value = auto_config
+        
+        # Create temporary raw file for testing 
+        temp_raw_file = create_temp_raw_file()
+        
+        try:
+            # Test plot call with config=None
+            result = plot(temp_raw_file, config=None, show=False)
+            
+            # Verify results
+            self.assertIsInstance(result, go.Figure)
+            
+            # Verify that auto-config was created using the plotter's data
+            mock_create_auto_config.assert_called_once_with(mock_spice_data)
+            
+            # Verify the auto-generated config was passed to load_config
+            mock_plotter.load_config.assert_called_once_with(auto_config)
+            mock_plotter.create_figure.assert_called_once()
+            
+        finally:
+            cleanup_temp_file(temp_raw_file)
+
+
+if __name__ == '__main__':
+    unittest.main() 
