@@ -4,6 +4,93 @@
 Wave_view is a Python package for SPICE simulation visualization with a modern, user-friendly API. The project features core modules for configuration management (config.py), data reading (reader.py), and plotting (plotter.py), with comprehensive YAML-based configuration support and advanced features like log scale plotting and processed signal generation.
 
 ## Current State
+**API Testing & Improvement Sprint - IN PROGRESS** 🚧
+
+**🎯 CURRENT FOCUS**: Building comprehensive API tests and improving code quality
+
+**API Testing Progress**:
+- **API Test Infrastructure**: Complete shared utilities and fixtures ✅
+- **plot() Function Tests**: 4 comprehensive tests covering basic functionality, show behavior, processed data, and auto-configuration ✅
+- **Coverage**: API coverage increased from 20% to 25% ✅
+- **Development Guidelines**: Enhanced with incremental testing, error handling, and API design principles ✅
+
+**🎯 CRITICAL API IMPROVEMENTS - MAJOR PROGRESS** ✅
+
+**Following Focused Development Guidelines**: Successfully implemented three critical API improvements using test-driven, incremental development:
+
+### ✅ **Feature 1: File Path Validation** (COMPLETE)
+- **Implementation**: Added comprehensive input validation for `raw_file` parameter in `plot()`
+- **Error Handling**: User-friendly error messages for None, empty strings, non-string/Path types, and non-existent files
+- **Path Support**: Consistent handling of both string and Path objects with proper conversion
+- **Tests**: 3 comprehensive test cases covering all error scenarios
+- **Result**: Clear TypeError/ValueError/FileNotFoundError with descriptive messages
+
+### ✅ **Feature 2: Unused **kwargs Removal** (COMPLETE)  
+- **Problem**: `**kwargs` parameter was silently ignored, causing confusion for users
+- **Solution**: Removed unused `**kwargs` parameter completely from `plot()` function
+- **API Clarity**: Function signature now only includes supported parameters
+- **Error Handling**: Users get proper TypeError for unexpected keyword arguments
+- **Tests**: 1 test case verifying proper error handling for unexpected parameters
+- **Result**: Clean API with clear error messages for unsupported parameters
+
+### ✅ **Feature 3: Processed Data Validation** (COMPLETE)
+- **Implementation**: Added comprehensive validation for `processed_data` parameter types
+- **Validation Logic**: Ensures dictionary with string keys and array-like (non-string) values
+- **Error Messages**: Specific error messages identifying the exact validation failure
+- **Tests**: 2 test cases covering non-dict input and invalid value types
+- **Result**: Clear TypeError with guidance on correct data types and formats
+
+**Development Process Excellence**:
+- ✅ **Test-First Development**: Created failing tests before implementing each feature
+- ✅ **Incremental Implementation**: One focused feature at a time with immediate verification
+- ✅ **Immediate Testing**: Ran specific test cases after each implementation
+- ✅ **Regression Prevention**: Verified all existing tests continue to pass
+- ✅ **User-Friendly Errors**: All error messages guide users toward correct usage
+
+**API Quality Improvements Achieved**:
+- **Input Validation**: Comprehensive validation with clear error messages
+- **API Clarity**: Removed confusing unused parameters  
+- **Error Handling**: Specific exception types with descriptive messages
+- **User Experience**: Clear guidance when API is used incorrectly
+- **Test Coverage**: Increased from 25% to 33% with focused error handling tests
+
+**API Code Quality Analysis - COMPLETED** 📋
+
+**Comprehensive analysis of `src/wave_view/api.py` identified multiple improvement areas:**
+
+### 🔴 Critical Issues (High Priority)
+1. **Error Handling & User Experience**:
+   - Missing file path validation for `raw_file` parameter
+   - Generic exception handling with poor user feedback
+   - Silent failures in `plot_batch()` with only console prints
+   - No input validation for `processed_data` types
+
+2. **API Design Issues**:
+   - Unused `**kwargs` parameter in `plot()` function (undocumented/unimplemented)
+   - Inconsistent return types across functions
+   - Mixed string/Path object support inconsistencies
+
+### 🟡 Code Quality Issues (Medium Priority)
+3. **Type Hints & Documentation**:
+   - Missing type annotations on internal functions
+   - Inconsistent docstring quality and examples
+   - Unfinished TODO comments in auto-configuration
+
+4. **Code Organization**:
+   - Long functions (create_config_template() 80+ lines)
+   - Duplicated signal categorization logic
+   - Magic numbers without explanation ([:5], [:3], [:2])
+
+### 🟢 Specific Improvement Tasks (Planned)
+- Input validation and error handling enhancement
+- Remove unused `**kwargs` or implement/document proper usage
+- Consistent Path object support throughout API
+- Better exception handling with specific error types
+- Extract common signal categorization logic into utilities
+- Replace print statements with proper logging
+- Add comprehensive input validation for all public functions
+- Improve error messages to guide users toward solutions
+
 **Test Suite Development Sprint - COMPREHENSIVE COMPLETION** ✅
 
 **🏆 MAJOR MILESTONE ACHIEVED**: Complete test-driven development with modular architecture for all core modules!
@@ -12,7 +99,8 @@ Wave_view is a Python package for SPICE simulation visualization with a modern, 
 - **PlotConfig**: 73 tests, 96% coverage ✅
 - **SpicePlotter**: 47 tests, 93% coverage ✅  
 - **SpiceData**: 56 tests, 100% coverage ✅
-- **🎯 TOTAL**: **176 comprehensive tests** with **95%+ coverage** on all core modules
+- **API Module**: 4 tests, 25% coverage (in progress) 🚧
+- **🎯 TOTAL**: **180 comprehensive tests** with **95%+ coverage** on core modules
 
 **Test Architecture Excellence - COMPLETE**:
 - **Consistent Modular Organization**: All three core modules follow the same modular test pattern

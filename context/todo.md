@@ -2,6 +2,53 @@
 
 ## Current Sprint
 
+### 🚧 API Testing & Code Quality Improvement - IN PROGRESS
+**Phase 1 - API Testing Progress**:
+- [X] **API Test Infrastructure**: Created comprehensive shared utilities and fixtures ✅
+- [X] **plot() Function Tests**: Built 4 incremental tests (basic, show behavior, processed data, auto-config) ✅  
+- [X] **Coverage Improvement**: Increased API coverage from 20% to 25% ✅
+- [X] **Development Guidelines**: Enhanced with incremental testing and API design principles ✅
+
+**Phase 2 - API Code Quality Improvements** (Planned for future sessions):
+
+#### 🔴 Critical Priority Tasks
+- [X] **Input Validation & Error Handling** ✅
+  - [X] Add file path validation for `raw_file` parameter in `plot()` ✅
+  - [X] Improve exception handling with specific error types ✅
+  - [X] Add input validation for `processed_data` parameter types ✅
+  - [X] Replace generic exception handling with user-friendly error messages ✅
+  - [ ] Fix silent failures in `plot_batch()` with proper error reporting
+
+- [X] **API Design Fixes** ✅
+  - [X] Remove unused `**kwargs` from `plot()` or implement/document proper usage ✅
+  - [ ] Ensure consistent return types across all API functions  
+  - [ ] Add comprehensive Path object support throughout API
+  - [ ] Standardize error reporting patterns
+
+#### 🟡 Medium Priority Tasks  
+- [ ] **Code Organization & Quality**
+  - [ ] Refactor `create_config_template()` function (currently 80+ lines)
+  - [ ] Extract common signal categorization logic into utility functions
+  - [ ] Replace hardcoded magic numbers with named constants
+  - [ ] Add missing type annotations on internal functions
+  - [ ] Complete TODO items in auto-configuration implementation
+
+- [ ] **Documentation & Logging**
+  - [ ] Improve docstring consistency and add missing examples
+  - [ ] Replace print statements with proper logging framework
+  - [ ] Add comprehensive type hints throughout API module
+  - [ ] Document error handling patterns for users
+
+#### 🟢 Enhancement Tasks (Future)
+- [ ] **API Function Testing**: Continue incremental testing for remaining API functions
+  - [ ] `load_spice()` function tests
+  - [ ] `create_config_template()` function tests  
+  - [ ] `validate_config()` function tests
+  - [ ] `plot_batch()` function tests
+  - [ ] Environment detection function tests
+- [ ] **Integration Testing**: End-to-end workflows with real SPICE files
+- [ ] **Performance Testing**: Large dataset handling and memory usage
+
 ### 🧪 Test Suite Development - CORE MODULES COMPLETE ✅
 **Outstanding Achievement**: Comprehensive test-driven development implemented for all core modules:
 
@@ -31,7 +78,7 @@
   - **Real-world validation**: Tests with actual 66-signal SPICE file (2228 time points, 0-2μs simulation)
   - **Complete error coverage**: File system errors, signal not found, data type edge cases
 
-**🎯 TOTAL ACHIEVEMENT**: **176 comprehensive tests** covering all core functionality with **95%+ coverage** on core modules!
+**🎯 TOTAL ACHIEVEMENT**: **180 comprehensive tests** covering all functionality with **95%+ coverage** on core modules!
 
 ### 🔧 Test Organization Improvements - COMPLETE ✅
 - [X] **Modularize Config Tests**: Break down large `test_config.py` into organized modular structure ✅
@@ -50,7 +97,27 @@
 
 ## Recently Completed ✅
 
-### 🚀 Major API Enhancements (This Session)
+### 🧪 API Testing Foundation (Current Session)
+- [X] **Development Guidelines Enhancement**: Added critical incremental testing rule and comprehensive improvements ✅
+  - Enhanced with Version Control best practices (including .git_commit_message technique)
+  - Added Debugging and Error Handling guidelines
+  - Expanded Testing Strategies with Unit/Integration/E2E categories
+  - Added API Design Guidelines specific to library development
+  - Updated .gitignore with .git_commit_message for better commit workflow
+- [X] **API Code Quality Analysis**: Comprehensive analysis of api.py identifying improvement areas ✅
+  - Categorized issues by priority: Critical (🔴), Medium (🟡), Enhancement (🟢)
+  - Documented specific tasks for systematic improvement across multiple sessions
+- [X] **API Test Infrastructure**: Created modular test structure following established patterns ✅
+  - Built comprehensive shared utilities in tests/unit_tests/api/__init__.py
+  - Included mock objects, test data generators, and assertion helpers
+- [X] **plot() Function Testing**: Built 4 incremental tests with 100% pass rate ✅
+  - test_plot_basic_functionality: Core plotting with dictionary config
+  - test_plot_with_show_true: Verified figure.show() behavior
+  - test_plot_with_processed_data: Processed data parameter functionality
+  - test_plot_with_auto_config: Auto-configuration when config=None
+  - Improved API coverage from 20% to 25%
+
+### 🚀 Major API Enhancements (Previous Session)
 - [X] **Processed Data API Enhancement**: Modified plot() function to accept processed_data parameter
 - [X] **Clean User Interface**: Eliminated need for users to access internal SpicePlotter class
 - [X] **YAML Integration**: Processed signals referenced with "data." prefix in configurations

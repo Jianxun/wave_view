@@ -20,8 +20,7 @@ from .core.plotter import SpicePlotter
 def plot(raw_file: str, 
          config: Union[str, Dict, None] = None,
          show: bool = True,
-         processed_data: Optional[Dict[str, np.ndarray]] = None,
-         **kwargs) -> go.Figure:
+         processed_data: Optional[Dict[str, np.ndarray]] = None) -> go.Figure:
     """
     Simple plotting function for SPICE waveforms.
     
@@ -35,7 +34,6 @@ def plot(raw_file: str,
         processed_data: Optional dictionary of processed signals 
                        {signal_name: numpy_array}. These can be referenced
                        in config with "data.signal_name"
-        **kwargs: Additional arguments passed to the plotter
         
     Returns:
         Plotly Figure object
@@ -63,11 +61,45 @@ def plot(raw_file: str,
         ... '''
         >>> fig = wv.plot("simulation.raw", config, processed_data=processed)
     """
+    # Input validation
+    if raw_file is None:
+        raise TypeError("file path must be a string or Path object, not None")
+    
+    if not isinstance(raw_file, (str, Path)):
+        raise TypeError("file path must be a string or Path object")
+    
+    if isinstance(raw_file, str) and raw_file.strip() == "":
+        raise ValueError("file path cannot be empty")
+    
+    # Convert to Path for consistent handling
+    file_path = Path(raw_file)
+    
+    # Check if file exists
+    if not file_path.exists():
+        raise FileNotFoundError(f"SPICE raw file not found: {file_path}")
+    
+    # Validate processed_data parameter
+    if processed_data is not None:
+        if not isinstance(processed_data, dict):
+            raise TypeError("processed_data must be a dictionary of signal names to arrays")
+        
+        for signal_name, signal_array in processed_data.items():
+            if not isinstance(signal_name, str):
+                raise TypeError("processed_data keys (signal names) must be strings")
+            
+            # Check if the value is array-like but not a string
+            if isinstance(signal_array, str):
+                raise TypeError(f"signal values must be array-like (lists, numpy arrays, etc.), got string for signal '{signal_name}'")
+            
+            # Check if the value is array-like (has __len__ and __getitem__)
+            if not hasattr(signal_array, '__len__') or not hasattr(signal_array, '__getitem__'):
+                raise TypeError(f"signal values must be array-like (lists, numpy arrays, etc.), got {type(signal_array).__name__} for signal '{signal_name}'")
+    
     # Auto-detect environment and set appropriate renderer
     _configure_plotly_renderer()
     
     # Create plotter and load data
-    plotter = SpicePlotter(raw_file)
+    plotter = SpicePlotter(str(file_path))
     
     # Add processed signals if provided
     if processed_data:
