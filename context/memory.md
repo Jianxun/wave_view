@@ -17,10 +17,10 @@ config = {...}  # Explicit user choices
 fig = wv.plot("simulation.raw", config)  # Required config, no magic
 ```
 
-### **Package Status**
+### **Package Status** 
 - **Installation**: `pip install -e .` (development mode)
-- **Test Coverage**: 236 tests passing, 92% overall coverage
-- **API Coverage**: 88% with comprehensive validation
+- **Test Coverage**: ⚠️ **BREAKING**: 207 passing, 23 failing due to API changes
+- **API Coverage**: 85% with comprehensive validation
 - **Repository Structure**: Modern src/ layout ready for PyPI publication
 
 ### **Core Modules Status**
@@ -55,11 +55,39 @@ fig = wv.plot("simulation.raw", config)  # Required config, no magic
 - **Signal categorization**: Voltage (v()), current (i()), and other signals
 - **Path objects**: Consistent Union[str, Path] support across all functions
 
+## API Changes Breaking Tests
+**23 tests failing due to explicit configuration API refactor:**
+
+### **PlotConfig Constructor Changes** (11 tests)
+- **Issue**: PlotConfig no longer accepts strings (YAML content or file paths)
+- **Affected**: `test_config_basic.py` (8 tests), `test_basic.py` (2 tests), `test_config_features.py` (3 tests)
+- **Root Cause**: Removed auto-detection logic, only accepts Path, dict, or list
+
+### **plot() Function API Changes** (4 tests)
+- **Issue**: plot() now requires PlotConfig objects or dicts, not file paths 
+- **Affected**: `test_api_plot.py` (2 tests), `test_path_support.py` (2 tests)
+- **Root Cause**: New explicit API requiring config_from_file() for YAML files
+
+### **Missing Functions** (1 test file)
+- **Issue**: plot_batch() function removed from API
+- **Affected**: `test_plot_batch.py` (entire test file - 8 tests)
+- **Root Cause**: Function removed to simplify API surface
+
+### **Removed Methods** (4 tests)
+- **Issue**: _looks_like_file_path() internal method removed
+- **Affected**: `test_config_basic.py` TestFilePathDetection class
+- **Root Cause**: Auto-detection logic removed from PlotConfig
+
+### **Type Issues** (1 test)
+- **Issue**: isinstance() call with invalid PlotConfig import
+- **Affected**: `test_path_support.py::test_all_functions_accept_path_objects`
+- **Root Cause**: Import/typing issue in api.py
+
 ## Current Issues Identified
 1. **Signal categorization logic duplication** in `explore_signals()` (api.py:285-300)
 2. **Magic numbers** in error messages (reader.py:95-96) - hardcoded `[:5]`
 3. **Missing type annotations** on internal functions (api.py:145-166)
-4. **Unimplemented grid layout** in `plot_batch()` (api.py:456-458)
+4. **Unimplemented grid layout** in `plot_batch()` (api.py:456-458) - **REMOVED**
 5. **Error message enhancement opportunity** for signal name suggestions (reader.py:97-101)
 
 ## Open Questions
