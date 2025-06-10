@@ -1,7 +1,7 @@
 ---
-description: Guidelines for Python development workflow with test-driven development and multi-session continuity - reference when planning tasks, writing tests, or implementing features
+description: 
 globs: 
-alwaysApply: false
+alwaysApply: true
 ---
 # Python Project Development Guidelines
 
@@ -46,12 +46,6 @@ This project follows a task-based and test-driven development approach across mu
 5. Run the test again to verify success
 6. Only then move to the next feature
 
-**Version Control Integration**:
-- **Branch Planning**: Ensure you're on the correct branch type for your work (feature vs test vs docs)
-- **Atomic Commits**: Commit each completed feature individually with descriptive messages
-- **Single Purpose**: Keep all commits in a development session focused on the same type of work
-- **Context Updates**: Update context files after completing each major feature or fix
-- **Clean State**: Ensure all tests pass before committing or switching tasks
 
 ### 4. Python-Specific Practices
 - Follow PEP 8 style guidelines
@@ -65,7 +59,8 @@ This project follows a task-based and test-driven development approach across mu
 ### Basic Commit Practices
 - Make frequent, atomic commits with descriptive messages
 - Use conventional commit format: `type(scope): description`
-- For multi-line commit messages, create `.git_commit_message` file and use `git commit -F .git_commit_message`
+- For multi-line commit messages, **completely rewrite** `.git_commit_message` file (don't append) and use `git commit -F .git_commit_message`
+- **CRITICAL**: Always rewrite `.git_commit_message` entirely - never append to existing content (avoids duplicate commit messages)
 - Ensure `.git_commit_message` is in .gitignore to avoid tracking temporary commit files
 - Ensure all tests pass before committing
 - Tag releases with semantic versioning (major.minor.patch)
