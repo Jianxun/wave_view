@@ -21,8 +21,7 @@ from .api import (
     explore_signals,
     validate_config,
     config_from_file,
-    config_from_yaml,
-    config_from_dict
+    config_from_yaml
 )
 
 # Convenience imports for power users
@@ -63,7 +62,6 @@ __all__ = [
     # Configuration factories
     'config_from_file',
     'config_from_yaml',
-    'config_from_dict',
     
     # Core classes
     'SpiceData',

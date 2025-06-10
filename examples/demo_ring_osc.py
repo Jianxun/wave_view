@@ -6,31 +6,27 @@ spice_file = "./raw_data/Ring_Oscillator_7stage.raw"
 
 data = wv.load_spice(spice_file)
 
-custom_config = wv.config_from_dict({
-    "title": "Ring Oscillator - Key Nodes",
-    "X": {
-        "signal_key": "raw.time", 
-        "label": "Time (s)"
-    },
-    "Y": [
-        {
-            "label": "Voltages (V)",
-            "signals": {
-                "VDD": "v(vdd)",
-                "Output": "v(bus06)",
-                "Bus07": "v(bus07)"
-            }
-        },
-        {
-            "label": "Current (A)", 
-            "signals": {
-                "Supply Current": "i(c1)"
-            }
-        }
-    ],
-    "plot_height": 600,
-    "show_rangeslider": True
-})
+custom_config = wv.config_from_yaml("""
+title: "Ring Oscillator - Key Nodes"
+
+X:
+  signal_key: "raw.time"
+  label: "Time (s)"
+
+Y:
+  - label: "Voltages (V)"
+    signals:
+      VDD: "v(vdd)"
+      Output: "v(bus06)"
+      Bus07: "v(bus07)"
+      
+  - label: "Current (A)"
+    signals:
+      Supply Current: "i(c1)"
+
+plot_height: 600
+show_rangeslider: true
+""")
 
 fig1 = wv.plot(spice_file, custom_config, show=True)
 # %%

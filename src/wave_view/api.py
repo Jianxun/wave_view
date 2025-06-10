@@ -89,32 +89,7 @@ def config_from_yaml(yaml_string: str) -> PlotConfig:
     return PlotConfig(config_dict)
 
 
-def config_from_dict(config_dict: Dict[str, Any]) -> PlotConfig:
-    """
-    Create a plot configuration from a dictionary.
-    
-    Args:
-        config_dict: Configuration as a dictionary
-        
-    Returns:
-        PlotConfig object
-        
-    Example:
-        >>> import wave_view as wv
-        >>> config = wv.config_from_dict({
-        ...     "title": "SPICE Analysis",
-        ...     "X": {"signal_key": "raw.time", "label": "Time (s)"},
-        ...     "Y": [{"label": "Voltage", "signals": {"VDD": "v(vdd)"}}]
-        ... })
-        >>> fig = wv.plot("simulation.raw", config)
-    """
-    if config_dict is None:
-        raise TypeError("config dictionary cannot be None")
-    
-    if not isinstance(config_dict, dict):
-        raise TypeError("config must be a dictionary")
-    
-    return PlotConfig(config_dict)
+
 
 
 def plot(raw_file: Union[str, Path], 
@@ -167,14 +142,14 @@ def plot(raw_file: Union[str, Path],
         ...     "vdb_out": 20 * np.log10(np.abs(data.get_signal("v(out)"))),
         ...     "power": data.get_signal("v(vdd)") * data.get_signal("i(vdd)")
         ... }
-        >>> config = wv.config_from_dict({
+        >>> config = {
         ...     "title": "Analysis with Processed Data",
         ...     "X": {"signal_key": "raw.time", "label": "Time (s)"},
         ...     "Y": [
         ...         {"label": "Magnitude (dB)", "signals": {"Output": "data.vdb_out"}},
         ...         {"label": "Power (W)", "signals": {"Supply": "data.power"}}
         ...     ]
-        ... })
+        ... }
         >>> fig = wv.plot("simulation.raw", config, processed_data=processed)
     """
     # Input validation for raw_file
