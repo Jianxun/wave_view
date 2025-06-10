@@ -39,7 +39,7 @@ fig = wv.plot("simulation.raw", config)  # Required config, no magic
 - `config_from_file()` - Load configuration from YAML files
 - `config_from_yaml()` - Create configuration from YAML strings
 
-### **Documentation System** ✅ **COMPLETE**
+### **Documentation System** ✅ **COMPLETE & UPDATED**
 - **Sphinx Setup**: Professional documentation with Read the Docs theme
 - **Comprehensive Structure**:
   - User guides (installation, quickstart, configuration, examples)
@@ -47,6 +47,7 @@ fig = wv.plot("simulation.raw", config)  # Required config, no magic
   - Core modules documentation
   - Development guides (changelog, contributing)
 - **Build System**: Clean HTML generation with minimal warnings
+- **Configuration Format**: ✅ **UPDATED** - All examples now use correct YAML X/Y format instead of deprecated dictionary plots format
 - **Ready for Publication**: Documentation ready for hosting and user onboarding
 
 ## Key Decisions
@@ -142,11 +143,17 @@ All 23 failing tests have been successfully fixed:
 - Set up autosummary for automatic API reference generation
 - Configured Read the Docs theme with proper navigation and cross-references
 
+## Recent Updates ✅ **COMPLETED**
+1. **Documentation Configuration Format Update**: All Sphinx documentation examples updated from deprecated dictionary `plots` format to current YAML `X`/`Y` axis structure
+2. **Configuration Examples Modernized**: Updated quickstart.rst, index.rst, configuration.rst, and examples.rst with proper YAML configurations
+3. **API Consistency**: Documentation now correctly shows `config_from_yaml()` and `config_from_file()` usage instead of raw dictionaries
+4. **Signal Reference Simplification**: Removed all `raw.` prefixes from signal references since signals default to raw file signals (e.g., `raw.time` → `time`, `raw.frequency` → `frequency`)
+
 ## Current Issues Identified
 1. **Error message enhancement opportunity** for signal name suggestions (reader.py:97-101)
 
 ## Open Questions
-None - package is functionally complete with all tests passing, high-priority code quality improvements completed, and comprehensive documentation ready for publication.
+None - package is functionally complete with all tests passing, high-priority code quality improvements completed, and comprehensive documentation updated with correct configuration format.
 
 ## Next Steps
 1. **Enhanced Error Messages**: Add fuzzy matching suggestions for signal name typos

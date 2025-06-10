@@ -31,15 +31,17 @@ Quick Start
    print(f"Available signals: {signals}")
 
    # Step 2: Configuration - "What do I want?"
-   config = {
-       "title": "My Simulation Results",
-       "plots": [
-           {
-               "signals": ["v(out)", "v(in)"],
-               "title": "Voltage Plot"
-           }
-       ]
-   }
+   config = wv.config_from_yaml("""
+   title: "My Simulation Results"
+   X:
+     signal_key: "time"
+     label: "Time (s)"
+   Y:
+     - label: "Voltage (V)"
+       signals:
+         OUT: "v(out)"
+         IN: "v(in)"
+   """)
 
    # Step 3: Plotting - "Show me the results"
    fig = wv.plot("simulation.raw", config)

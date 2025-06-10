@@ -8,16 +8,10 @@ Configuration Formats
 
 You can provide configuration in three ways:
 
-Python Dictionary
-~~~~~~~~~~~~~~~~~
+YAML Configuration (Recommended)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. code-block:: python
-
-   config = {
-       "title": "My Plots",
-       "plots": [...]
-   }
-   fig = wv.plot("simulation.raw", config)
+wave_view uses YAML configuration files for defining plots. While dictionaries are still supported, YAML is the recommended approach.
 
 YAML File
 ~~~~~~~~~
@@ -26,8 +20,13 @@ YAML File
 
    # config.yaml
    title: "My Plots"
-   plots:
-     - ...
+   X:
+     signal_key: "time"
+     label: "Time (s)"
+   Y:
+     - label: "Voltage"
+       signals:
+         VDD: "v(vdd)"
 
 .. code-block:: python
 
@@ -41,11 +40,35 @@ YAML String
 
    yaml_config = """
    title: "My Plots"
-   plots:
-     - ...
+   X:
+     signal_key: "time"
+     label: "Time (s)"
+   Y:
+     - label: "Voltage"
+       signals:
+         VDD: "v(vdd)"
    """
    config = wv.config_from_yaml(yaml_config)
    fig = wv.plot("simulation.raw", config)
+
+Configuration Structure
+-----------------------
+
+The configuration uses an X/Y axis structure that clearly separates what you want on each axis:
+
+.. code-block:: yaml
+
+   title: "Optional overall title"
+   X:
+     signal_key: "time"    # Required: X-axis data source
+     label: "Time (s)"         # Optional: X-axis label  
+     scale: "linear"           # Optional: "linear" or "log"
+   Y:
+     - label: "Voltage (V)"    # Optional: Y-axis group label
+       scale: "linear"         # Optional: "linear" or "log" 
+       signals:               # Required: signals to plot
+         VDD: "v(vdd)"        # Legend name: signal reference
+         OUT: "v(out)"
 
 Root Configuration Options
 --------------------------
@@ -59,101 +82,71 @@ Optional overall title for the entire figure.
 
    title: "SPICE Simulation Results"
 
-plots
-~~~~~
+X (Required)
+~~~~~~~~~~~~
 
-Required list of plot configurations. Each plot becomes a subplot in the final figure.
-
-.. code-block:: yaml
-
-   plots:
-     - signals: ["v(out)"]
-       title: "Output Voltage"
-     - signals: ["i(m1)"]
-       title: "Current"
-
-Plot Configuration Options
---------------------------
-
-Each plot in the `plots` list can have the following options:
-
-Required Options
-~~~~~~~~~~~~~~~~
-
-signals
-*******
-
-List of signal names to plot. Signal names are case-insensitive.
+Defines the X-axis configuration. Always required.
 
 .. code-block:: yaml
 
-   signals: ["v(out)", "v(in)", "I(R1)"]
+   X:
+     signal_key: "time"    # Signal to use for X-axis
+     label: "Time (s)"         # Axis label (optional)
+     scale: "linear"           # "linear" or "log" (optional, default: linear)
 
-Optional Options
-~~~~~~~~~~~~~~~~
+Y (Required)  
+~~~~~~~~~~~~
 
-title
+List of Y-axis groups. Each group can contain multiple signals that share the same Y-axis properties.
+
+.. code-block:: yaml
+
+   Y:
+     - label: "Voltage (V)"
+       scale: "linear"
+       signals:
+         VDD: "v(vdd)"
+         OUT: "v(out)"
+     - label: "Current (A)" 
+       scale: "log"
+       signals:
+         M1: "i(m1)"
+
+Y-Axis Group Options
+~~~~~~~~~~~~~~~~~~~~
+
+label
 *****
 
-Title for this specific plot.
+Optional label for this Y-axis group.
 
 .. code-block:: yaml
 
-   title: "Voltage Waveforms"
+   label: "Voltage (V)"
 
-xlabel
-******
-
-X-axis label. Defaults to "Time".
-
-.. code-block:: yaml
-
-   xlabel: "Time (s)"
-
-ylabel
-******
-
-Y-axis label. If not specified, attempts to auto-generate from signal types.
-
-.. code-block:: yaml
-
-   ylabel: "Voltage (V)"
-
-log_x
+scale
 *****
 
-Enable logarithmic scale for X-axis. Default: false.
+Scale type for this Y-axis group. Can be "linear" or "log". Default: "linear".
 
 .. code-block:: yaml
 
-   log_x: true
+   scale: "log"
 
-log_y
-*****
+signals (Required)
+******************
 
-Enable logarithmic scale for Y-axis. Default: false.
+Dictionary mapping legend names to signal references. Each signal reference can be:
 
-.. code-block:: yaml
-
-   log_y: true
-
-grid
-****
-
-Show grid lines. Default: true.
+- ``signal_name`` - Signal from SPICE file (default)
+- ``data.signal_name`` - Processed signal (passed via processed_data parameter)
 
 .. code-block:: yaml
 
-   grid: false
-
-legend
-******
-
-Show legend. Default: true.
-
-.. code-block:: yaml
-
-   legend: false
+   signals:
+     VDD: "v(vdd)"            # SPICE signal reference
+     OUT: "v(out)"            # SPICE signal reference  
+     Power: "data.power"      # Processed signal reference
 
 Complete Example
 ----------------
@@ -163,23 +156,26 @@ Here's a comprehensive configuration example showing all available options:
 .. code-block:: yaml
 
    title: "Amplifier Analysis"
-   plots:
-     - signals: ["v(in)", "v(out)"]
-       title: "Input vs Output Voltage"
-       xlabel: "Time (s)"
-       ylabel: "Voltage (V)"
-       grid: true
-       legend: true
-       
-     - signals: ["i(m1)", "i(m2)"]
-       title: "Transistor Currents"
-       ylabel: "Current (A)"
-       log_y: true
-       
-     - signals: ["v(vdd)", "v(vss)"]
-       title: "Supply Voltages"
-       ylabel: "Supply (V)"
-       grid: false
+   X:
+     signal_key: "time"
+     label: "Time (s)"
+     scale: "linear"
+   Y:
+     - label: "Input/Output Voltage (V)"
+       scale: "linear"
+       signals:
+         Input: "v(in)"
+         Output: "v(out)"
+     - label: "Transistor Currents (A)"
+       scale: "log"
+       signals:
+         M1: "i(m1)"
+         M2: "i(m2)"
+     - label: "Supply Voltages (V)"
+       scale: "linear"
+       signals:
+         VDD: "v(vdd)"
+         VSS: "v(vss)"
 
 Multi-Figure Support
 --------------------
@@ -189,31 +185,57 @@ wave_view can create multiple separate figures from a single configuration. This
 Single Figure (Default)
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-All plots become subplots in one figure:
+A single configuration creates one figure with multiple Y-axis groups:
+
+.. code-block:: yaml
+
+   # config.yaml - Single figure
+   title: "Combined Analysis"
+   X:
+     signal_key: "time"
+     label: "Time (s)"
+   Y:
+     - label: "Voltage (V)"
+       signals:
+         OUT: "v(out)"
+     - label: "Current (A)"
+       signals:
+         M1: "i(m1)"
 
 .. code-block:: python
 
-   config = {
-       "plots": [
-           {"signals": ["v(out)"]},
-           {"signals": ["i(m1)"]}
-       ]
-   }
+   config = wv.config_from_file("config.yaml")
    fig = wv.plot("simulation.raw", config)  # Returns single figure
 
 Multiple Figures
 ~~~~~~~~~~~~~~~~
 
-To create separate figures, make `plots` a list of lists:
+To create separate figures, provide a list of configurations:
+
+.. code-block:: yaml
+
+   # multi_config.yaml - Multiple figures
+   - title: "Voltage Analysis"
+     X:
+       signal_key: "time"
+       label: "Time (s)"
+     Y:
+       - label: "Voltage (V)"
+         signals:
+           OUT: "v(out)"
+   - title: "Current Analysis"
+     X:
+       signal_key: "time"
+       label: "Time (s)"
+     Y:
+       - label: "Current (A)"
+         signals:
+           M1: "i(m1)"
+           M2: "i(m2)"
 
 .. code-block:: python
 
-   config = {
-       "plots": [
-           [{"signals": ["v(out)"]}],           # Figure 1
-           [{"signals": ["i(m1)", "i(m2)"]}]   # Figure 2
-       ]
-   }
+   config = wv.config_from_file("multi_config.yaml")
    figures = wv.plot("simulation.raw", config)  # Returns list of figures
 
 Processed Data Integration
@@ -230,14 +252,17 @@ You can include computed signals alongside SPICE data by using the `processed_da
        "efficiency": compute_efficiency(spice_data)
    }
 
-   config = {
-       "plots": [
-           {
-               "signals": ["v(out)", "power"],  # Mix SPICE and processed data
-               "title": "Voltage and Power"
-           }
-       ]
-   }
+   config = wv.config_from_yaml("""
+   title: "Voltage and Power Analysis"
+   X:
+     signal_key: "time"
+     label: "Time (s)"
+   Y:
+     - label: "Mixed Signals"
+       signals:
+         Voltage: "v(out)"      # SPICE signal
+         Power: "data.power"    # Processed signal
+   """)
 
    fig = wv.plot("simulation.raw", config, processed_data=processed_signals)
 
@@ -251,8 +276,10 @@ All signal names are normalized to lowercase for easy access:
 
 .. code-block:: python
 
-   # These are all equivalent:
-   signals: ["V(OUT)", "v(out)", "V(Out)", "v(OUT)"]
+   # These are all equivalent in signal references:
+   OUT: "V(OUT)"    # Same as v(out)
+   OUT: "v(out)"    # Same as V(OUT)
+   OUT: "V(Out)"    # Same as v(out)
 
 Automatic Categorization
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -270,11 +297,13 @@ Use :func:`~wave_view.validate_config` to check your configuration:
 
 .. code-block:: python
 
-   config = {
-       "plots": [
-           {"signals": ["v(out)"]}
-       ]
-   }
+   config = wv.config_from_yaml("""
+   X:
+     signal_key: "time"
+   Y:
+     - signals:
+         OUT: "v(out)"
+   """)
 
    errors = wv.validate_config(config)
    if errors:
@@ -287,11 +316,12 @@ Use :func:`~wave_view.validate_config` to check your configuration:
 Common Validation Errors
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-* Missing `plots` key
-* Empty `plots` list
-* Plot missing `signals` key
-* Empty `signals` list
-* Invalid data types (e.g., string instead of list for signals)
+* Missing `X` or `Y` configuration
+* Missing `signal_key` in X configuration
+* Y configuration not a list
+* Y-axis group missing `signals` key
+* Invalid signal references
+* Invalid data types (e.g., string instead of dict for signals)
 
 Best Practices
 --------------

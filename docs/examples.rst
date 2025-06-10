@@ -12,17 +12,18 @@ Plot input and output voltages from an amplifier simulation:
 
    import wave_view as wv
 
-   # Simple voltage plot
-   config = {
-       "title": "Amplifier Response",
-       "plots": [
-           {
-               "signals": ["v(in)", "v(out)"],
-               "title": "Input vs Output Voltage",
-               "ylabel": "Voltage (V)"
-           }
-       ]
-   }
+   # Simple voltage plot using YAML configuration
+   config = wv.config_from_yaml("""
+   title: "Amplifier Response"
+   X:
+     signal_key: "time"
+     label: "Time (s)"
+   Y:
+     - label: "Voltage (V)"
+       signals:
+         Input: "v(in)"
+         Output: "v(out)"
+   """)
 
    fig = wv.plot("amplifier.raw", config)
    fig.show()
@@ -34,17 +35,19 @@ Analyze transistor currents with logarithmic scale:
 
 .. code-block:: python
 
-   config = {
-       "title": "Transistor Current Analysis",
-       "plots": [
-           {
-               "signals": ["i(m1)", "i(m2)", "i(m3)"],
-               "title": "MOSFET Currents",
-               "ylabel": "Current (A)",
-               "log_y": True
-           }
-       ]
-   }
+   config = wv.config_from_yaml("""
+   title: "Transistor Current Analysis"
+   X:
+     signal_key: "time"
+     label: "Time (s)"
+   Y:
+     - label: "Current (A)"
+       scale: "log"
+       signals:
+         M1: "i(m1)"
+         M2: "i(m2)"
+         M3: "i(m3)"
+   """)
 
    fig = wv.plot("transistor_analysis.raw", config)
 
@@ -55,27 +58,26 @@ Create multiple subplots for comprehensive analysis:
 
 .. code-block:: python
 
-   config = {
-       "title": "Complete Circuit Analysis",
-       "plots": [
-           {
-               "signals": ["v(in)", "v(out)"],
-               "title": "Voltage Waveforms",
-               "ylabel": "Voltage (V)"
-           },
-           {
-               "signals": ["i(m1)", "i(m2)"],
-               "title": "Current Consumption",
-               "ylabel": "Current (A)",
-               "log_y": True
-           },
-           {
-               "signals": ["v(vdd)", "v(vss)"],
-               "title": "Supply Rails",
-               "ylabel": "Supply Voltage (V)"
-           }
-       ]
-   }
+   config = wv.config_from_yaml("""
+   title: "Complete Circuit Analysis"
+   X:
+     signal_key: "time"
+     label: "Time (s)"
+   Y:
+     - label: "Voltage (V)"
+       signals:
+         Input: "v(in)"
+         Output: "v(out)"
+     - label: "Current (A)"
+       scale: "log"
+       signals:
+         M1: "i(m1)"
+         M2: "i(m2)"
+     - label: "Supply Voltage (V)"
+       signals:
+         VDD: "v(vdd)"
+         VSS: "v(vss)"
+   """)
 
    fig = wv.plot("complete_analysis.raw", config)
 
@@ -103,21 +105,20 @@ Combine SPICE signals with computed power calculations:
        "power_avg": np.ones_like(power) * np.mean(power)
    }
 
-   config = {
-       "title": "Power Analysis",
-       "plots": [
-           {
-               "signals": ["v(out)"],
-               "title": "Output Voltage",
-               "ylabel": "Voltage (V)"
-           },
-           {
-               "signals": ["power_output", "power_avg"],
-               "title": "Output Power",
-               "ylabel": "Power (W)"
-           }
-       ]
-   }
+   config = wv.config_from_yaml("""
+   title: "Power Analysis"
+   X:
+     signal_key: "time"
+     label: "Time (s)"
+   Y:
+     - label: "Voltage (V)"
+       signals:
+         Output: "v(out)"
+     - label: "Power (W)"
+       signals:
+         Output_Power: "data.power_output"
+         Average_Power: "data.power_avg"
+   """)
 
    fig = wv.plot("power_analysis.raw", config, processed_data=processed_signals)
 
@@ -128,18 +129,17 @@ Plot frequency response from AC analysis:
 
 .. code-block:: python
 
-   config = {
-       "title": "Frequency Response",
-       "plots": [
-           {
-               "signals": ["v(out)"],
-               "title": "Magnitude Response",
-               "xlabel": "Frequency (Hz)",
-               "ylabel": "Magnitude (dB)",
-               "log_x": True
-           }
-       ]
-   }
+   config = wv.config_from_yaml("""
+   title: "Frequency Response"
+   X:
+     signal_key: "frequency"
+     label: "Frequency (Hz)"
+     scale: "log"
+   Y:
+     - label: "Magnitude (dB)"
+       signals:
+         Output: "v(out)"
+   """)
 
    fig = wv.plot("ac_analysis.raw", config)
 
@@ -152,20 +152,26 @@ For complex configurations, use YAML files:
 
    # analysis_config.yaml
    title: "Operational Amplifier Analysis"
-   plots:
-     - signals: ["v(inp)", "v(inn)", "v(out)"]
-       title: "Input and Output Signals"
-       ylabel: "Voltage (V)"
-       
-     - signals: ["i(m1)", "i(m2)", "i(m3)", "i(m4)"]
-       title: "Transistor Currents"
-       ylabel: "Current (A)"
-       log_y: true
-       
-     - signals: ["v(vdd)", "v(vss)"]
-       title: "Power Supply"
-       ylabel: "Supply Voltage (V)"
-       grid: false
+   X:
+     signal_key: "time"
+     label: "Time (s)"
+   Y:
+     - label: "Voltage (V)"
+       signals:
+         Input_P: "v(inp)"
+         Input_N: "v(inn)"
+         Output: "v(out)"
+     - label: "Current (A)"
+       scale: "log"
+       signals:
+         M1: "i(m1)"
+         M2: "i(m2)"
+         M3: "i(m3)"
+         M4: "i(m4)"
+     - label: "Supply Voltage (V)"
+       signals:
+         VDD: "v(vdd)"
+         VSS: "v(vss)"
 
 .. code-block:: python
 
@@ -186,15 +192,16 @@ Process multiple simulation files with the same configuration:
    from pathlib import Path
 
    # Common configuration for all simulations
-   config = {
-       "plots": [
-           {
-               "signals": ["v(out)"],
-               "title": "Output Voltage",
-               "ylabel": "Voltage (V)"
-           }
-       ]
-   }
+   config = wv.config_from_yaml("""
+   title: "Output Voltage Analysis"
+   X:
+     signal_key: "time"
+     label: "Time (s)"
+   Y:
+     - label: "Voltage (V)"
+       signals:
+         Output: "v(out)"
+   """)
 
    # Process all .raw files in a directory
    raw_files = Path("simulations").glob("*.raw")
@@ -224,19 +231,21 @@ Use explore_signals to discover what's available:
    print("Other signals:", signals['other_signals'])
 
    # Create configuration based on discovery
-   config = {
-       "plots": [
-           {
-               "signals": signals['voltage_signals'][:3],  # First 3 voltage signals
-               "title": "Main Voltages"
-           },
-           {
-               "signals": signals['current_signals'][:2],  # First 2 current signals
-               "title": "Main Currents",
-               "log_y": True
-           }
-       ]
-   }
+   voltage_signals = {f"V{i+1}": sig for i, sig in enumerate(signals['voltage_signals'][:3])}
+   current_signals = {f"I{i+1}": sig for i, sig in enumerate(signals['current_signals'][:2])}
+   
+   config = wv.config_from_yaml(f"""
+   title: "Discovered Signals Analysis"
+   X:
+     signal_key: "time"
+     label: "Time (s)"
+   Y:
+     - label: "Main Voltages (V)"
+       signals: {voltage_signals}
+     - label: "Main Currents (A)"
+       scale: "log"
+       signals: {current_signals}
+   """)
 
    fig = wv.plot("mystery_circuit.raw", config)
 
@@ -270,7 +279,13 @@ Robust error handling for production use:
        return None
 
    # Usage
-   config = {"plots": [{"signals": ["v(out)"]}]}
+   config = wv.config_from_yaml("""
+   X:
+     signal_key: "time"
+   Y:
+     - signals:
+         OUT: "v(out)"
+   """)
    fig = safe_plot("simulation.raw", config)
    
    if fig:
@@ -293,16 +308,17 @@ Compare results from different simulation runs:
        "v_out_after": data2.get_signal_data("v(out)")
    }
 
-   config = {
-       "title": "Optimization Comparison",
-       "plots": [
-           {
-               "signals": ["v_out_before", "v_out_after"],
-               "title": "Output Voltage Comparison",
-               "ylabel": "Voltage (V)"
-           }
-       ]
-   }
+   config = wv.config_from_yaml("""
+   title: "Optimization Comparison"
+   X:
+     signal_key: "time"
+     label: "Time (s)"
+   Y:
+     - label: "Voltage (V)"
+       signals:
+         Before: "data.v_out_before"
+         After: "data.v_out_after"
+   """)
 
    # Use time base from first simulation
    fig = wv.plot("before_optimization.raw", config, processed_data=processed_signals) 

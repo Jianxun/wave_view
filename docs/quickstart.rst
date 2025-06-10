@@ -38,41 +38,24 @@ This returns a dictionary with categorized signals:
 Step 2: Configuration
 ---------------------
 
-Next, create a configuration that defines what you want to plot. You can use a Python dictionary:
-
-.. code-block:: python
-
-   config = {
-       "title": "My SPICE Results",
-       "plots": [
-           {
-               "signals": ["v(out)", "v(in)"],
-               "title": "Input vs Output Voltage",
-               "ylabel": "Voltage (V)"
-           },
-           {
-               "signals": ["i(m1)"],
-               "title": "Transistor Current",
-               "ylabel": "Current (A)",
-               "log_y": True
-           }
-       ]
-   }
-
-Or load from a YAML file:
+Next, create a configuration that defines what you want to plot using YAML format:
 
 .. code-block:: yaml
 
    # config.yaml
    title: "My SPICE Results"
-   plots:
-     - signals: ["v(out)", "v(in)"]
-       title: "Input vs Output Voltage"
-       ylabel: "Voltage (V)"
-     - signals: ["i(m1)"]
-       title: "Transistor Current"
-       ylabel: "Current (A)"
-       log_y: true
+   X:
+     signal_key: "time"
+     label: "Time (s)"
+   Y:
+     - label: "Voltage (V)"
+       signals:
+         OUT: "v(out)"
+         IN: "v(in)"
+     - label: "Current (A)"
+       scale: "log"
+       signals:
+         M1: "i(m1)"
 
 .. code-block:: python
 
@@ -108,17 +91,18 @@ Here's a complete working example:
    signals = wv.explore_signals("simulation.raw")
    print(f"Found {len(signals['voltage_signals'])} voltage signals")
 
-   # Step 2: Configure what to plot
-   config = {
-       "title": "SPICE Simulation Results",
-       "plots": [
-           {
-               "signals": ["v(out)", "v(in)"],
-               "title": "Voltage Waveforms",
-               "ylabel": "Voltage (V)"
-           }
-       ]
-   }
+   # Step 2: Configure what to plot (using YAML)
+   config = wv.config_from_yaml("""
+   title: "SPICE Simulation Results"
+   X:
+     signal_key: "time"
+     label: "Time (s)"
+   Y:
+     - label: "Voltage (V)"
+       signals:
+         OUT: "v(out)"
+         IN: "v(in)"
+   """)
 
    # Step 3: Generate the plot
    fig = wv.plot("simulation.raw", config)
@@ -145,14 +129,16 @@ You can include computed signals alongside SPICE data:
        "power": spice_data.get_signal_data("v(out)") * spice_data.get_signal_data("i(out)")
    }
 
-   config = {
-       "plots": [
-           {
-               "signals": ["v(out)", "power"],
-               "title": "Voltage and Power"
-           }
-       ]
-   }
+   config = wv.config_from_yaml("""
+   X:
+     signal_key: "time"
+     label: "Time (s)"
+   Y:
+     - label: "Voltage and Power"
+       signals:
+         OUT: "v(out)"
+         Power: "data.power"
+   """)
 
    fig = wv.plot("simulation.raw", config, processed_data=processed_signals)
 
@@ -163,7 +149,7 @@ Validate your configuration before plotting:
 
 .. code-block:: python
 
-   config = {...}  # Your configuration
+   config = wv.config_from_file("config.yaml")  # Your YAML configuration
    
    # Check if configuration is valid
    errors = wv.validate_config(config)

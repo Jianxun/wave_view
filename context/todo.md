@@ -1,6 +1,43 @@
 # Project Todo List
 
-## Current Sprint - Documentation Setup ✅ **COMPLETED**
+## Current Sprint - Documentation Configuration Update ✅ **COMPLETED**
+
+### 📚 **Sphinx Documentation Configuration Format Update** (HIGH PRIORITY) ✅ **COMPLETED**
+- [X] **Update Quickstart Guide** ✅ **COMPLETED**
+  - Replaced dictionary `plots` format with YAML `X`/`Y` axis structure
+  - Updated all code examples to use `config_from_yaml()` function
+  - Modernized configuration examples with proper signal references
+
+- [X] **Update Index Page** ✅ **COMPLETED**
+  - Updated quick start example to use correct YAML format
+  - Replaced dictionary configuration with `config_from_yaml()` usage
+
+- [X] **Update Configuration Guide** ✅ **COMPLETED**
+  - Completely rewrote configuration structure documentation
+  - Added comprehensive X/Y axis configuration options
+  - Updated all examples to use current API format
+  - Documented signal reference patterns (raw.signal, data.signal)
+
+- [X] **Update Examples Documentation** ✅ **COMPLETED**
+  - Updated all 8+ examples to use YAML configuration format
+  - Replaced dictionary configurations with `config_from_yaml()` calls
+  - Modernized signal references and axis configurations
+  - Updated multi-figure and processed data examples
+
+- [X] **Build and Verify Documentation** ✅ **COMPLETED**
+  - Successfully built HTML documentation with updated examples
+  - Verified all configuration examples use correct format
+  - Documentation builds cleanly with only minor autosummary warnings
+
+- [X] **Simplify Signal References** ✅ **COMPLETED**
+  - Removed all `raw.` prefixes from signal references in documentation
+  - Updated signal_key examples: `raw.time` → `time`, `raw.frequency` → `frequency`
+  - Updated signal reference documentation to show simplified format
+  - Verified documentation builds successfully with simplified references
+
+### 📊 **Documentation Status**: All examples updated to current YAML X/Y format with simplified signal references ✅ **SUCCESS**
+
+## Previous Sprint - Documentation Setup ✅ **COMPLETED**
 
 ### 📚 **Sphinx Documentation** (HIGH PRIORITY) ✅ **COMPLETED**
 - [X] **Install Sphinx Dependencies** ✅ **COMPLETED**
