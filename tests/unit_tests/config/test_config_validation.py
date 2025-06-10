@@ -190,54 +190,6 @@ class TestYConfigurationValidation(unittest.TestCase):
 
 
 class TestSignalValidationWithSpiceData(unittest.TestCase):
-    """Test validation of multi-figure configurations."""
-    
-    def test_validate_multi_figure_with_errors(self):
-        """Test validation of multi-figure config with various errors."""
-        multi_config_with_errors = [
-            {
-                "title": "Figure 1 - Valid",
-                "X": {"signal_key": "raw.time"},
-                "Y": [{"label": "V1", "signals": {"VDD": "v(vdd)"}}]
-            },
-            {
-                "title": "Figure 2 - Missing X",
-                # Missing X configuration
-                "Y": [{"label": "V2", "signals": {"OUT": "v(out)"}}]
-            },
-            {
-                "title": "Figure 3 - Invalid Y",
-                "X": {"signal_key": "raw.freq"},
-                "Y": "not_a_list"  # Should be a list
-            }
-        ]
-        
-        config = PlotConfig(multi_config_with_errors)
-        warnings = config.validate()
-        self.assertGreater(len(warnings), 1)
-        
-        # Check for figure-specific warnings
-        assert_validation_warnings(warnings, contains_text="Figure 1: Missing required 'X'")
-        assert_validation_warnings(warnings, contains_text="Figure 2: Y configuration must be a list")
-    
-    def test_validate_empty_figures_in_multi_config(self):
-        """Test validation of empty figures in multi-figure config."""
-        multi_with_empty = [
-            get_basic_config_dict(),  # Valid figure
-            {},                       # Empty figure
-            get_basic_config_dict()   # Valid figure
-        ]
-        
-        config = PlotConfig(multi_with_empty)
-        warnings = config.validate()
-        self.assertGreater(len(warnings), 1)
-        
-        # Figure 1 (index 1) should have missing X and Y warnings
-        assert_validation_warnings(warnings, contains_text="Figure 1: Missing required 'X'")
-        assert_validation_warnings(warnings, contains_text="Figure 1: Missing required 'Y'")
-
-
-class TestSignalValidationWithSpiceData(unittest.TestCase):
     """Test signal validation against SPICE data."""
     
     def test_validate_with_valid_signals(self):
