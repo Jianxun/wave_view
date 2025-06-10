@@ -56,7 +56,8 @@ This project follows a task-based and test-driven development approach across mu
 ## Version Control Guidelines
 - Make frequent, atomic commits with descriptive messages
 - Use conventional commit format: `type(scope): description`
-- For multi-line commit messages, create `.git_commit_message` file and use `git commit -F .git_commit_message`
+- For multi-line commit messages, **completely rewrite** `.git_commit_message` file (don't append) and use `git commit -F .git_commit_message`
+- **CRITICAL**: Always rewrite `.git_commit_message` entirely - never append to existing content (avoids duplicate commit messages)
 - Ensure `.git_commit_message` is in .gitignore to avoid tracking temporary commit files
 - Create feature branches for significant changes
 - Ensure all tests pass before committing

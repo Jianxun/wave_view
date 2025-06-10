@@ -18,7 +18,7 @@ from .core.config import PlotConfig
 from .api import (
     plot,
     load_spice,
-    create_config_template,
+    explore_signals,
     validate_config,
     plot_batch
 )
@@ -55,7 +55,7 @@ __all__ = [
     # Main API
     'plot',
     'load_spice',
-    'create_config_template', 
+    'explore_signals', 
     'validate_config',
     'plot_batch',
     

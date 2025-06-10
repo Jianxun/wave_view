@@ -17,19 +17,19 @@ from .core.config import PlotConfig
 from .core.plotter import SpicePlotter
 
 
-def plot(raw_file: str, 
-         config: Union[str, Dict, None] = None,
+def plot(raw_file: Union[str, Path], 
+         config: Union[str, Path, Dict],
          show: bool = True,
          processed_data: Optional[Dict[str, np.ndarray]] = None) -> go.Figure:
     """
     Simple plotting function for SPICE waveforms.
     
-    This is the main API function that 90% of users will interact with.
-    It provides a simple interface for creating waveform plots.
+    This is the main API function that provides a simple interface for creating 
+    waveform plots with explicit configuration.
     
     Args:
-        raw_file: Path to SPICE .raw file
-        config: Configuration file path, dictionary, or None for auto-config
+        raw_file: Path to SPICE .raw file (string or Path object)
+        config: Configuration file path (string or Path), or dictionary
         show: Whether to display the plot immediately (default: True)
         processed_data: Optional dictionary of processed signals 
                        {signal_name: numpy_array}. These can be referenced
@@ -40,8 +40,15 @@ def plot(raw_file: str,
         
     Example:
         >>> import wave_view as wv
+        >>> config = {
+        ...     "title": "SPICE Analysis",
+        ...     "X": {"signal_key": "raw.time", "label": "Time (s)"},
+        ...     "Y": [{"label": "Voltage", "signals": {"VDD": "v(vdd)"}}]
+        ... }
+        >>> fig = wv.plot("simulation.raw", config)
+        
+        # With YAML configuration file
         >>> fig = wv.plot("simulation.raw", "config.yaml")
-        >>> fig = wv.plot("simulation.raw", show=False)  # Return without showing
         
         # With processed data
         >>> import numpy as np
@@ -50,18 +57,17 @@ def plot(raw_file: str,
         ...     "vdb_out": 20 * np.log10(np.abs(data.get_signal("v(out)"))),
         ...     "power": data.get_signal("v(vdd)") * data.get_signal("i(vdd)")
         ... }
-        >>> config = '''
-        ... title: "Analysis with Processed Data"
-        ... X: {signal_key: "raw.time", label: "Time (s)"}
-        ... Y:
-        ...   - label: "Magnitude (dB)"
-        ...     signals: {Output: "data.vdb_out"}
-        ...   - label: "Power (W)"  
-        ...     signals: {Supply: "data.power"}
-        ... '''
+        >>> config = {
+        ...     "title": "Analysis with Processed Data",
+        ...     "X": {"signal_key": "raw.time", "label": "Time (s)"},
+        ...     "Y": [
+        ...         {"label": "Magnitude (dB)", "signals": {"Output": "data.vdb_out"}},
+        ...         {"label": "Power (W)", "signals": {"Supply": "data.power"}}
+        ...     ]
+        ... }
         >>> fig = wv.plot("simulation.raw", config, processed_data=processed)
     """
-    # Input validation
+    # Input validation for raw_file
     if raw_file is None:
         raise TypeError("file path must be a string or Path object, not None")
     
@@ -77,6 +83,22 @@ def plot(raw_file: str,
     # Check if file exists
     if not file_path.exists():
         raise FileNotFoundError(f"SPICE raw file not found: {file_path}")
+    
+    # Input validation for config
+    if config is None:
+        raise TypeError("config must be provided (string, Path, or dictionary)")
+    
+    if not isinstance(config, (str, Path, dict)):
+        raise TypeError("config must be a string, Path object, or dictionary")
+    
+    # Additional validation for string/Path config
+    if isinstance(config, (str, Path)):
+        if isinstance(config, str) and config.strip() == "":
+            raise ValueError("config path cannot be empty")
+        
+        config_path = Path(config)
+        if not config_path.exists():
+            raise FileNotFoundError(f"Configuration file not found: {config_path}")
     
     # Validate processed_data parameter
     if processed_data is not None:
@@ -108,13 +130,7 @@ def plot(raw_file: str,
                 signal_array = np.array(signal_array, dtype=float)
             plotter._processed_signals[signal_name] = signal_array
     
-    # Handle configuration
-    if config is None:
-        # TODO: Implement auto-configuration based on common patterns
-        # For now, create a basic config
-        spice_data = plotter.data
-        config = _create_auto_config(spice_data)
-    
+    # Load configuration (no auto-config)
     plotter.load_config(config)
     
     # Create figure
@@ -221,134 +237,81 @@ def load_spice(raw_file: Union[str, Path]) -> SpiceData:
     return SpiceData(str(file_path))
 
 
-def create_config_template(output_path: Union[str, Path], 
-                          raw_file: Optional[Union[str, Path]] = None,
-                          signals: Optional[List[str]] = None) -> None:
+def explore_signals(raw_file: Union[str, Path]) -> List[str]:
     """
-    Create a YAML configuration template file.
+    Explore and list all available signals in a SPICE raw file.
+    
+    This function provides signal discovery - showing what signals are available
+    in the raw file so users can make informed decisions about configuration.
     
     Args:
-        output_path: Path where to save the template (string or Path object)
-        raw_file: Optional SPICE file to analyze for signal names (string or Path object)
-        signals: Optional list of specific signals to include
+        raw_file: Path to SPICE .raw file (string or Path object)
+        
+    Returns:
+        List of available signal names
         
     Example:
-        >>> wv.create_config_template("my_config.yaml", "sim.raw")
-        >>> wv.create_config_template("template.yaml", signals=["v(vdd)", "v(out)"])
+        >>> import wave_view as wv
+        >>> signals = wv.explore_signals("simulation.raw")
+        >>> print("Available signals:")
+        >>> for signal in signals:
+        ...     print(f"  - {signal}")
         
         >>> from pathlib import Path
-        >>> wv.create_config_template(Path("config.yaml"), Path("sim.raw"))
+        >>> signals = wv.explore_signals(Path("sim.raw"))
     """
-    # Input validation for output_path
-    if output_path is None:
-        raise TypeError("output path must be a string or Path object, not None")
+    # Input validation for raw_file
+    if raw_file is None:
+        raise TypeError("file path must be a string or Path object, not None")
     
-    if not isinstance(output_path, (str, Path)):
-        raise TypeError("output path must be a string or Path object")
+    if not isinstance(raw_file, (str, Path)):
+        raise TypeError("file path must be a string or Path object")
     
-    if isinstance(output_path, str) and output_path.strip() == "":
-        raise ValueError("output path cannot be empty")
+    if isinstance(raw_file, str) and raw_file.strip() == "":
+        raise ValueError("file path cannot be empty")
     
     # Convert to Path for consistent handling
-    output_file_path = Path(output_path)
+    file_path = Path(raw_file)
     
-    # Validate raw_file if provided
-    raw_file_path = None
-    if raw_file is not None:
-        if not isinstance(raw_file, (str, Path)):
-            raise TypeError("raw file path must be a string or Path object")
-        
-        if isinstance(raw_file, str) and raw_file.strip() == "":
-            raise ValueError("raw file path cannot be empty")
-        
-        raw_file_path = Path(raw_file)
-        
-        # Check if raw file exists when provided
-        if not raw_file_path.exists():
-            raise FileNotFoundError(f"SPICE raw file not found: {raw_file_path}")
+    # Check if file exists
+    if not file_path.exists():
+        raise FileNotFoundError(f"SPICE raw file not found: {file_path}")
     
-    # Create basic template
-    template = {
-        "title": "SPICE Waveform Plot",
-        "source": "./simulation.raw",  # Relative path placeholder
-        "X": {
-            "signal_key": "raw.time",
-            "label": "Time (s)"
-        },
-        "Y": []
-    }
+    # Load data and get signals
+    spice_data = SpiceData(str(file_path))
+    signals = spice_data.signals
     
-    # Add signals if provided
-    if signals:
-        voltage_signals = [s for s in signals if s.startswith('v(')]
-        current_signals = [s for s in signals if s.startswith('i(')]
-        
-        if voltage_signals:
-            template["Y"].append({
-                "label": "Voltage (V)",
-                "signals": {s: s for s in voltage_signals}
-            })
-        
-        if current_signals:
-            template["Y"].append({
-                "label": "Current (A)", 
-                "signals": {s: s for s in current_signals}
-            })
-        
-        # Add any other signals
-        other_signals = [s for s in signals if not s.startswith(('v(', 'i('))]
-        if other_signals:
-            template["Y"].append({
-                "label": "Other Signals",
-                "signals": {s: s for s in other_signals}
-            })
+    # Print signals for immediate visibility (placeholder behavior)
+    print(f"\nAvailable signals in '{file_path}':")
+    print("=" * 50)
     
-    # Analyze raw file if provided
-    elif raw_file_path:
-        try:
-            data = SpiceData(str(raw_file_path))
-            template["source"] = str(raw_file_path)
-            
-            # Categorize signals
-            voltage_signals = [s for s in data.signals if s.startswith('v(')][:5]  # Limit to first 5
-            current_signals = [s for s in data.signals if s.startswith('i(')][:5]
-            
-            if voltage_signals:
-                template["Y"].append({
-                    "label": "Voltage (V)",
-                    "signals": {s: s for s in voltage_signals}
-                })
-            
-            if current_signals:
-                template["Y"].append({
-                    "label": "Current (A)",
-                    "signals": {s: s for s in current_signals}
-                })
-                
-        except Exception as e:
-            print(f"Warning: Could not analyze raw file '{raw_file_path}': {e}")
-            # Fall back to basic template
-            
-    # Ensure at least one Y axis
-    if not template["Y"]:
-        template["Y"].append({
-            "label": "Signal",
-            "signals": {"signal_name": "v(out)"}  # Placeholder
-        })
+    # Categorize signals for better readability
+    voltage_signals = [s for s in signals if s.startswith('v(')]
+    current_signals = [s for s in signals if s.startswith('i(')]
+    other_signals = [s for s in signals if not s.startswith(('v(', 'i('))]
     
-    # Add optional settings with comments
-    template.update({
-        "plot_height": 600,
-        "show_rangeslider": True,
-        "show_zoom_buttons": True,
-        "default_dragmode": "zoom"
-    })
+    if voltage_signals:
+        print(f"Voltage signals ({len(voltage_signals)}):")
+        for signal in voltage_signals:
+            print(f"  - {signal}")
+        print()
     
-    # Write template
-    with open(output_file_path, 'w') as f:
-        yaml.dump(template, f, default_flow_style=False, sort_keys=False, indent=2)
+    if current_signals:
+        print(f"Current signals ({len(current_signals)}):")
+        for signal in current_signals:
+            print(f"  - {signal}")
+        print()
     
-    print(f"Configuration template created: {output_file_path}")
+    if other_signals:
+        print(f"Other signals ({len(other_signals)}):")
+        for signal in other_signals:
+            print(f"  - {signal}")
+        print()
+    
+    print(f"Total: {len(signals)} signals")
+    print("=" * 50)
+    
+    return signals
 
 
 def validate_config(config: Union[str, Path, Dict], 
@@ -495,51 +458,3 @@ def plot_batch(files_and_configs: List[Tuple[str, str]],
     else:
         return figures
 
-
-def _create_auto_config(spice_data: SpiceData) -> Dict[str, Any]:
-    """
-    Create automatic configuration based on signal analysis.
-    
-    Args:
-        spice_data: SpiceData object to analyze
-        
-    Returns:
-        Auto-generated configuration dictionary
-    """
-    signals = spice_data.signals
-    
-    # Basic auto-config
-    config = {
-        "title": "Auto-generated SPICE Plot",
-        "X": {
-            "signal_key": "raw.time",
-            "label": "Time (s)"
-        },
-        "Y": []
-    }
-    
-    # Find voltage and current signals
-    voltage_signals = [s for s in signals if s.startswith('v(')][:3]  # Limit to 3
-    current_signals = [s for s in signals if s.startswith('i(')][:2]  # Limit to 2
-    
-    if voltage_signals:
-        config["Y"].append({
-            "label": "Voltage (V)",
-            "signals": {s: s for s in voltage_signals}
-        })
-    
-    if current_signals:
-        config["Y"].append({
-            "label": "Current (A)",
-            "signals": {s: s for s in current_signals}
-        })
-    
-    # If no voltage/current signals found, use first few signals
-    if not config["Y"]:
-        first_signals = signals[:3]
-        config["Y"].append({
-            "label": "Signals",
-            "signals": {s: s for s in first_signals}
-        })
-    
-    return config 

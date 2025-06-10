@@ -122,46 +122,21 @@ class TestPlotBasic(unittest.TestCase):
         finally:
             cleanup_temp_file(temp_raw_file)
 
-    @patch('wave_view.api._create_auto_config')
-    @patch('wave_view.api.SpicePlotter')
-    @patch('wave_view.api._configure_plotly_renderer')
-    def test_plot_with_auto_config(self, mock_configure_renderer, mock_spice_plotter_class, mock_create_auto_config):
-        """Test plot() function with config=None triggers auto-configuration."""
-        # Set up mocks
-        mock_figure = go.Figure()
-        mock_figure.add_trace(go.Scatter(x=[1, 2, 3], y=[1, 2, 3], name="Test"))
-        
-        mock_spice_data = Mock()
-        mock_spice_data.signals = ["time", "v(vdd)", "v(out)"]
-        
-        mock_plotter = create_mock_spice_plotter(mock_spice_data, mock_figure)
-        mock_spice_plotter_class.return_value = mock_plotter
-        
-        # Mock auto-config creation
-        auto_config = get_basic_test_config()
-        auto_config["title"] = "Auto-generated SPICE Plot"
-        mock_create_auto_config.return_value = auto_config
-        
+    def test_plot_with_required_config(self):
+        """Test plot() function requires config parameter."""
         # Create temporary raw file for testing 
         temp_raw_file = create_temp_raw_file()
         
         try:
-            # Test plot call with config=None
-            result = plot(temp_raw_file, config=None, show=False)
+            # Test that config=None raises TypeError
+            with self.assertRaises(TypeError) as context:
+                plot(temp_raw_file, config=None, show=False)
             
-            # Verify results
-            self.assertIsInstance(result, go.Figure)
-            
-            # Verify that auto-config was created using the plotter's data
-            mock_create_auto_config.assert_called_once_with(mock_spice_data)
-            
-            # Verify the auto-generated config was passed to load_config
-            mock_plotter.load_config.assert_called_once_with(auto_config)
-            mock_plotter.create_figure.assert_called_once()
+            error_message = str(context.exception)
+            self.assertIn("config must be provided", error_message)
             
         finally:
             cleanup_temp_file(temp_raw_file)
-
 
 if __name__ == '__main__':
     unittest.main()

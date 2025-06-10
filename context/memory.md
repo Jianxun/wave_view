@@ -4,15 +4,47 @@
 Wave_view is a Python package for SPICE simulation visualization with a modern, user-friendly API. The project features core modules for configuration management (config.py), data reading (reader.py), and plotting (plotter.py), with comprehensive YAML-based configuration support and advanced features like log scale plotting and processed signal generation.
 
 ## Current State
-**API Testing & Improvement Sprint - IN PROGRESS** 🚧
+**🏆 ARCHITECTURAL REFACTORING COMPLETE** ✅
 
-**🎯 CURRENT FOCUS**: Building comprehensive API tests and improving code quality
+**🎯 MAJOR MILESTONE**: Successfully implemented clean API architecture with explicit signal discovery workflow!
 
-**API Testing Progress**:
-- **API Test Infrastructure**: Complete shared utilities and fixtures ✅
-- **plot() Function Tests**: 4 comprehensive tests covering basic functionality, show behavior, processed data, and auto-configuration ✅
-- **Coverage**: API coverage increased from 20% to 25% ✅
-- **Development Guidelines**: Enhanced with incremental testing, error handling, and API design principles ✅
+**🎯 BREAKING CHANGES IMPLEMENTED** (Current Session):
+
+### ✅ **Removed Auto-Config Magic** (COMPLETE)
+- **Problem**: Implicit behavior violated separation of concerns - users didn't know what `wv.plot("sim.raw")` actually did
+- **Solution**: Made config parameter required, removed `_create_auto_config()` function entirely
+- **Benefits**: No more hidden magic, transparent behavior, explicit user choices
+- **Impact**: Breaking change but library not yet released - perfect timing for architectural improvement
+
+### ✅ **Removed Template Creation** (COMPLETE)  
+- **Problem**: `create_config_template()` was 130+ lines violating single responsibility principle
+- **Issues**: Magic numbers, hardcoded limits, duplicated logic, poor testability, workflow mismatch
+- **Solution**: Removed function entirely from API - users will use explicit configuration
+- **Benefits**: Cleaner codebase, better separation of concerns, reduced maintenance burden
+
+### ✅ **Added Signal Exploration** (COMPLETE)
+- **Implementation**: Clean `explore_signals()` function for signal discovery
+- **Features**: Beautiful categorized output (voltage, current, other), Path object support, programmatic return
+- **Purpose**: Explicit step 1 in new workflow - "what signals are available?"
+- **Design**: Simple, focused, single responsibility - perfect contrast to removed complexity
+
+**🎯 CLEAN ARCHITECTURE ACHIEVED**:
+```python
+# Step 1: Discovery - "What's available?"
+signals = wv.explore_signals("simulation.raw")
+
+# Step 2: Configuration - "What do I want?"  
+config = {...}  # Explicit user choices
+
+# Step 3: Plotting - "Show me the results"
+fig = wv.plot("simulation.raw", config)  # Required config, no magic
+```
+
+**API Testing Excellence**:
+- **All 42 API tests passing** with comprehensive coverage maintained
+- **API Coverage**: Maintained at 88% after architectural changes  
+- **Test Updates**: Fixed all references to removed functions, added new explore_signals tests
+- **Integration**: Updated integration tests to use new signal exploration workflow
 
 **🎯 CRITICAL API IMPROVEMENTS - COMPLETE** ✅
 

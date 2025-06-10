@@ -122,10 +122,6 @@ def test_simple_api():
         fig = wv.plot(raw_file, config_file, show=False)
         print(f"✓ Simple plot created with {len(fig.data)} traces")
         
-        # Test with auto-config
-        fig_auto = wv.plot(raw_file, config=None, show=False)
-        print(f"✓ Auto-config plot created with {len(fig_auto.data)} traces")
-        
         return True
     except Exception as e:
         print(f"❌ Failed simple API test: {e}")
@@ -133,38 +129,27 @@ def test_simple_api():
         traceback.print_exc()
         return False
 
-def test_template_creation():
-    """Test configuration template creation."""
-    print("\n=== Testing Template Creation ===")
+def test_signal_exploration():
+    """Test signal exploration functionality."""
+    print("\n=== Testing Signal Exploration ===")
     
     try:
         raw_file = "prototype/script/Ring_Oscillator_7stage.raw"
-        template_file = "test_template.yaml"
         
-        # Clean up any existing template
-        if os.path.exists(template_file):
-            os.remove(template_file)
+        # Test explore_signals function
+        signals = wv.explore_signals(raw_file)
+        print(f"✓ Signal exploration completed, found {len(signals)} signals")
         
-        # Create template
-        wv.create_config_template(template_file, raw_file)
-        
-        # Verify template was created
-        if os.path.exists(template_file):
-            print(f"✓ Template created: {template_file}")
-            
-            # Test loading the template
-            config = wv.PlotConfig(template_file)
-            print(f"✓ Template loads correctly: {config}")
-            
-            # Clean up
-            os.remove(template_file)
+        # Verify we got a list of strings
+        if isinstance(signals, list) and len(signals) > 0:
+            print(f"✓ Signal list contains: {signals[:3]}...")  # Show first 3
             return True
         else:
-            print("❌ Template file was not created")
+            print("❌ Signal exploration returned invalid data")
             return False
             
     except Exception as e:
-        print(f"❌ Failed template creation test: {e}")
+        print(f"❌ Failed signal exploration test: {e}")
         return False
 
 def main():
@@ -178,7 +163,7 @@ def main():
         test_config_validation,
         test_advanced_plotter,
         test_simple_api,
-        test_template_creation
+        test_signal_exploration
     ]
     
     results = []

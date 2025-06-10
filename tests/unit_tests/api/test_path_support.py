@@ -11,7 +11,7 @@ import os
 from pathlib import Path
 from unittest.mock import Mock, patch, MagicMock
 
-from wave_view.api import plot, load_spice, create_config_template, validate_config
+from wave_view.api import plot, load_spice, explore_signals, validate_config
 from . import (
     create_temp_raw_file, 
     create_temp_yaml_config, 
@@ -88,8 +88,8 @@ class TestPathObjectSupport:
         finally:
             cleanup_temp_file(raw_file_str)
     
-    def test_create_config_template_path_support(self):
-        """Test that create_config_template() supports Path objects for both parameters."""
+    def test_explore_signals_path_support(self):
+        """Test that explore_signals() supports both string and Path objects."""
         # Create temporary raw file
         raw_file_str = create_temp_raw_file("test.raw")
         
@@ -99,30 +99,21 @@ class TestPathObjectSupport:
                 mock_data = create_mock_spice_data()
                 mock_spice_data_class.return_value = mock_data
                 
-                # Test with string paths
-                output_path1 = "test_config1.yaml"
-                create_config_template(output_path1, raw_file_str)
-                assert Path(output_path1).exists()
-                cleanup_temp_file(output_path1)
+                # Test with string path
+                signals1 = explore_signals(raw_file_str)
+                assert isinstance(signals1, list)
+                assert len(signals1) > 0
                 
-                # Test with Path objects
-                output_path2 = Path("test_config2.yaml")
+                # Test with Path object
                 raw_path = Path(raw_file_str)
-                create_config_template(output_path2, raw_path)
-                assert output_path2.exists()
-                cleanup_temp_file(str(output_path2))
+                signals2 = explore_signals(raw_path)
+                assert isinstance(signals2, list)
+                assert len(signals2) > 0
                 
-                # Test mixed usage (Path output, string raw file)
-                output_path3 = Path("test_config3.yaml")
-                create_config_template(output_path3, raw_file_str)
-                assert output_path3.exists()
-                cleanup_temp_file(str(output_path3))
-                
-                # Test without raw file (only output path as Path)
-                output_path4 = Path("test_config4.yaml")
-                create_config_template(output_path4)
-                assert output_path4.exists()
-                cleanup_temp_file(str(output_path4))
+                # Verify SpiceData was called with string paths (internal conversion)
+                calls = mock_spice_data_class.call_args_list
+                for call in calls:
+                    assert isinstance(call[0][0], str)  # Should be converted to string
                 
         finally:
             cleanup_temp_file(raw_file_str)
@@ -179,25 +170,27 @@ class TestPathValidationErrors:
     
     def test_plot_function_path_validation(self):
         """Test plot() function validates Path objects properly."""
+        config = get_basic_test_config()
+        
         # Test None input
         with pytest.raises(TypeError, match="file path must be a string or Path object, not None"):
-            plot(None)
+            plot(None, config)
         
         # Test invalid type
         with pytest.raises(TypeError, match="file path must be a string or Path object"):
-            plot(123)
+            plot(123, config)
         
         # Test empty string
         with pytest.raises(ValueError, match="file path cannot be empty"):
-            plot("")
+            plot("", config)
         
         # Test non-existent file (string)
         with pytest.raises(FileNotFoundError, match="SPICE raw file not found"):
-            plot("nonexistent.raw")
+            plot("nonexistent.raw", config)
         
         # Test non-existent file (Path)
         with pytest.raises(FileNotFoundError, match="SPICE raw file not found"):
-            plot(Path("nonexistent.raw"))
+            plot(Path("nonexistent.raw"), config)
     
     def test_load_spice_path_validation(self):
         """Test load_spice() function validates Path objects properly."""
@@ -221,35 +214,27 @@ class TestPathValidationErrors:
         with pytest.raises(FileNotFoundError, match="SPICE raw file not found"):
             load_spice(Path("nonexistent.raw"))
     
-    def test_create_config_template_path_validation(self):
-        """Test create_config_template() validates Path objects properly."""
-        # Test None output path
-        with pytest.raises(TypeError, match="output path must be a string or Path object, not None"):
-            create_config_template(None)
+    def test_explore_signals_path_validation(self):
+        """Test explore_signals() validates Path objects properly."""
+        # Test None input
+        with pytest.raises(TypeError, match="file path must be a string or Path object, not None"):
+            explore_signals(None)
         
-        # Test invalid type output path
-        with pytest.raises(TypeError, match="output path must be a string or Path object"):
-            create_config_template(123)
+        # Test invalid type
+        with pytest.raises(TypeError, match="file path must be a string or Path object"):
+            explore_signals(123)
         
-        # Test empty string output path
-        with pytest.raises(ValueError, match="output path cannot be empty"):
-            create_config_template("")
+        # Test empty string
+        with pytest.raises(ValueError, match="file path cannot be empty"):
+            explore_signals("")
         
-        # Test invalid type raw file
-        with pytest.raises(TypeError, match="raw file path must be a string or Path object"):
-            create_config_template("output.yaml", 123)
-        
-        # Test empty string raw file
-        with pytest.raises(ValueError, match="raw file path cannot be empty"):
-            create_config_template("output.yaml", "")
-        
-        # Test non-existent raw file (string)
+        # Test non-existent file (string)
         with pytest.raises(FileNotFoundError, match="SPICE raw file not found"):
-            create_config_template("output.yaml", "nonexistent.raw")
+            explore_signals("nonexistent.raw")
         
-        # Test non-existent raw file (Path)
+        # Test non-existent file (Path)
         with pytest.raises(FileNotFoundError, match="SPICE raw file not found"):
-            create_config_template("output.yaml", Path("nonexistent.raw"))
+            explore_signals(Path("nonexistent.raw"))
     
     def test_validate_config_path_validation(self):
         """Test validate_config() validates Path objects properly."""
@@ -330,10 +315,8 @@ class TestPathConsistency:
                 data = load_spice(raw_path)
                 assert data == mock_data
                 
-                output_path = Path("test_output.yaml")
-                create_config_template(output_path, raw_path)
-                assert output_path.exists()
-                cleanup_temp_file(str(output_path))
+                signals = explore_signals(raw_path)
+                assert isinstance(signals, list)
                 
                 warnings = validate_config(config_path, raw_path)
                 assert warnings == []
