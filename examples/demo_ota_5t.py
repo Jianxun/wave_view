@@ -14,7 +14,7 @@ for signal in data.signals:
 
 
 # Now proceed with plotting using YAML configuration
-custom_config = """
+custom_config = wv.config_from_yaml("""
 title: "SPICE Simulation - Key Signals"
 
 X:
@@ -35,7 +35,7 @@ Y:
 
 plot_height: 600
 show_rangeslider: true
-"""
+""")
 
 fig1 = wv.plot(spice_file, custom_config, show=True)
 
@@ -58,7 +58,7 @@ processed_data = {
 
 # YAML config referencing processed signals with "data." prefix
 # Using log scale for frequency axis (typical for Bode plots)
-ac_config = """
+ac_config = wv.config_from_yaml("""
 title: "AC Analysis - Frequency Response (Bode Plot)"
 
 X:
@@ -74,7 +74,7 @@ Y:
 
 plot_height: 600
 show_rangeslider: true
-"""
+""")
 
 # Create figure using the new processed_data parameter
 fig2 = wv.plot(spice_file, ac_config, processed_data=processed_data, show=True)

@@ -20,7 +20,9 @@ from .api import (
     load_spice,
     explore_signals,
     validate_config,
-    plot_batch
+    config_from_file,
+    config_from_yaml,
+    config_from_dict
 )
 
 # Convenience imports for power users
@@ -57,7 +59,11 @@ __all__ = [
     'load_spice',
     'explore_signals', 
     'validate_config',
-    'plot_batch',
+    
+    # Configuration factories
+    'config_from_file',
+    'config_from_yaml',
+    'config_from_dict',
     
     # Core classes
     'SpiceData',

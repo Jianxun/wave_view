@@ -2,11 +2,11 @@
 import wave_view as wv
 
 # Use the test data we have available
-spice_file = "../data/Ring_Oscillator_7stage.raw"
+spice_file = "./raw_data/Ring_Oscillator_7stage.raw"
 
 data = wv.load_spice(spice_file)
 
-custom_config = {
+custom_config = wv.config_from_dict({
     "title": "Ring Oscillator - Key Nodes",
     "X": {
         "signal_key": "raw.time", 
@@ -30,7 +30,7 @@ custom_config = {
     ],
     "plot_height": 600,
     "show_rangeslider": True
-}
+})
 
 fig1 = wv.plot(spice_file, custom_config, show=True)
 # %%
