@@ -1,0 +1,35 @@
+
+Note: No compatibility mode selected!
+
+
+Circuit: 
+
+Doing analysis at TEMP = 27.000000 and TNOM = 27.000000
+
+Using SPARSE 1.3 as Direct Linear Solver
+
+Initial Transient Solution
+--------------------------
+
+Node                                   Voltage
+----                                   -------
+vssa                                         0
+vdda                                       3.3
+i_bias                                0.983517
+out                                    1.51022
+in_n                                   1.51022
+in                                         1.5
+in_p                                       1.5
+x1.net2                               0.403978
+x1.net1                                2.24151
+v_src#branch                                 0
+v_jumper_in#branch                           0
+v_jumper_fb#branch                -1.75475e-15
+v_vdda#branch                     -0.000144664
+v_vssa#branch                      3.71771e-15
+
+ Reference value :  3.24228e-06
+ Reference value :  6.86628e-06
+No. of Data Rows : 10008
+binary raw file "/foss/designs/simulations/tb_ota_5t/test_tran/results.raw"
+Note: Simulation executed from .control section 

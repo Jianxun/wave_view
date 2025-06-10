@@ -61,5 +61,11 @@ Thumbs.db
 # MyPy
 .mypy_cache/
 
+# MyPy
+.mypy_cache/
+
 # Development tools
-.pre-commit-config.yaml 
+.pre-commit-config.yaml
+
+# Git workflow
+.git_commit_message 

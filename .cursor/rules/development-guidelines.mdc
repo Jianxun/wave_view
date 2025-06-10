@@ -36,11 +36,54 @@ This project follows a task-based and test-driven development approach across mu
 - Prefer explicit over implicit code
 - Document functions and classes with docstrings
 
+## Version Control Guidelines
+- Make frequent, atomic commits with descriptive messages
+- Use conventional commit format: `type(scope): description`
+- For multi-line commit messages, create `.git_commit_message` file and use `git commit -F .git_commit_message`
+- Ensure `.git_commit_message` is in .gitignore to avoid tracking temporary commit files
+- Create feature branches for significant changes
+- Ensure all tests pass before committing
+- Tag releases with semantic versioning (major.minor.patch)
+
 ## Testing Organization
 - Organize test files as `test_*.py` in the `/tests/` directory
 - Use pytest for test execution and assertions
 - For complex components, create subdirectories: `/tests/{component}/`
 - Save test fixtures in separate files or a fixtures directory
+
+### Incremental Test Development
+**CRITICAL RULE**: Always develop tests incrementally, one test case at a time:
+- Create ONE test case and run it to ensure it passes
+- Only move to the next test case after the current one is verified
+- Use fast and incremental iteration instead of bulk edits
+- This approach enables easier troubleshooting and maintenance
+- If a test fails, fix it immediately before adding more tests
+
+### Testing Strategies
+- **Unit Tests**: Test individual functions/methods in isolation
+- **Integration Tests**: Test component interactions
+- **End-to-End Tests**: Test complete user workflows
+- Aim for 90%+ coverage on core modules
+- Test both happy path and error conditions
+- Use descriptive test names that explain the scenario
+- Mock external dependencies to ensure test reliability
+
+## Debugging and Error Handling
+- Use systematic debugging: reproduce, isolate, identify root cause, fix, verify
+- Add logging statements for complex logic flows
+- Write descriptive error messages that guide users toward solutions
+- Use appropriate exception types and handle edge cases gracefully
+- Document known issues and their workarounds in `context/memory.md`
+- Test error conditions as thoroughly as success conditions
+
+## API Design Guidelines
+- Design APIs that are intuitive for first-time users
+- Provide sensible defaults to minimize required parameters
+- Use consistent parameter names across functions
+- Support both simple and advanced use cases
+- Maintain backward compatibility in minor version updates
+- Provide clear examples in docstrings
+- Return consistent data types and structures
 
 ## Cross-Session Continuity
 - Update context files at the end of each session:
@@ -62,5 +105,5 @@ This project follows a task-based and test-driven development approach across mu
 1. Update the todo list to mark task completion
 2. Update the memory file to reflect current project state
 3. Consider adding a new task for refactoring if appropriate
-4. Commit changes with a descriptive message
+4. Commit changes with a descriptive message using `.git_commit_message` file
 5. End the session or move to the next task
