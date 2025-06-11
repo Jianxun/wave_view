@@ -34,6 +34,7 @@ Y:
       Supply Current: "i(v_vdda)"
 
 plot_height: 600
+show_zoom_buttons: true
 show_rangeslider: true
 """)
 
@@ -73,6 +74,7 @@ Y:
       Output: "data.vdb_out"
 
 plot_height: 600
+show_zoom_buttons: False
 show_rangeslider: true
 """)
 

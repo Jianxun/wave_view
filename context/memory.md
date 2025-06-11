@@ -184,16 +184,22 @@ All 23 failing tests have been successfully fixed:
 - ✅ **Final Validation**: All 220 tests passing, 91% coverage, multi-figure removal comprehensive and complete
 - ✅ **Branch Status**: Ready for merge - all multi-figure functionality cleanly removed with proper migration guidance
 
-### **UI Polish Requirements** (Pending Multi-Figure Completion)
-1. **Zoom Button Configuration**: Option to disable zoom buttons at top of graph
-2. **Zoom XY Functionality**: Fix broken zoom XY button behavior
-3. **Plot Title Alignment**: Center-justify plot titles instead of left alignment
+### **UI Polish Improvements** ✅ **COMPLETED**
+1. **Zoom Button Configuration**: ✅ Existing `show_zoom_buttons` configuration works correctly
+2. **Zoom XY Functionality**: ✅ Fixed broken zoom XY button - now properly resets all axis fixedrange properties
+3. **Plot Title Alignment**: ✅ Implemented center-aligned titles by default with configurable positioning
+
+#### **Technical Implementation Details**
+- **Fixed Zoom XY Bug**: Updated zoom button args to explicitly set `xaxis.fixedrange: False` and `yaxis.fixedrange: False`
+- **Title Configuration**: Added structured title object with `x` and `xanchor` properties (default: center)
+- **Configuration Options**: Added `title_x` and `title_xanchor` for custom title positioning
+- **Backward Compatibility**: All existing configurations continue to work unchanged
 
 ### **Other Issues**
 - **Error message enhancement opportunity** for signal name suggestions (reader.py:97-101)
 
 ## Open Questions
-1. **Zoom Button Configuration**: Should zoom button visibility be per-plot configurable or global setting?
+None currently - UI polish requirements have been addressed.
 
 ## Next Steps
 

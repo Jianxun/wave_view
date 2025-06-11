@@ -221,7 +221,6 @@ class SpicePlotter:
                 ))
 
         # Global layout settings
-        layout_update_dict["title_text"] = plot_config.get("title", "SPICE Waveform Plot")
         layout_update_dict["height"] = plot_config.get("plot_height", 600 if num_y_axes <= 1 else 300 * num_y_axes)
         layout_update_dict["dragmode"] = plot_config.get("default_dragmode", "zoom")
 
@@ -239,8 +238,13 @@ class SpicePlotter:
 
         # Configure zoom buttons
         if plot_config.get("show_zoom_buttons", True) and num_y_axes > 0:
+            # Zoom XY (both X and Y axes free) - Fixed to reset fixedrange properties
+            xy_zoom_args = {"dragmode": "zoom", "xaxis.fixedrange": False}
+            for axis_id_str in plotly_y_axis_ids:
+                xy_zoom_args[f"{axis_id_str}.fixedrange"] = False
+            
             zoom_buttons = [
-                dict(label="Zoom XY", method="relayout", args=[{"dragmode": "zoom"}])
+                dict(label="Zoom XY", method="relayout", args=[xy_zoom_args])
             ]
 
             # Zoom Y (all Y axes, X fixed)
@@ -265,6 +269,17 @@ class SpicePlotter:
                     buttons=zoom_buttons
                 )
             ]
+
+        # Configure title alignment (center by default, configurable)
+        title_text = plot_config.get("title", "SPICE Waveform Plot")
+        title_x = plot_config.get("title_x", 0.5)  # Center by default
+        title_xanchor = plot_config.get("title_xanchor", "center")  # Center anchor by default
+        
+        layout_update_dict["title"] = {
+            "text": title_text,
+            "x": title_x,
+            "xanchor": title_xanchor
+        }
 
         fig.update_layout(**layout_update_dict)
         return fig
