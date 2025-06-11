@@ -13,7 +13,8 @@ Features
 
 * **Modern API Design**: Clean 3-step workflow (Discovery → Configuration → Plotting)
 * **YAML Configuration**: Flexible configuration system with file, string, or dict input
-* **Advanced Plotting**: Log scale support, processed data integration, customizable themes
+* **Complex Signal Processing**: Full support for AC analysis with complex numbers for transfer functions
+* **Advanced Plotting**: Log scale support, Bode plots, processed data integration, customizable themes
 * **Case-insensitive**: All signal names normalized for easy access
 * **Path Object Support**: Modern pathlib integration throughout
 * **Comprehensive Validation**: Clear error messages guide users to solutions

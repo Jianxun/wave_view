@@ -179,22 +179,28 @@
 
 ### 📊 **UI Polish Status**: All identified issues resolved ✅ **SUCCESS**
 
-## Current Sprint - AC Simulation Parsing Issues
+## Current Sprint - AC Simulation Complex Number Fix ✅ **COMPLETED**
 
-### 🔧 **AC Simulation Complex Number Parsing** (HIGH PRIORITY)
-- [ ] **Investigate AC Simulation Data Parsing**
-  - Issue: AC simulation "v(out)" should return complex numbers but returning all real numbers
-  - Context: User was working with AC analysis transfer function plots
-  - Expected: Complex voltage/current values for AC analysis
-  - Actual: All real number values being returned
-  - Impact: Cannot properly calculate magnitude/phase for transfer functions
+### 🔧 **AC Simulation Complex Number Parsing** ✅ **FIXED**
+- [X] **Investigate AC Simulation Data Parsing** ✅ **COMPLETED**
+  - Issue: AC simulation "v(out)" was returning real numbers instead of complex numbers
+  - Root Cause: `dtype=float` parameter in `reader.py` line 118 was forcing conversion and discarding imaginary parts
+  - Solution: Removed dtype constraint to preserve original spicelib data types
 
-### 📋 **Investigation Tasks**
-- [ ] Examine SPICE raw file format for AC analysis results
-- [ ] Check reader.py parsing logic for complex number handling
-- [ ] Verify AC vs transient analysis data type handling
-- [ ] Test with actual AC simulation files (e.g., tb_ota_5t AC results)
-- [ ] Ensure magnitude and phase calculations work correctly
+- [X] **Fix Implementation** ✅ **COMPLETED**
+  - Fixed `src/wave_view/core/reader.py` get_signal() method to preserve complex numbers
+  - Updated test utility `assert_signal_data_integrity()` to handle both real and complex dtypes
+  - Added comprehensive test suite `test_reader_complex_numbers.py` with 6 test cases
+  - Verified magnitude/phase calculations work correctly for transfer function analysis
+
+### 📋 **Investigation Tasks** ✅ **ALL COMPLETED**
+- [X] Examined SPICE raw file format for AC analysis results (contains `Flags: complex`)
+- [X] Checked reader.py parsing logic for complex number handling (found dtype=float bug)
+- [X] Verified AC vs transient analysis data type handling (both work correctly now)
+- [X] Tested with actual AC simulation files (tb_ota_5t AC results working perfectly)
+- [X] Ensured magnitude and phase calculations work correctly (✅ verified with real data)
+
+### 📊 **Fix Results**: AC analysis with complex numbers fully functional ✅ **SUCCESS**
 
 ## Previous Sprint - Multi-Figure Removal ✅ **COMPLETED**
 

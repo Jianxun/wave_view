@@ -124,3 +124,47 @@ show_rangeslider: true
 fig2 = wv.plot(spice_file, config=custom_config, processed_data=processed_data, show=True)
 
 # %%
+spice_file = "./raw_data/tb_ota_5t/test_ac/results.raw"
+
+data = wv.load_spice(spice_file)
+
+#print(f"Total signals: {len(data.signals)}")
+#for signal in data.signals:
+#    print(f"  - {signal}")
+print(data.get_signal("v(out)"))
+
+processed_data = {
+    "tf_db" : 20*np.log10(np.abs(data.get_signal("v(out)"))),
+    "tf_phase" : np.angle(data.get_signal("v(out)"))
+}
+
+print(processed_data)
+
+
+
+# Now proceed with plotting using YAML configuration
+custom_config = wv.config_from_yaml("""
+title: "AC Analysis - Frequency Response"
+
+X:
+  signal_key: "frequency"
+  label: "Frequency (Hz)"
+  scale: "log"
+                                    
+Y:
+  - label: "Magnitude (dB)"
+    signals:
+      Magnitude: "data.tf_db"
+  - label: "Phase (deg)"
+    signals:
+      Phase: "data.tf_phase"
+
+                                    
+plot_height: 600
+show_zoom_buttons: false
+show_rangeslider: true
+""")
+
+fig2 = wv.plot(spice_file, config=custom_config, processed_data=processed_data, show=True)
+
+# %%

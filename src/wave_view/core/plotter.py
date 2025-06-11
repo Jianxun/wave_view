@@ -151,7 +151,16 @@ class SpicePlotter:
                 if signal_key_str.startswith("raw."):
                     trace_name = signal_key_str[4:]  # Remove "raw."
                 
-                return self._spice_data.get_signal(trace_name)
+                signal_data = self._spice_data.get_signal(trace_name)
+                
+                # Convert complex signals to real for Plotly compatibility
+                # For complex signals, take the real part (magnitude would be np.abs())
+                if np.iscomplexobj(signal_data):
+                    # For most cases like frequency, time, we want the real part
+                    # For AC analysis voltages/currents, users should use processed_data for magnitude/phase
+                    signal_data = np.real(signal_data)
+                
+                return signal_data
 
         fig = go.Figure()
 

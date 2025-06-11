@@ -142,6 +142,42 @@ You can include computed signals alongside SPICE data:
 
    fig = wv.plot("simulation.raw", config, processed_data=processed_signals)
 
+AC Analysis with Complex Numbers
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+wave_view automatically handles complex numbers from AC analysis for transfer function analysis:
+
+.. code-block:: python
+
+   import numpy as np
+
+   # Load AC analysis data (contains complex numbers)
+   spice_data = wv.load_spice("ac_analysis.raw")
+   v_out = spice_data.get_signal("v(out)")  # Complex numbers preserved
+   
+   # Process for Bode plot
+   processed_signals = {
+       "magnitude_db": 20 * np.log10(np.abs(v_out)),
+       "phase_deg": np.angle(v_out) * 180 / np.pi
+   }
+
+   config = wv.config_from_yaml("""
+   title: "Bode Plot"
+   X:
+     signal_key: "frequency"
+     label: "Frequency (Hz)"
+     scale: "log"
+   Y:
+     - label: "Magnitude (dB)"
+       signals:
+         Output: "data.magnitude_db"
+     - label: "Phase (°)"
+       signals:
+         Phase: "data.phase_deg"
+   """)
+
+   fig = wv.plot("ac_analysis.raw", config, processed_data=processed_signals)
+
 Configuration Validation
 ~~~~~~~~~~~~~~~~~~~~~~~~
 

@@ -115,7 +115,7 @@ class SpiceData:
             )
         
         trace = self._raw_data.get_trace(original_name)
-        return np.array(trace, dtype=float)
+        return np.array(trace)
     
     def get_signals(self, names: List[str]) -> Dict[str, np.ndarray]:
         """

@@ -122,15 +122,60 @@ Combine SPICE signals with computed power calculations:
 
    fig = wv.plot("power_analysis.raw", config, processed_data=processed_signals)
 
-AC Analysis
------------
+AC Analysis with Complex Signal Processing
+--------------------------------------------
 
-Plot frequency response from AC analysis:
+AC analysis results contain complex numbers for voltage and current signals, enabling proper 
+magnitude and phase analysis for transfer functions and Bode plots:
 
 .. code-block:: python
 
+   import wave_view as wv
+   import numpy as np
+
+   # Load AC analysis data (contains complex numbers)
+   data = wv.load_spice("ac_analysis.raw")
+   
+   # AC signals are automatically returned as complex numbers
+   v_out = data.get_signal("v(out)")  # Returns complex128 array
+   v_in = data.get_signal("v(in)")    # Returns complex128 array
+   
+   print(f"v_out dtype: {v_out.dtype}")  # complex128
+   print(f"Is complex: {np.iscomplexobj(v_out)}")  # True
+
+**Basic AC Magnitude Plot:**
+
+.. code-block:: python
+
+   # Simple magnitude plot (uses real part of complex signal)
    config = wv.config_from_yaml("""
-   title: "Frequency Response"
+   title: "AC Magnitude Response"
+   X:
+     signal_key: "frequency"
+     label: "Frequency (Hz)"
+     scale: "log"
+   Y:
+     - label: "Voltage (V)"
+       signals:
+         Output: "v(out)"  # Automatically uses real part
+   """)
+
+   fig = wv.plot("ac_analysis.raw", config)
+
+**Complete Bode Plot (Magnitude and Phase):**
+
+.. code-block:: python
+
+   # Process complex signals for magnitude and phase analysis
+   processed_data = {
+       "magnitude_db": 20 * np.log10(np.abs(v_out)),      # Magnitude in dB
+       "phase_deg": np.angle(v_out) * 180 / np.pi,        # Phase in degrees
+       "magnitude_linear": np.abs(v_out),                  # Linear magnitude
+       "phase_rad": np.angle(v_out)                        # Phase in radians
+   }
+
+   config = wv.config_from_yaml("""
+   title: "Transfer Function Bode Plot"
    X:
      signal_key: "frequency"
      label: "Frequency (Hz)"
@@ -138,10 +183,106 @@ Plot frequency response from AC analysis:
    Y:
      - label: "Magnitude (dB)"
        signals:
-         Output: "v(out)"
+         H(jω): "data.magnitude_db"
+     - label: "Phase (degrees)"
+       signals:
+         φ(jω): "data.phase_deg"
+   plot_height: 800
+   show_zoom_buttons: true
+   show_rangeslider: true
    """)
 
-   fig = wv.plot("ac_analysis.raw", config)
+   fig = wv.plot("ac_analysis.raw", config, processed_data=processed_data)
+
+**Transfer Function Analysis:**
+
+.. code-block:: python
+
+   # Calculate transfer function H(jω) = V_out / V_in
+   transfer_function = v_out / v_in
+   
+   # Process for comprehensive analysis
+   processed_data = {
+       "tf_magnitude_db": 20 * np.log10(np.abs(transfer_function)),
+       "tf_phase_deg": np.angle(transfer_function) * 180 / np.pi,
+       "input_magnitude_db": 20 * np.log10(np.abs(v_in)),
+       "output_magnitude_db": 20 * np.log10(np.abs(v_out))
+   }
+
+   config = wv.config_from_yaml("""
+   title: "Complete Transfer Function Analysis"
+   X:
+     signal_key: "frequency"
+     label: "Frequency (Hz)"
+     scale: "log"
+   Y:
+     - label: "Transfer Function Magnitude (dB)"
+       signals:
+         "|H(jω)|": "data.tf_magnitude_db"
+     - label: "Transfer Function Phase (°)"
+       signals:
+         "∠H(jω)": "data.tf_phase_deg"
+     - label: "Input/Output Magnitude (dB)"
+       signals:
+         Input: "data.input_magnitude_db"
+         Output: "data.output_magnitude_db"
+   plot_height: 900
+   """)
+
+   fig = wv.plot("ac_analysis.raw", config, processed_data=processed_data)
+
+**Working with Complex Numbers:**
+
+.. code-block:: python
+
+   # AC analysis preserves complex numbers for calculations
+   frequency = data.get_signal("frequency")  # Real (even though stored as complex)
+   v_out = data.get_signal("v(out)")         # Complex
+   
+   # Extract components
+   real_part = np.real(v_out)
+   imag_part = np.imag(v_out)
+   magnitude = np.abs(v_out)
+   phase_rad = np.angle(v_out)
+   
+   # Complex signal analysis
+   processed_data = {
+       "real_component": real_part,
+       "imaginary_component": imag_part,
+       "magnitude": magnitude,
+       "phase_unwrapped": np.unwrap(phase_rad) * 180 / np.pi  # Unwrap phase
+   }
+
+   config = wv.config_from_yaml("""
+   title: "Complex Signal Components"
+   X:
+     signal_key: "frequency"
+     label: "Frequency (Hz)"
+     scale: "log"
+   Y:
+     - label: "Real/Imaginary Parts"
+       signals:
+         Real: "data.real_component"
+         Imaginary: "data.imaginary_component"
+     - label: "Magnitude"
+       signals:
+         "|V|": "data.magnitude"
+     - label: "Unwrapped Phase (°)"
+       signals:
+         "φ": "data.phase_unwrapped"
+   """)
+
+   fig = wv.plot("ac_analysis.raw", config, processed_data=processed_data)
+
+.. note::
+   
+   **Complex Number Handling:**
+   
+   - Raw AC signals are preserved as complex numbers (``complex128``)
+   - Use ``np.abs()`` for magnitude and ``np.angle()`` for phase
+   - Frequency and time signals are automatically converted to real numbers
+   - Raw signals in plots automatically use the real part for display
+   - Use ``processed_data`` parameter for magnitude/phase calculations
 
 YAML Configuration File
 -----------------------
