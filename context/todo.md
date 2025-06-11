@@ -151,9 +151,54 @@
   - `_configure_plotly_renderer() -> None` and `_is_jupyter_environment() -> bool`
   - Consistent type annotation across all functions
 
-## Current Sprint - UI Polish & Multi-Figure Removal
+## Current Sprint - UI Polish Improvements ✅ **COMPLETED**
 
-### 🗑️ **Remove Multi-Figure Support** (HIGH PRIORITY)
+### 🎨 **UI Polish Tasks** (HIGH PRIORITY) ✅ **ALL COMPLETED**
+
+- [X] **Fix Zoom XY Functionality** ✅ **COMPLETED**
+  - Fixed broken Zoom XY button that only set dragmode without resetting fixedrange properties
+  - Now properly resets both X and Y axis fixedrange to False for free zooming
+  - Verified all zoom buttons work correctly (Zoom XY, Zoom Y, Zoom X)
+
+- [X] **Implement Center Title Alignment** ✅ **COMPLETED**
+  - Added default center alignment for plot titles (x=0.5, xanchor=center)
+  - Replaced old title_text with structured title configuration
+  - Improved visual consistency with centered titles by default
+
+- [X] **Add Configurable Title Alignment** ✅ **COMPLETED**
+  - Added `title_x` configuration option (0.0=left, 0.5=center, 1.0=right)
+  - Added `title_xanchor` configuration option ("left", "center", "right")
+  - Provides full flexibility for custom title positioning
+  - Maintains backward compatibility with existing configurations
+
+- [X] **Comprehensive Test Coverage** ✅ **COMPLETED**
+  - Created `test_plotter_ui_polish.py` with 8 comprehensive tests
+  - Tests cover zoom functionality, title alignment, and integration scenarios
+  - All 228 tests pass with 92% coverage maintained
+  - Verified no regressions in existing functionality
+
+### 📊 **UI Polish Status**: All identified issues resolved ✅ **SUCCESS**
+
+## Current Sprint - AC Simulation Parsing Issues
+
+### 🔧 **AC Simulation Complex Number Parsing** (HIGH PRIORITY)
+- [ ] **Investigate AC Simulation Data Parsing**
+  - Issue: AC simulation "v(out)" should return complex numbers but returning all real numbers
+  - Context: User was working with AC analysis transfer function plots
+  - Expected: Complex voltage/current values for AC analysis
+  - Actual: All real number values being returned
+  - Impact: Cannot properly calculate magnitude/phase for transfer functions
+
+### 📋 **Investigation Tasks**
+- [ ] Examine SPICE raw file format for AC analysis results
+- [ ] Check reader.py parsing logic for complex number handling
+- [ ] Verify AC vs transient analysis data type handling
+- [ ] Test with actual AC simulation files (e.g., tb_ota_5t AC results)
+- [ ] Ensure magnitude and phase calculations work correctly
+
+## Previous Sprint - Multi-Figure Removal ✅ **COMPLETED**
+
+### 🗑️ **Remove Multi-Figure Support** ✅ **COMPLETED**
 **Decision Made**: Remove multi-figure feature to simplify API and reduce maintenance burden
 
 #### **Phase 1: Core Code Removal** ✅ **COMPLETED - COMMITTED TO BRANCH**

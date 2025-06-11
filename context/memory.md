@@ -184,18 +184,40 @@ All 23 failing tests have been successfully fixed:
 - ✅ **Final Validation**: All 220 tests passing, 91% coverage, multi-figure removal comprehensive and complete
 - ✅ **Branch Status**: Ready for merge - all multi-figure functionality cleanly removed with proper migration guidance
 
-### **UI Polish Requirements** (Pending Multi-Figure Completion)
-1. **Zoom Button Configuration**: Option to disable zoom buttons at top of graph
-2. **Zoom XY Functionality**: Fix broken zoom XY button behavior
-3. **Plot Title Alignment**: Center-justify plot titles instead of left alignment
+### **UI Polish Improvements** ✅ **COMPLETED**
+1. **Zoom Button Configuration**: ✅ Existing `show_zoom_buttons` configuration works correctly
+2. **Zoom XY Functionality**: ✅ Fixed broken zoom XY button - now properly resets all axis fixedrange properties
+3. **Plot Title Alignment**: ✅ Implemented center-aligned titles by default with configurable positioning
+
+#### **Technical Implementation Details**
+- **Fixed Zoom XY Bug**: Updated zoom button args to explicitly set `xaxis.fixedrange: False` and `yaxis.fixedrange: False`
+- **Title Configuration**: Added structured title object with `x` and `xanchor` properties (default: center)
+- **Configuration Options**: Added `title_x` and `title_xanchor` for custom title positioning
+- **Backward Compatibility**: All existing configurations continue to work unchanged
+
+### **New Issues Identified**
+- **AC Simulation Complex Number Parsing**: AC analysis results should return complex numbers for voltage/current signals but currently returning only real numbers
+  - **Context**: User working on transfer function analysis from AC simulation
+  - **Expected**: Complex numbers to enable magnitude/phase calculations  
+  - **Impact**: Cannot properly analyze frequency response characteristics
+  - **Location**: Likely in `src/wave_view/core/reader.py` SPICE file parsing logic
 
 ### **Other Issues**
 - **Error message enhancement opportunity** for signal name suggestions (reader.py:97-101)
 
 ## Open Questions
-1. **Zoom Button Configuration**: Should zoom button visibility be per-plot configurable or global setting?
+1. **AC Analysis Data Types**: How should complex numbers be handled in SPICE raw file parsing?
+2. **Transfer Function Calculations**: What's the best way to expose magnitude/phase data to users?
 
 ## Next Steps
+
+### **AC Simulation Data Parsing Investigation** (NEXT SESSION)
+1. **Examine AC Raw File Format**: Understand how complex numbers are stored in SPICE AC analysis files
+2. **Debug reader.py Logic**: Check if complex number parsing is implemented correctly
+3. **Test Transfer Function Workflow**: Verify magnitude/phase calculations work as expected
+4. **User Experience**: Ensure AC analysis data is accessible and usable for frequency response plots
+
+### **Completed Sprints**
 
 ### **Multi-Figure Removal Sprint** ✅ **COMPLETED**
 - **Phase 1**: ✅ **COMPLETED** - Core removal from PlotConfig class and tests  
