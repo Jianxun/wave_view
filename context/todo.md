@@ -179,6 +179,23 @@
 
 ### 📊 **UI Polish Status**: All identified issues resolved ✅ **SUCCESS**
 
+## Current Sprint - AC Simulation Parsing Issues
+
+### 🔧 **AC Simulation Complex Number Parsing** (HIGH PRIORITY)
+- [ ] **Investigate AC Simulation Data Parsing**
+  - Issue: AC simulation "v(out)" should return complex numbers but returning all real numbers
+  - Context: User was working with AC analysis transfer function plots
+  - Expected: Complex voltage/current values for AC analysis
+  - Actual: All real number values being returned
+  - Impact: Cannot properly calculate magnitude/phase for transfer functions
+
+### 📋 **Investigation Tasks**
+- [ ] Examine SPICE raw file format for AC analysis results
+- [ ] Check reader.py parsing logic for complex number handling
+- [ ] Verify AC vs transient analysis data type handling
+- [ ] Test with actual AC simulation files (e.g., tb_ota_5t AC results)
+- [ ] Ensure magnitude and phase calculations work correctly
+
 ## Previous Sprint - Multi-Figure Removal ✅ **COMPLETED**
 
 ### 🗑️ **Remove Multi-Figure Support** ✅ **COMPLETED**

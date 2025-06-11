@@ -195,13 +195,29 @@ All 23 failing tests have been successfully fixed:
 - **Configuration Options**: Added `title_x` and `title_xanchor` for custom title positioning
 - **Backward Compatibility**: All existing configurations continue to work unchanged
 
+### **New Issues Identified**
+- **AC Simulation Complex Number Parsing**: AC analysis results should return complex numbers for voltage/current signals but currently returning only real numbers
+  - **Context**: User working on transfer function analysis from AC simulation
+  - **Expected**: Complex numbers to enable magnitude/phase calculations  
+  - **Impact**: Cannot properly analyze frequency response characteristics
+  - **Location**: Likely in `src/wave_view/core/reader.py` SPICE file parsing logic
+
 ### **Other Issues**
 - **Error message enhancement opportunity** for signal name suggestions (reader.py:97-101)
 
 ## Open Questions
-None currently - UI polish requirements have been addressed.
+1. **AC Analysis Data Types**: How should complex numbers be handled in SPICE raw file parsing?
+2. **Transfer Function Calculations**: What's the best way to expose magnitude/phase data to users?
 
 ## Next Steps
+
+### **AC Simulation Data Parsing Investigation** (NEXT SESSION)
+1. **Examine AC Raw File Format**: Understand how complex numbers are stored in SPICE AC analysis files
+2. **Debug reader.py Logic**: Check if complex number parsing is implemented correctly
+3. **Test Transfer Function Workflow**: Verify magnitude/phase calculations work as expected
+4. **User Experience**: Ensure AC analysis data is accessible and usable for frequency response plots
+
+### **Completed Sprints**
 
 ### **Multi-Figure Removal Sprint** ✅ **COMPLETED**
 - **Phase 1**: ✅ **COMPLETED** - Core removal from PlotConfig class and tests  
