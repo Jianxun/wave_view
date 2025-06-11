@@ -130,17 +130,22 @@ def create_temporary_invalid_file():
     return temp_path
 
 
-def assert_signal_data_integrity(data_array, expected_length=None, expected_dtype=float):
+def assert_signal_data_integrity(data_array, expected_length=None, expected_dtype=None):
     """
     Common assertions for signal data integrity.
     
     Args:
         data_array: Numpy array to validate
         expected_length: Expected length of array (optional)
-        expected_dtype: Expected data type
+        expected_dtype: Expected data type (optional). If None, any numeric dtype is accepted.
     """
     assert isinstance(data_array, np.ndarray), "Signal data should be numpy array"
-    assert data_array.dtype == expected_dtype, f"Expected dtype {expected_dtype}, got {data_array.dtype}"
+    
+    if expected_dtype is not None:
+        assert data_array.dtype == expected_dtype, f"Expected dtype {expected_dtype}, got {data_array.dtype}"
+    else:
+        # Ensure it's a numeric dtype (supports both real and complex)
+        assert np.issubdtype(data_array.dtype, np.number), f"Expected numeric dtype, got {data_array.dtype}"
     
     if expected_length is not None:
         assert len(data_array) == expected_length, f"Expected length {expected_length}, got {len(data_array)}"

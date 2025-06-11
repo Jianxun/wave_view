@@ -19,7 +19,7 @@ fig = wv.plot("simulation.raw", config)  # Required config, no magic
 
 ### **Package Status** 
 - **Installation**: `pip install -e .` (development mode)
-- **Test Coverage**: ✅ **ALL PASSING**: 220 passing, 0 failing (Phase 3 multi-figure removal COMPLETE)
+- **Test Coverage**: ✅ **ALL PASSING**: 234 passing, 0 failing (includes new AC complex number tests)
 - **API Coverage**: 87% with comprehensive validation
 - **Overall Coverage**: 91% with comprehensive test suite
 - **Repository Structure**: Modern src/ layout ready for PyPI publication
@@ -195,19 +195,35 @@ All 23 failing tests have been successfully fixed:
 - **Configuration Options**: Added `title_x` and `title_xanchor` for custom title positioning
 - **Backward Compatibility**: All existing configurations continue to work unchanged
 
-### **New Issues Identified**
-- **AC Simulation Complex Number Parsing**: AC analysis results should return complex numbers for voltage/current signals but currently returning only real numbers
-  - **Context**: User working on transfer function analysis from AC simulation
-  - **Expected**: Complex numbers to enable magnitude/phase calculations  
-  - **Impact**: Cannot properly analyze frequency response characteristics
-  - **Location**: Likely in `src/wave_view/core/reader.py` SPICE file parsing logic
+### **Recently Fixed Issues** ✅
+
+#### **AC Simulation Complex Number Parsing** ✅ **FIXED**
+- **Issue**: AC analysis results were returning only real numbers instead of complex numbers
+- **Root Cause**: Line 118 in `src/wave_view/core/reader.py` forced `dtype=float` conversion, discarding imaginary parts
+- **Fix**: Removed `dtype=float` parameter to preserve original data types from spicelib
+- **Impact**: Transfer function analysis (magnitude/phase) now works correctly for AC simulations
+- **Test Coverage**: Added comprehensive test suite in `tests/unit_tests/reader/test_reader_complex_numbers.py`
+- **Verification**: ✅ Complex signals preserved, magnitude/phase calculations work, mixed real/complex signals supported
+
+#### **Plotly JSON Serialization for Complex Numbers** ✅ **FIXED**
+- **Issue**: "Object of type complex is not JSON serializable" when plotting AC data
+- **Root Cause**: Complex numbers from raw AC signals were passed directly to Plotly without conversion
+- **Fix**: Added complex number handling in plotter's `_get_signal_data()` function to convert complex raw signals to real parts
+- **Impact**: AC frequency response plots now display correctly without JSON serialization errors
+- **Verification**: ✅ AC analysis plots work, transient analysis unaffected, all tests pass
+
+#### **Documentation Updates for AC Analysis** ✅ **COMPLETED**
+- **Updated examples.rst**: Replaced basic AC example with comprehensive complex signal processing guide
+- **Enhanced quickstart.rst**: Added AC analysis section to advanced features
+- **Updated index.rst**: Added "Complex Signal Processing" to features list
+- **Content Added**: Bode plot examples, transfer function analysis, complex number handling guide
+- **Documentation Build**: ✅ Successfully built with new AC analysis examples
 
 ### **Other Issues**
 - **Error message enhancement opportunity** for signal name suggestions (reader.py:97-101)
 
 ## Open Questions
-1. **AC Analysis Data Types**: How should complex numbers be handled in SPICE raw file parsing?
-2. **Transfer Function Calculations**: What's the best way to expose magnitude/phase data to users?
+None - AC simulation complex number parsing issue has been resolved.
 
 ## Next Steps
 
