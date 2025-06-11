@@ -52,10 +52,10 @@ def test_config_loading():
     config_file = "prototype/script/plot_config.yaml"
     
     try:
-        config = wv.PlotConfig(config_file)
+        config = wv.config_from_file(config_file)
         print(f"✓ Loaded configuration: {config}")
-        print(f"✓ Figure count: {config.figure_count}")
-        print(f"✓ Multi-figure: {config.is_multi_figure}")
+        print(f"✓ Config type: {type(config)}")
+        print(f"✓ Config has title: {'title' in config.config}")
         return config
     except Exception as e:
         print(f"❌ Failed to load configuration: {e}")

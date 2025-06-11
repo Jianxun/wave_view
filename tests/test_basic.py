@@ -28,20 +28,22 @@ class TestPlotConfig(unittest.TestCase):
         }
         
         config = PlotConfig(config_dict)
-        self.assertEqual(config.figure_count, 1)
-        self.assertFalse(config.is_multi_figure)
         self.assertEqual(config.config["title"], "Test Plot")
+        self.assertIn("X", config.config)
+        self.assertIn("Y", config.config)
     
     def test_multi_figure_config(self):
-        """Test multi-figure configuration."""
+        """Test multi-figure configuration rejection."""
         config_list = [
             {"title": "Figure 1", "X": {"signal_key": "raw.time"}, "Y": []},
             {"title": "Figure 2", "X": {"signal_key": "raw.time"}, "Y": []}
         ]
         
-        config = PlotConfig(config_list)
-        self.assertEqual(config.figure_count, 2)
-        self.assertTrue(config.is_multi_figure)
+        # Multi-figure configurations should now be rejected
+        with self.assertRaises(ValueError) as context:
+            PlotConfig(config_list)
+        
+        self.assertIn("Multi-figure configurations are no longer supported", str(context.exception))
     
     def test_config_validation(self):
         """Test basic configuration validation."""
@@ -88,7 +90,8 @@ class TestPlotConfig(unittest.TestCase):
         try:
             config = config_from_file(temp_path)
             self.assertEqual(config.config["title"], "Test YAML Config")
-            self.assertFalse(config.is_multi_figure)
+            self.assertIn("X", config.config)
+            self.assertIn("Y", config.config)
         finally:
             os.unlink(temp_path)
 

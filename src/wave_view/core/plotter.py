@@ -103,7 +103,7 @@ class SpicePlotter:
         Create a Plotly figure based on loaded data and configuration.
         
         Args:
-            figure_index: Index of figure to create (for multi-figure configs)
+            figure_index: Index of figure to create (deprecated, ignored)
             
         Returns:
             Plotly Figure object
@@ -117,8 +117,8 @@ class SpicePlotter:
         if not self._config:
             raise ValueError("Must load configuration before creating figure")
         
-        # Get configuration for this figure
-        plot_config = self._config.get_figure_config(figure_index)
+        # Get configuration (direct access for single-figure support)
+        plot_config = self._config.config
         
         return self._create_plotly_figure(plot_config)
     
@@ -274,7 +274,7 @@ class SpicePlotter:
         Create and display figure in browser or inline (environment-aware).
         
         Args:
-            figure_index: Index of figure to show (for multi-figure configs)
+            figure_index: Index of figure to show (deprecated, ignored)
         """
         # Import here to avoid circular import
         from ..api import _configure_plotly_renderer

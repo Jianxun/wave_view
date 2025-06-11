@@ -172,10 +172,13 @@ def get_basic_test_config():
 
 def get_multi_figure_test_config():
     """
-    Get a multi-figure configuration list for testing.
+    Get a multi-figure configuration list for testing rejection.
+    
+    This configuration should be rejected by the current system
+    since multi-figure support has been removed.
     
     Returns:
-        list: Multi-figure test configuration
+        list: Multi-figure test configuration (for rejection testing)
     """
     return [
         {

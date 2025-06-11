@@ -9,7 +9,7 @@ import unittest
 
 from wave_view.core.config import PlotConfig
 from . import (
-    get_basic_config_dict, get_multi_figure_config_list, create_mock_spice_data,
+    get_basic_config_dict, create_mock_spice_data,
     get_config_with_processed_signals, get_invalid_config_examples,
     assert_validation_warnings
 )
@@ -26,13 +26,7 @@ class TestBasicConfigurationValidation(unittest.TestCase):
         warnings = config.validate()
         assert_validation_warnings(warnings, expected_warning_count=0)
     
-    def test_validate_valid_multi_figure_config(self):
-        """Test validation of valid multi-figure configuration."""
-        config_list = get_multi_figure_config_list()
-        config = PlotConfig(config_list)
-        
-        warnings = config.validate()
-        assert_validation_warnings(warnings, expected_warning_count=0)
+
     
     def test_validate_empty_config(self):
         """Test validation of empty configuration."""
@@ -44,11 +38,6 @@ class TestBasicConfigurationValidation(unittest.TestCase):
         # Should warn about missing X and Y
         assert_validation_warnings(warnings, contains_text="Missing required 'X'")
         assert_validation_warnings(warnings, contains_text="Missing required 'Y'")
-        
-        # Empty multi-figure config
-        empty_multi = PlotConfig([])
-        warnings = empty_multi.validate()
-        assert_validation_warnings(warnings, expected_warning_count=0)  # Empty list is valid
     
     def test_validate_minimal_valid_config(self):
         """Test validation of minimal but valid configuration."""
@@ -200,54 +189,6 @@ class TestYConfigurationValidation(unittest.TestCase):
         assert_validation_warnings(warnings, expected_warning_count=0)
 
 
-class TestMultiFigureValidation(unittest.TestCase):
-    """Test validation of multi-figure configurations."""
-    
-    def test_validate_multi_figure_with_errors(self):
-        """Test validation of multi-figure config with various errors."""
-        multi_config_with_errors = [
-            {
-                "title": "Figure 1 - Valid",
-                "X": {"signal_key": "raw.time"},
-                "Y": [{"label": "V1", "signals": {"VDD": "v(vdd)"}}]
-            },
-            {
-                "title": "Figure 2 - Missing X",
-                # Missing X configuration
-                "Y": [{"label": "V2", "signals": {"OUT": "v(out)"}}]
-            },
-            {
-                "title": "Figure 3 - Invalid Y",
-                "X": {"signal_key": "raw.freq"},
-                "Y": "not_a_list"  # Should be a list
-            }
-        ]
-        
-        config = PlotConfig(multi_config_with_errors)
-        warnings = config.validate()
-        self.assertGreater(len(warnings), 1)
-        
-        # Check for figure-specific warnings
-        assert_validation_warnings(warnings, contains_text="Figure 1: Missing required 'X'")
-        assert_validation_warnings(warnings, contains_text="Figure 2: Y configuration must be a list")
-    
-    def test_validate_empty_figures_in_multi_config(self):
-        """Test validation of empty figures in multi-figure config."""
-        multi_with_empty = [
-            get_basic_config_dict(),  # Valid figure
-            {},                       # Empty figure
-            get_basic_config_dict()   # Valid figure
-        ]
-        
-        config = PlotConfig(multi_with_empty)
-        warnings = config.validate()
-        self.assertGreater(len(warnings), 1)
-        
-        # Figure 1 (index 1) should have missing X and Y warnings
-        assert_validation_warnings(warnings, contains_text="Figure 1: Missing required 'X'")
-        assert_validation_warnings(warnings, contains_text="Figure 1: Missing required 'Y'")
-
-
 class TestSignalValidationWithSpiceData(unittest.TestCase):
     """Test signal validation against SPICE data."""
     
@@ -300,28 +241,7 @@ class TestSignalValidationWithSpiceData(unittest.TestCase):
         # Only raw signals should be validated
         assert_validation_warnings(warnings, expected_warning_count=0)
     
-    def test_validate_multi_figure_with_spice_data(self):
-        """Test multi-figure validation against SPICE data."""
-        mock_spice_data = create_mock_spice_data(["time", "v(vdd)", "v(out)", "i(vdd)"])
-        
-        multi_config = [
-            {
-                "title": "Figure 1 - Valid",
-                "X": {"signal_key": "raw.time"},
-                "Y": [{"label": "VDD", "signals": {"VDD": "v(vdd)"}}]
-            },
-            {
-                "title": "Figure 2 - Invalid Signal",
-                "X": {"signal_key": "raw.time"},
-                "Y": [{"label": "Missing", "signals": {"MISSING": "v(nonexistent)"}}]
-            }
-        ]
-        
-        config = PlotConfig(multi_config)
-        warnings = config.validate(mock_spice_data)
-        self.assertGreater(len(warnings), 0)
-        
-        assert_validation_warnings(warnings, contains_text="nonexistent")
+
     
     def test_validate_case_insensitive_signals(self):
         """Test signal validation behavior with case differences."""

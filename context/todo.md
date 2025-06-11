@@ -1,6 +1,37 @@
 # Project Todo List
 
-## Current Sprint - Documentation Configuration Update ✅ **COMPLETED**
+## Current Sprint - PyPI Release Preparation ✅ **COMPLETED**
+
+### 📦 **PyPI Release Preparation** (HIGH PRIORITY) ✅ **COMPLETED**
+- [X] **Update Package Metadata** ✅ **COMPLETED**
+  - Updated author information in pyproject.toml (Jianxun Zhu)
+  - Modernized license format to SPDX "MIT" instead of deprecated table format
+  - Removed deprecated license classifier
+  - Updated GitHub URLs to correct repository paths
+
+- [X] **Add Type Information Support** ✅ **COMPLETED**
+  - Created py.typed marker file for type information distribution
+  - Configured pyproject.toml to include py.typed in package data
+
+- [X] **Setup CI/CD Infrastructure** ✅ **COMPLETED**
+  - Added GitHub Actions workflow for automated PyPI publishing on releases
+  - Added comprehensive test workflow for Python 3.8-3.12 with coverage reporting
+  - Configured trusted publishing for secure PyPI uploads
+
+- [X] **Build and Validate Package** ✅ **COMPLETED**
+  - Successfully built clean distribution files (wheel + sdist)
+  - Passed twine check validation for PyPI compatibility
+  - Verified package installation and import functionality
+  - All 226 tests passing with 92% coverage
+
+- [X] **Branch and Commit Changes** ✅ **COMPLETED**
+  - Created `pypi_release_preparation` branch for release changes
+  - Committed all PyPI preparation work with comprehensive commit message
+  - Ready for merge to main and PyPI publication
+
+### 📊 **PyPI Release Status**: Package ready for publication with professional packaging standards ✅ **SUCCESS**
+
+## Previous Sprint - Documentation Configuration Update ✅ **COMPLETED**
 
 ### 📚 **Sphinx Documentation Configuration Format Update** (HIGH PRIORITY) ✅ **COMPLETED**
 - [X] **Update Quickstart Guide** ✅ **COMPLETED**
@@ -120,24 +151,133 @@
   - `_configure_plotly_renderer() -> None` and `_is_jupyter_environment() -> bool`
   - Consistent type annotation across all functions
 
+## Current Sprint - UI Polish & Multi-Figure Removal
+
+### 🗑️ **Remove Multi-Figure Support** (HIGH PRIORITY)
+**Decision Made**: Remove multi-figure feature to simplify API and reduce maintenance burden
+
+#### **Phase 1: Core Code Removal** ✅ **COMPLETED - COMMITTED TO BRANCH**
+**Branch**: `remove_multi_figure_support` | **Commit**: `81dfc2e` | **Status**: Ready for Phase 2
+
+- [X] **Remove Multi-Figure Logic from PlotConfig Class** ✅ **COMPLETED**
+  - Location: `src/wave_view/core/config.py`
+  - ✅ Removed: `is_multi_figure` property, `figure_count` property, `get_figure_config()` method
+  - ✅ Simplified: Constructor to only accept single config dictionaries (not lists)
+  - ✅ Updated: `__repr__()` method to remove multi-figure case
+  - ✅ Ensured: Single-figure logic remains intact
+
+- [X] **Remove Multi-Figure Test Cases** ✅ **COMPLETED**
+  - Location: `tests/unit_tests/config/test_config_basic.py`, `test_config_validation.py`
+  - ✅ Removed: All multi-figure test cases and helper functions
+  - ✅ Updated: Error message validation tests for list rejection
+  - ✅ Ensured: Tests validate that multi-figure configs are properly rejected
+  - ✅ Results: 41 config tests now passing
+
+- [X] **Update PlotConfig Factory Functions** ✅ **COMPLETED**
+  - Location: `src/wave_view/api.py`
+  - ✅ Updated: `config_from_yaml()` and `config_from_file()` to reject YAML lists
+  - ✅ Added: Clear error messages for multi-figure rejection with migration guidance
+  - ✅ Ensured: Backward compatibility for single-figure YAML files
+
+#### **Phase 1.5: Fix Critical Blocker** ✅ **COMPLETED**
+- [X] **Update SpicePlotter to Remove get_figure_config() Calls** ✅ **COMPLETED**
+  - Location: `src/wave_view/core/plotter.py` line 121 - Fixed
+  - Solution: Updated `create_figure()` to access `config.config` directly for single-figure support
+  - Impact: All 31 failing tests now passing, plotter functionality restored
+  - Additional: Fixed all related config tests and migration tests
+  - Result: 220 passing, 0 failing tests (was 189 passing, 31 failing)
+
+#### **Phase 2: Documentation & Example Updates** ✅ **COMPLETED**
+- [X] **Update Documentation and Examples** ✅ **COMPLETED**
+  - Location: `examples/demo_ring_osc.py`, `docs/`, `README.md`, `demo.ipynb` - All updated
+  - Removed: All multi-figure configuration examples and feature references
+  - Added: Examples showing separate plot() calls as recommended approach  
+  - Updated: API documentation to reflect single-figure-only support
+  - Updated: CHANGELOG.md with breaking change documentation
+
+- [X] **Update Error Messages** ✅ **COMPLETED**
+  - Location: Throughout codebase - All updated in Phase 1.5
+  - Replaced: Multi-figure references with single-figure guidance
+  - Added: Helpful migration suggestions in error messages
+  - Ensure: User-friendly messaging about the change
+
+#### **Phase 3: Final Cleanup & Validation** ✅ **COMPLETED**
+- [X] **Run Complete Test Suite** ✅ **COMPLETED**
+  - ✅ Verified: All 220 tests passing after multi-figure removal
+  - ✅ Fixed: Integration test to use `config_from_file()` instead of removed properties  
+  - ✅ Cleaned: Updated test helper docstring, removed obsolete validation tests
+  - ✅ Confirmed: No remaining references to removed methods (comprehensive search completed)
+  - ✅ Validated: Error messages are helpful and accurate with migration guidance
+
+## Test Status Summary 
+- **All Tests**: ✅ 220 passing, 0 failing (100% pass rate)
+- **Coverage**: 91% overall with comprehensive test coverage
+- **Multi-Figure Removal**: ✅ COMPLETE - All phases successfully implemented
+
+## Git Status
+- **Current Branch**: `remove_multi_figure_support` 
+- **Latest Commit**: `3efeb71` - Phase 3 final cleanup and validation completed
+- **Working Directory**: Clean (all phases committed)
+- **Status**: ✅ Multi-figure removal COMPLETE - Branch ready for merge
+  - ✅ All phases completed successfully
+  - ✅ All 220 tests passing with 91% coverage
+  - ✅ Clean migration path with helpful error messages
+
+- [ ] **Update Version and CHANGELOG**
+  - Bump: Version number for breaking change
+  - Document: Multi-figure removal in CHANGELOG.md
+  - Note: Migration guide for existing users
+  - Mark: As breaking change in semantic versioning
+
+### 🎨 **UI Polish Tasks** (HIGH PRIORITY)
+- [ ] **Add Option to Disable Zoom Buttons**
+  - Add configuration option to hide/disable the zoom buttons at the top of the graph
+  - Should be configurable per plot or globally in plot configuration
+  - Default behavior should remain unchanged (buttons visible)
+
+- [ ] **Fix Zoom XY Button Functionality**
+  - The "Zoom XY" button doesn't properly shift to zoom xy mode
+  - Need to investigate plotly zoom mode configuration
+  - Ensure proper toggling between pan, zoom x, zoom y, and zoom xy modes
+
+- [ ] **Center-Align Plot Titles**
+  - Plot titles should be center-justified across all plot types
+  - Verify alignment works consistently across different plot configurations
+  - Test with both single and multi-axis plots
+
 ## Backlog - Code Quality & Polish
 
 ### 🚀 **Feature Completion** (Medium Priority)
-- [X] **Complete plot_batch Grid Layout or Remove Parameter** ✅ **COMPLETED**
-  - Location: `src/wave_view/api.py:456-458`
-  - **RESOLUTION**: Removed plot_batch() function entirely to simplify API
 
 - [ ] **Enhanced Error Messages**
   - Location: `src/wave_view/core/reader.py:97-101`
   - Add fuzzy matching suggestions for signal name typos
   - Improve user experience with helpful error guidance
 
-### 📚 **Documentation Polish** (Low Priority)
-- [X] **Create Comprehensive Sphinx Documentation** ✅ **COMPLETED**
-  - Complete documentation structure with user guides and API reference
-  - Professional Read the Docs theme with proper navigation
-  - Examples, configuration guide, and contributing guidelines
-  - Ready for publication and user onboarding
+### 📦 **Release Preparation** (Medium Priority)
+- [ ] **PyPI Publication** (Ready when multi-figure removal is complete)
+  - Package has been tested and is functionally complete
+  - Multi-figure removal will be a breaking change requiring version bump
+  - Documentation is comprehensive and up-to-date
+  - Consider beta release for testing the breaking changes
+
+### 📚 **Documentation Enhancement** (Low Priority)
+- [ ] **Documentation Hosting Setup**
+  - Set up Read the Docs or GitHub Pages for comprehensive documentation
+  - Include interactive examples and comprehensive API reference
+  - Provide migration guide for multi-figure removal
+
+### 🧪 **Testing & Quality** (Low Priority)
+- [ ] **Test Coverage Analysis**
+  - Current coverage is high, maintain 90%+ on core modules
+  - Focus on edge cases and error handling paths
+  - Add integration tests for complete workflows
+
+### 🔧 **Performance & Optimization** (Low Priority)
+- [ ] **Performance Profiling**
+  - Profile memory usage with large datasets
+  - Optimize data loading and signal processing for large files
+  - Consider streaming for very large datasets
 
 ## Backlog - Future Enhancements
 
@@ -146,10 +286,14 @@
 - [ ] Group signals by circuit blocks or hierarchy
 - [ ] Add search and filtering capabilities
 
-### 📦 **Package Publication**
-- [ ] Polish README.md for PyPI
-- [ ] Set up GitHub Actions for CI/CD
-- [ ] Publish to PyPI (python -m build, twine upload)
+### 📦 **Package Publication** ✅ **READY FOR RELEASE**
+- [X] Polish README.md for PyPI ✅ **COMPLETED** 
+- [X] Set up GitHub Actions for CI/CD ✅ **COMPLETED**
+- [ ] **Publish to PyPI** (Ready for release)
+  - Package metadata updated and modernized
+  - CI/CD workflows configured for automated publishing
+  - Distribution files built and validated (wave_view-0.1.0.tar.gz, wave_view-0.1.0-py3-none-any.whl)
+  - All prerequisites completed - ready for `twine upload dist/*` or GitHub release
 
 ### 🎨 **Advanced Features**
 - [ ] Export functionality (PNG, PDF, SVG)
