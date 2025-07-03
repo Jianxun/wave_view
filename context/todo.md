@@ -1,6 +1,28 @@
 # Project Todo List
 
-## Current Sprint - Release 0.1.0 ✅ **SUCCESSFULLY PUBLISHED**
+## Current Sprint - Version 0.2.0 Phase 1 Development 🚀 **IN PROGRESS**
+
+### 📋 **Development Methodology and Lessons Learned**
+
+#### **TDD Success Story** ✅ **METHODOLOGY VALIDATION**
+- **Approach**: Strict one-test-at-a-time TDD following development guidelines
+- **Process**: Red → Green → Refactor cycle with immediate test verification
+- **Quality Results**: 93% PlotSpec coverage, 66% SpicePlotter coverage improvement
+- **Key Lesson**: TDD discipline prevents feature creep and ensures robust implementation
+
+#### **Pydantic Integration Benefits** ✅ **ARCHITECTURAL SUCCESS**
+- **Validation**: Automatic validation with rich error messages
+- **Type Safety**: IDE autocompletion and type checking
+- **Maintenance**: Self-documenting code with Field descriptions
+- **Future**: Foundation for JSON schema generation and editor support
+
+#### **Next Session Priorities**
+1. **Complete PlotSpec API**: Add missing methods (`from_file()`, `show()`, `get_figure()`)
+2. **Simple WaveDataset**: Create minimal data container for new API
+3. **Integration Testing**: Fix demo script and ensure end-to-end workflow
+4. **API Export**: Update main `__init__.py` to expose PlotSpec
+
+## Previous Sprint - Release 0.1.0 ✅ **SUCCESSFULLY PUBLISHED**
 
 ### 🚀 **Release 0.1.0 Final Steps** ✅ **COMPLETED**
 - [X] **Update CHANGELOG.md** ✅ **COMPLETED**
@@ -47,19 +69,111 @@
 
 ### 📊 **Release 0.1.0 Status**: Package built, tested, and ready for publication ✅ **SUCCESS**
 
-## Next Sprint - Post-Release Planning
+## Next Sprint - Version 0.2.0 Architecture Implementation
 
-### 🎯 **Version 0.1.1 Planning** (FUTURE)
+### 🎯 **Version 0.2.0 Phase 1: Core API Refactoring** (HIGH PRIORITY) 🚀 **IN PROGRESS**
+
+#### **PlotSpec Implementation** ✅ **COMPLETED**
+- [X] **Create PlotSpec Class with Pydantic Validation** ✅ **COMPLETED**
+  - Created `PlotSpec` and `YAxisSpec` Pydantic models in `src/wave_view/core/plotspec.py`
+  - Implemented comprehensive validation with Field descriptions
+  - Added type safety with proper Union types and Optional fields
+  - Achieved 93% test coverage with systematic TDD approach
+
+- [X] **Implement Core PlotSpec Methods** ✅ **COMPLETED**
+  - `PlotSpec.from_yaml()` - Factory method with YAML parsing and error handling
+  - `PlotSpec.plot(data)` - Core plotting method returning Plotly figures
+  - Multi-axis Y configuration support (tested with real configs from demo_ota_5t.py)
+  - Integration with existing SpicePlotter infrastructure
+
+- [X] **Add Pydantic Configuration Validation** ✅ **COMPLETED**
+  - Replaced ad-hoc validation with structured Pydantic models
+  - Rich validation error messages with field-level details
+  - Type hints for improved developer experience
+  - Added pydantic>=2.0.0 to requirements.txt
+
+#### **Current Phase 1 Tasks** (HIGH PRIORITY)
+- [ ] **Complete PlotSpec API** 
+  - Add `PlotSpec.from_file()` method for YAML file loading
+  - Add `PlotSpec.show()` method for direct figure display
+  - Add `PlotSpec.get_figure()` method for Plotly figure access
+  - Test and fix integration issues in demo script
+
+- [ ] **Simple WaveDataset Implementation**
+  - Create minimal `WaveDataset` class for single-figure plotting
+  - Support `WaveDataset.from_raw()` with optional metadata
+  - Replace `SpiceData` usage in new API with `WaveDataset`
+  - Maintain backward compatibility with existing `SpiceData`
+
+- [ ] **API Integration and Backward Compatibility**
+  - Update main `__init__.py` to export PlotSpec
+  - Create wrapper functions to maintain existing `wv.plot()` API
+  - Ensure seamless migration path for existing users
+  - Update examples to showcase new API alongside old API
+
+#### **Testing and Documentation** (HIGH PRIORITY)
+- [ ] **Expand Test Coverage**
+  - Add tests for `from_file()` method and file I/O edge cases
+  - Add tests for `show()` and `get_figure()` methods
+  - Add integration tests for PlotSpec with SpiceData
+  - Test error handling and validation edge cases
+
+- [ ] **Fix Demo Script Integration**
+  - Resolve import and integration issues in `examples/demo_plotspec_api.py`
+  - Ensure PlotSpec can be imported and used from main package
+  - Test end-to-end workflow with real SPICE data
+  - Create working examples for documentation
+
+### 🎯 **Version 0.2.0 Phase 2: HTML Report Builder** (HIGH PRIORITY)
+- [ ] **Create ReportSpec Pydantic Model**
+  - Design declarative report configuration format
+  - Support sections, headings, notes, and multiple figures
+  - Include theme support and metadata fields
+  - Validate report structure at load time
+
+- [ ] **Implement ReportBuilder Class**
+  - Create Jinja2 template system for HTML generation
+  - Support self-contained HTML with embedded Plotly JSON
+  - Add CDN vs inline Plotly.js options
+  - Handle figure collection and HTML assembly
+
+- [ ] **Add CLI Command for Reports**
+  - Implement `wave_view report report.yaml --out report.html`
+  - Support metadata file input for sweep data
+  - Add options for PDF export and theme selection
+  - Provide comprehensive help and examples
+
+### 🎯 **Version 0.2.0 Phase 3: Foundation for Parameter Sweeps** (MEDIUM PRIORITY)
+- [ ] **WaveDataset with Metadata Support**
+  - Create `WaveDataset` class to hold signals + metadata
+  - Support `from_raw()` with optional metadata dict
+  - Enable metadata-driven legend templating
+  - Prepare for multi-file collection support
+
+- [ ] **DataFrame-based Metadata Operations**
+  - Implement `slice_df()` and `group_df()` helper functions
+  - Support filtering: `slice: {temperature: 85, corner: tt}`
+  - Enable grouping: `group: [temperature, corner]`
+  - Add legend templating: `"{corner}_{temperature}°C"`
+
+### 🎯 **Version 0.3.0 Planning: Full Parameter Sweep Engine** (FUTURE)
+- [ ] **Multi-File Collection Support**
+  - `WaveDataCollection` class for multiple raw files
+  - Statistical aggregators (envelope, mean, percentiles)
+  - Continuous color mapping for parameter sweeps
+  - Monte Carlo analysis with confidence bands
+
+- [ ] **Advanced Sweep Visualization**
+  - PVT corner overlay plots
+  - Parameter sweep with color coding
+  - Statistical summary tables
+  - Interactive parameter exploration
+
+### 🎯 **Version 0.1.1 Maintenance** (LOW PRIORITY)
 - [ ] **Monitor Initial Users**: Gather feedback and bug reports
 - [ ] **Documentation Site**: Consider hosting documentation (e.g., GitHub Pages, Read the Docs)
 - [ ] **Performance Optimization**: Profile and optimize for large SPICE files
 - [ ] **Additional Plot Types**: Expand visualization options based on user needs
-
-### 🎯 **Version 0.2.0 Planning** (FUTURE)
-- [ ] **Signal Exploration UI**: Interactive signal browser for Jupyter
-- [ ] **Advanced Processing**: More signal processing functions
-- [ ] **Export Options**: Save plots as images/PDFs
-- [ ] **Configuration Templates**: Pre-built templates for common use cases
 
 ## Current Sprint - PyPI Release Preparation ✅ **COMPLETED**
 

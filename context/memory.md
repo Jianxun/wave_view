@@ -5,6 +5,49 @@ Wave_view is a Python package for SPICE simulation visualization with a modern, 
 
 ## Current State
 
+### **Version 0.2.0 Phase 1 Development** 🚀 **IN PROGRESS**
+- **Current Branch**: `API_refactor` 
+- **Phase Status**: **Core PlotSpec Implementation** - Successfully completed using strict TDD methodology
+- **Coverage**: PlotSpec module 93% coverage, SpicePlotter improved to 66% coverage
+- **Tests**: 4 comprehensive test cases passing for PlotSpec core functionality
+
+#### **PlotSpec Implementation Completed** ✅ **MAJOR MILESTONE**
+- **Pydantic Models**: Created PlotSpec and YAxisSpec classes with full validation
+- **Core Features Implemented**:
+  - ✅ Basic initialization from dict configuration
+  - ✅ YAML factory method (`PlotSpec.from_yaml()`) with error handling
+  - ✅ Multi-axis Y configuration support (leveraging real configs from demo_ota_5t.py)
+  - ✅ Core plotting method (`plot(data)`) returning Plotly figures
+- **Integration**: PlotSpec successfully uses existing SpicePlotter infrastructure
+- **Dependencies**: Added pydantic>=2.0.0 to requirements.txt
+
+#### **TDD Methodology Success** ✅ **DEVELOPMENT APPROACH**
+- **Approach**: Strict one-test-at-a-time TDD following development guidelines
+- **Process**: Red → Green → Refactor cycle with immediate test verification
+- **Quality**: Each feature fully tested before moving to next feature
+- **Coverage**: Achieved excellent test coverage through systematic TDD approach
+
+#### **Current PlotSpec API**
+```python
+# Basic usage
+config = {"x": "time", "y": [{"label": "Voltage", "signals": {"out": "v(out)"}}]}
+spec = PlotSpec(**config)
+fig = spec.plot(data)  # Returns plotly.graph_objects.Figure
+
+# YAML factory method
+spec = PlotSpec.from_yaml(yaml_string)
+fig = spec.plot(data)
+
+# Multi-axis Y configuration (automatically supported)
+spec = PlotSpec.from_yaml(complex_yaml_with_multiple_y_axes)
+fig = spec.plot(data)
+```
+
+#### **Integration Status**
+- **Demo Script**: Created `examples/demo_plotspec_api.py` (needs integration fixes)
+- **Module Integration**: PlotSpec successfully imports and uses existing SpicePlotter
+- **Test Infrastructure**: Comprehensive test suite in `tests/unit_tests/config/test_plotspec.py`
+
 ### **Release 0.1.0 Status** ✅ **SUCCESSFULLY PUBLISHED TO PyPI**
 - **Version**: 0.1.0 (Released and Live)
 - **PyPI Status**: ✅ **LIVE** - https://pypi.org/project/wave-view/
@@ -64,6 +107,13 @@ fig = wv.plot("simulation.raw", config)  # Required config, no magic
 - **Ready for Publication**: Documentation ready for hosting and user onboarding
 
 ## Key Decisions
+
+### **PlotSpec Architecture (v0.2.0 Phase 1)**
+- **Pydantic Migration**: Complete replacement of PlotConfig with Pydantic-based PlotSpec
+- **Fluent API Design**: `PlotSpec(config).plot(data)` pattern for clean method chaining
+- **Backward Compatibility**: Maintain existing `wv.plot()` API as convenience wrapper
+- **TDD Methodology**: Strict one-test-at-a-time approach for high-quality implementation
+- **Simple WaveDataset**: Defer complex features to focus on core single-figure plotting
 
 ### **API Design Philosophy**
 - **Explicit over implicit**: No hidden magic, all behavior transparent
@@ -238,11 +288,31 @@ None - AC simulation complex number parsing issue has been resolved.
 
 ## Next Steps
 
-### **AC Simulation Data Parsing Investigation** (NEXT SESSION)
-1. **Examine AC Raw File Format**: Understand how complex numbers are stored in SPICE AC analysis files
-2. **Debug reader.py Logic**: Check if complex number parsing is implemented correctly
-3. **Test Transfer Function Workflow**: Verify magnitude/phase calculations work as expected
-4. **User Experience**: Ensure AC analysis data is accessible and usable for frequency response plots
+### **Version 0.2.0 Architecture Planning** ✅ **ANALYZED**
+Based on comprehensive API improvement analysis, v0.2.0 will focus on:
+
+1. **HTML Report Builder** (Higher Priority)
+   - `ReportSpec` Pydantic model for declarative reports
+   - Jinja2 template system for HTML generation
+   - Self-contained HTML with embedded Plotly JSON data
+   - CLI command: `wave_view report report.yaml --out report.html`
+
+2. **PlotSpec API Refactoring** (Foundation)
+   - New composable API: `data = wv.load_spice()`, `ps = wv.PlotSpec(config)`, `ps.plot(data).show()`
+   - Addresses efficiency concern of parsing files multiple times
+   - Maintains backward compatibility with existing `wv.plot()` API
+   - Enables fluent chaining and better extensibility
+
+3. **Parameter Sweep Engine** (Future v0.3.0)
+   - Metadata-as-DataFrame approach for PVT corners, Monte Carlo
+   - Filtering/grouping: `slice: {temperature: 85}`, `group: [temperature, corner]`
+   - Legend templating: `"{corner}_{temperature}°C"`
+   - Statistical aggregators (envelope, mean, etc.)
+
+### **Implementation Phases**
+- **Phase 1**: Core API refactoring with PlotSpec class
+- **Phase 2**: HTML Report Builder with ReportSpec
+- **Phase 3**: Parameter Sweep Engine with multi-file support
 
 ### **Completed Sprints**
 
