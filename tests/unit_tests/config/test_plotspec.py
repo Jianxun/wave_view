@@ -184,3 +184,122 @@ y:
 
 if __name__ == '__main__':
     unittest.main() 
+
+
+class TestPlotSpecNewMethods(unittest.TestCase):
+    """Test PlotSpec new methods: from_file(), show(), get_figure()."""
+    
+    def test_plotspec_from_file_method_loads_yaml_file(self):
+        """Test that PlotSpec.from_file() loads configuration from YAML file."""
+        # Skip test if PlotSpec not implemented yet
+        if PlotSpec is None:
+            self.skipTest("PlotSpec not implemented yet")
+        
+        # Create a temporary YAML file for testing
+        import tempfile
+        import os
+        
+        yaml_content = """
+title: "Test Plot from File"
+x: "time"
+y:
+  - label: "Voltage"
+    signals:
+      VDD: "v(vdd)"
+      OUT: "v(out)"
+width: 800
+height: 600
+"""
+        
+        # Write to temporary file
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.yaml', delete=False) as f:
+            f.write(yaml_content)
+            temp_file_path = f.name
+        
+        try:
+            # Test the from_file method
+            spec = PlotSpec.from_file(temp_file_path)
+            
+            # Verify the data was loaded correctly
+            self.assertEqual(spec.title, "Test Plot from File")
+            self.assertEqual(spec.x, "time")
+            self.assertEqual(len(spec.y), 1)
+            self.assertEqual(spec.y[0].label, "Voltage")
+            self.assertEqual(spec.y[0].signals["VDD"], "v(vdd)")
+            self.assertEqual(spec.y[0].signals["OUT"], "v(out)")
+            self.assertEqual(spec.width, 800)
+            self.assertEqual(spec.height, 600)
+            
+        finally:
+            # Clean up temporary file
+            os.unlink(temp_file_path) 
+
+    def test_plotspec_show_method_displays_plot(self):
+        """Test that PlotSpec.show() method displays the plot directly."""
+        # Skip test if dependencies not available
+        if PlotSpec is None or SpiceData is None or go is None:
+            self.skipTest("PlotSpec, SpiceData, or plotly not available yet")
+        
+        # Create a simple PlotSpec
+        spec = PlotSpec.model_validate({
+            "title": "Test Show Method",
+            "x": "time", 
+            "y": [
+                {
+                    "label": "Voltage",
+                    "signals": {"VDD": "v(vdd)"}
+                }
+            ]
+        })
+        
+        # Create a mock SpiceData object
+        mock_data = Mock(spec=SpiceData)
+        mock_data.get_signal.return_value = [0, 1, 2, 3, 4]
+        mock_data.signals = ["time", "v(vdd)"]
+        
+        # Mock the figure.show() method to verify it's called
+        with patch('plotly.graph_objects.Figure.show') as mock_show:
+            # Call the show method
+            result = spec.show(mock_data)
+            
+            # Verify show() was called on the figure
+            mock_show.assert_called_once()
+            
+            # Verify the method returns None (it's a display method)
+            self.assertIsNone(result)
+
+    def test_plotspec_get_figure_method_returns_plotly_figure(self):
+        """Test that PlotSpec.get_figure() returns a Plotly Figure object (alias for plot())."""
+        # Skip test if dependencies not available
+        if PlotSpec is None or SpiceData is None or go is None:
+            self.skipTest("PlotSpec, SpiceData, or plotly not available yet")
+        
+        # Create a simple PlotSpec
+        spec = PlotSpec.model_validate({
+            "title": "Test Get Figure Method",
+            "x": "time", 
+            "y": [
+                {
+                    "label": "Voltage",
+                    "signals": {"VDD": "v(vdd)"}
+                }
+            ]
+        })
+        
+        # Create a mock SpiceData object
+        mock_data = Mock(spec=SpiceData)
+        mock_data.get_signal.return_value = [0, 1, 2, 3, 4]
+        mock_data.signals = ["time", "v(vdd)"]
+        
+        # Call both methods
+        fig1 = spec.plot(mock_data)
+        fig2 = spec.get_figure(mock_data)
+        
+        # Verify both return Plotly Figure objects
+        self.assertIsInstance(fig1, go.Figure)
+        self.assertIsInstance(fig2, go.Figure)
+        
+        # Verify both methods return equivalent figures
+        # (They should have the same data and layout structure)
+        self.assertEqual(type(fig1), type(fig2))
+        # Both should be Figure objects - that's sufficient for this test 

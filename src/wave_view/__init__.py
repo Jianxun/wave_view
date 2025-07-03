@@ -13,6 +13,7 @@ __author__ = "Wave View Development Team"
 from .core.reader import SpiceData
 from .core.plotter import SpicePlotter
 from .core.config import PlotConfig
+from .core.plotspec import PlotSpec
 
 # Main API functions
 from .api import (
@@ -67,6 +68,7 @@ __all__ = [
     'SpiceData',
     'SpicePlotter', 
     'PlotConfig',
+    'PlotSpec',
     
     # Utilities
     'set_renderer',

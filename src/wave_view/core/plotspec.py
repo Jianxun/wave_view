@@ -60,6 +60,31 @@ class PlotSpec(BaseModel):
         except yaml.YAMLError as e:
             raise ValueError(f"Invalid YAML: {e}")
     
+    @classmethod
+    def from_file(cls, file_path: Union[str, Path]) -> 'PlotSpec':
+        """
+        Create PlotSpec from YAML file.
+        
+        Args:
+            file_path: Path to YAML configuration file
+            
+        Returns:
+            PlotSpec instance
+            
+        Raises:
+            FileNotFoundError: If file doesn't exist
+            ValueError: If YAML is invalid or unsupported
+        """
+        file_path = Path(file_path)
+        if not file_path.exists():
+            raise FileNotFoundError(f"Configuration file not found: {file_path}")
+        
+        try:
+            yaml_content = file_path.read_text(encoding='utf-8')
+            return cls.from_yaml(yaml_content)
+        except Exception as e:
+            raise ValueError(f"Failed to load configuration from {file_path}: {e}")
+    
     # Fluent API methods
     def plot(self, data, processed_data: Optional[Dict[str, np.ndarray]] = None) -> go.Figure:
         """
@@ -83,6 +108,30 @@ class PlotSpec(BaseModel):
         # Convert PlotSpec to legacy config format for SpicePlotter
         legacy_config = self._to_legacy_config()
         return plotter._create_plotly_figure(legacy_config)
+    
+    def get_figure(self, data, processed_data: Optional[Dict[str, np.ndarray]] = None) -> go.Figure:
+        """
+        Get the Plotly figure (alias for plot() method).
+        
+        Args:
+            data: SpiceData object (pre-loaded)
+            processed_data: Optional processed signals dictionary
+            
+        Returns:
+            Plotly Figure object
+        """
+        return self.plot(data, processed_data)
+    
+    def show(self, data, processed_data: Optional[Dict[str, np.ndarray]] = None) -> None:
+        """
+        Create and display the plot directly.
+        
+        Args:
+            data: SpiceData object (pre-loaded)
+            processed_data: Optional processed signals dictionary
+        """
+        fig = self.plot(data, processed_data)
+        fig.show()
     
     # Utility methods
     def _to_legacy_config(self) -> Dict[str, Any]:
