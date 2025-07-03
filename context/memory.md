@@ -30,13 +30,13 @@ Wave_view is a Python package for SPICE simulation visualization with a modern, 
 - Demo script working as Jupyter notebook (no changes needed)
 - All tests passing with comprehensive coverage
 
-### **Next Phase**: Ready to begin Phase 2 - HTML Report Builder or continue with WaveDataset implementation
+### **Next Phase**: Ready to begin Phase 2 - HTML Report Builder (WaveDataset implementation COMPLETED)
 
-### **Version 0.2.0 Phase 1 Development** 🚀 **IN PROGRESS**
+### **Version 0.2.0 Phase 1 Development** ✅ **COMPLETED**
 - **Current Branch**: `API_refactor` 
-- **Phase Status**: **Core PlotSpec Implementation** - Successfully completed using strict TDD methodology
-- **Coverage**: PlotSpec module 93% coverage, SpicePlotter improved to 66% coverage
-- **Tests**: 4 comprehensive test cases passing for PlotSpec core functionality
+- **Phase Status**: **Both PlotSpec and WaveDataset Implementation** - Successfully completed using strict TDD methodology
+- **Coverage**: PlotSpec module 93% coverage, WaveDataset module 80% coverage, SpicePlotter improved to 66% coverage
+- **Tests**: 19 comprehensive test cases passing (10 PlotSpec + 9 WaveDataset)
 
 #### **PlotSpec Implementation Completed** ✅ **MAJOR MILESTONE**
 - **Pydantic Models**: Created PlotSpec and YAxisSpec classes with full validation
@@ -54,20 +54,35 @@ Wave_view is a Python package for SPICE simulation visualization with a modern, 
 - **Quality**: Each feature fully tested before moving to next feature
 - **Coverage**: Achieved excellent test coverage through systematic TDD approach
 
-#### **Current PlotSpec API**
+#### **WaveDataset Implementation Completed** ✅ **MAJOR MILESTONE**
+- **Modern Data Container**: Complete replacement for SpiceData with metadata support
+- **Core Features Implemented**:
+  - ✅ `WaveDataset.from_raw()` factory method with optional metadata
+  - ✅ `signals` property (lowercase normalized signal names)
+  - ✅ `get_signal()` method with case-insensitive signal access
+  - ✅ `has_signal()` method for signal existence checking
+  - ✅ `metadata` property with proper encapsulation (returns copy)
+- **Package Integration**: Available as `import wave_view as wv; wv.WaveDataset`
+- **Test Coverage**: 9 comprehensive tests, 80% coverage achieved
+
+#### **Current v0.2.0 API**
 ```python
-# Basic usage
-config = {"x": "time", "y": [{"label": "Voltage", "signals": {"out": "v(out)"}}]}
-spec = PlotSpec(**config)
+# New API Pattern (v0.2.0)
+data = wv.WaveDataset.from_raw("simulation.raw", metadata={"temp": 25})
+spec = wv.PlotSpec.from_yaml(yaml_config)
 fig = spec.plot(data)  # Returns plotly.graph_objects.Figure
 
-# YAML factory method
-spec = PlotSpec.from_yaml(yaml_string)
+# PlotSpec usage
+config = {"x": "time", "y": [{"label": "Voltage", "signals": {"out": "v(out)"}}]}
+spec = wv.PlotSpec(**config)
 fig = spec.plot(data)
 
-# Multi-axis Y configuration (automatically supported)
-spec = PlotSpec.from_yaml(complex_yaml_with_multiple_y_axes)
-fig = spec.plot(data)
+# WaveDataset usage
+data = wv.WaveDataset.from_raw("test.raw", metadata={"corner": "tt"})
+print(data.signals)  # ['time', 'v(out)', 'i(vin)']
+signal_data = data.get_signal("v(out)")  # numpy array
+has_signal = data.has_signal("v(out)")  # True
+metadata = data.metadata  # {'corner': 'tt'}
 ```
 
 #### **Integration Status**
