@@ -59,9 +59,8 @@ This project follows a task-based and test-driven development approach across mu
 ### Basic Commit Practices
 - Make frequent, atomic commits with descriptive messages
 - Use conventional commit format: `type(scope): description`
-- For multi-line commit messages, **completely rewrite** `.git_commit_message` file (don't append) and use `git commit -F .git_commit_message`
-- **CRITICAL**: Always delete `.git_commit_message` file after committing to prevent accidental appending
-- Ensure `.git_commit_message` is in .gitignore to avoid tracking temporary commit files
+- For multi-line commit messages, write a `git_commit_message` file and use `git commit -F git_commit_message`
+- Ensure `git_commit_message` is in .gitignore to avoid tracking temporary commit files
 - Ensure all tests pass before committing
 - Tag releases with semantic versioning (major.minor.patch)
 
@@ -193,7 +192,7 @@ This project follows a task-based and test-driven development approach across mu
 1. **Verify Implementation**: Ensure all tests pass and feature works as expected
 2. **Update Context**: Update `context/todo.md` to mark task completion and `context/memory.md` to reflect current project state
 3. **Version Control**: 
-   - Commit changes with descriptive message using `.git_commit_message` file
+   - Commit changes with descriptive message using `git_commit_message` file
    - Verify branch contains only related work (single purpose)
    - Consider if additional refactoring tasks should be added to backlog
 4. **Branch Management**:

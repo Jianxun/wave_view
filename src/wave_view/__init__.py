@@ -14,6 +14,7 @@ from .core.reader import SpiceData
 from .core.plotter import SpicePlotter
 from .core.config import PlotConfig
 from .core.plotspec import PlotSpec
+from .core.wavedataset import WaveDataset
 
 # Main API functions
 from .api import (
@@ -69,6 +70,7 @@ __all__ = [
     'SpicePlotter', 
     'PlotConfig',
     'PlotSpec',
+    'WaveDataset',
     
     # Utilities
     'set_renderer',
