@@ -26,9 +26,10 @@ Wave_view is a Python package for SPICE simulation visualization with a modern, 
   - Demo script verified working as Jupyter notebook
 
 ### **Current Branch**: API_refactor
-- Ready for commit: PlotSpec implementation, tests, and package integration
+- Ready for commit: PlotSpec implementation, tests, package integration, and CLI interface
 - Demo script working as Jupyter notebook (no changes needed)
 - All tests passing with comprehensive coverage
+- **CLI Implementation Completed**: Full command-line interface with browser rendering
 
 ### **Next Phase**: Ready to begin Phase 2 - HTML Report Builder (WaveDataset implementation COMPLETED)
 
@@ -64,6 +65,17 @@ Wave_view is a Python package for SPICE simulation visualization with a modern, 
   - ✅ `metadata` property with proper encapsulation (returns copy)
 - **Package Integration**: Available as `import wave_view as wv; wv.WaveDataset`
 - **Test Coverage**: 9 comprehensive tests, 80% coverage achieved
+
+#### **CLI Interface Implementation Completed** ✅ **MAJOR MILESTONE**
+- **Command-Line Interface**: Complete CLI with proper browser rendering
+- **Core Commands Implemented**:
+  - ✅ `wave_view plot <raw_file> --spec <spec.yaml>` - Main plotting command
+  - ✅ `wave_view signals <raw_file>` - Signal listing utility
+  - ✅ Browser rendering with `pio.renderers.default = "browser"`
+  - ✅ Output options: HTML, PNG, PDF, SVG, JSON formats
+  - ✅ CLI overrides: --title, --width, --height, --theme options
+- **Package Integration**: Entry point configured in pyproject.toml
+- **User Experience**: Emoji-enhanced feedback and comprehensive help text
 
 #### **Current v0.2.0 API**
 ```python

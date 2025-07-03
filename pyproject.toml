@@ -37,7 +37,11 @@ dependencies = [
     "numpy>=1.20.0",
     "PyYAML>=6.0",
     "spicelib>=1.0.0",
+    "click>=8.0.0",
 ]
+
+[project.scripts]
+wave_view = "wave_view.cli:cli"
 
 [project.optional-dependencies]
 dev = [
