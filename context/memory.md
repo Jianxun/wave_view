@@ -4,7 +4,15 @@
 Wave_view is a Python package for SPICE simulation visualization with a modern, user-friendly API. The project features core modules for configuration management (config.py), data reading (reader.py), and plotting (plotter.py), with comprehensive YAML-based configuration support and advanced features like log scale plotting and processed signal generation.
 
 ## Current State
-**Version 0.2.0 Phase 1 Development - PlotSpec API Implementation COMPLETED** ✅
+**Version 1.0.0 Architecture Design - Major API Refactoring Planned** 🚀
+
+### **Major Architecture Decision: v1.0.0 API Simplification** 
+- **Architecture Document**: Complete v1.0.0 architecture design documented in `context/architecture_v1.0.0.md`
+- **Breaking Changes**: Major API simplification with function-based approach
+- **Future Extensibility**: Designed for multi-case plotting (PVT, Monte Carlo, parameter sweeps)
+- **Implementation Plan**: Ready to begin Phase 1 implementation on new `1.0.0` branch
+
+### **Previous State: Version 0.2.0 Phase 1 Development - PlotSpec API Implementation COMPLETED** ✅
 
 ### **Major Achievement: Complete PlotSpec API Implementation** 
 - **Full PlotSpec API**: Successfully implemented all core methods:
@@ -162,7 +170,15 @@ fig = wv.plot("simulation.raw", config)  # Required config, no magic
 
 ## Key Decisions
 
-### **PlotSpec Architecture (v0.2.0 Phase 1)**
+### **Version 1.0.0 Architecture (Major Refactoring)**
+- **Function-Based API**: Shift from `spec.plot(data)` to `wv.plot(data, spec)` for better extensibility
+- **PlotSpec Simplification**: Remove plotting methods, focus on configuration-only class
+- **Signal Resolution**: Direct dictionary lookup instead of complex prefix handling
+- **Data Interface**: Unified `Dict[str, np.ndarray]` interface replacing SpiceData + processed_data
+- **Plotter Refactoring**: Standalone functions using simple data structures
+- **Multi-Case Foundation**: Architecture designed for future PVT/Monte Carlo/parameter sweep support
+
+### **Previous: PlotSpec Architecture (v0.2.0 Phase 1)**
 - **Pydantic Migration**: Complete replacement of PlotConfig with Pydantic-based PlotSpec
 - **Fluent API Design**: `PlotSpec(config).plot(data)` pattern for clean method chaining
 - **Backward Compatibility**: Maintain existing `wv.plot()` API as convenience wrapper

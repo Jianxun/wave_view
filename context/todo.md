@@ -1,8 +1,45 @@
 # Project Todo List
 
-## Current Sprint - Version 0.2.0 Phase 1 Development ✅ **MAJOR PROGRESS**
+## Current Sprint - Version 1.0.0 Architecture Implementation 🚀 **MAJOR REFACTORING**
 
-### 📋 **Development Methodology and Lessons Learned**
+### 📋 **Architecture Design Completed** ✅ **ARCHITECTURAL MILESTONE**
+- **Complete Architecture Document**: `context/architecture_v1.0.0.md` with comprehensive design decisions
+- **API Simplification**: Function-based approach for better extensibility
+- **Multi-Case Foundation**: Architecture designed for future PVT/Monte Carlo/parameter sweep support
+- **Breaking Changes**: Major simplification with clear migration path
+- **Implementation Plan**: Ready to begin Phase 1 development on new `1.0.0` branch
+
+### 📋 **Version 1.0.0 Implementation Plan**
+
+#### **Phase 1: Core API Refactoring** (HIGH PRIORITY)
+- [ ] **PlotSpec Simplification** 
+  - Remove plotting methods from PlotSpec class
+  - Focus on configuration-only functionality
+  - Maintain factory methods (`from_yaml`, `from_file`)
+  
+- [ ] **Standalone Plotting Functions**
+  - Create `wv.plot(data: Dict[str, np.ndarray], spec: PlotSpec)` function
+  - Implement helper functions: `create_figure()`, `create_layout()`, `add_waveform()`
+  - Remove SpiceData dependency from plotter
+  
+- [ ] **Signal Resolution Simplification**
+  - Remove complex prefix handling
+  - Implement direct dictionary lookup
+  - Update tests for new simple interface
+
+#### **Phase 2: Data Preparation Layer** (MEDIUM PRIORITY)
+- [ ] **Design Data Preparation API**
+  - Create lambda-based signal processing
+  - Implement standalone data preparation utilities
+  - Design backward compatibility wrappers
+
+#### **Phase 3: Multi-Case Foundation** (FUTURE)
+- [ ] **Multi-Case Plotting Functions**
+  - Implement `wv.plot_multi_case()`
+  - Design PVT corner plotting
+  - Create Monte Carlo visualization support
+
+### 📋 **Previous Development Success** ✅ **COMPLETED**
 
 #### **TDD Success Story** ✅ **METHODOLOGY VALIDATION**
 - **Approach**: Strict one-test-at-a-time TDD following development guidelines
@@ -16,28 +53,12 @@
 - **Maintenance**: Self-documenting code with Field descriptions
 - **Future**: Foundation for JSON schema generation and editor support
 
-#### **Session Accomplishments** ✅ **WaveDataset TDD Success**
+#### **Version 0.2.0 Accomplishments** ✅ **COMPLETED**
 1. **WaveDataset Implementation**: Complete modern data container replacing SpiceData
-2. **TDD Methodology**: Strict Red-Green-Refactor cycle with 9 comprehensive tests
-3. **Package Integration**: Properly exported WaveDataset in main package API
-4. **80% Test Coverage**: High-quality implementation with edge case handling
-
-#### **Next Session Priorities**
-1. **API Integration**: Create wrapper functions for backward compatibility
-2. **Demo Updates**: Update examples to showcase new v0.2.0 API patterns
-3. **Phase 2 Prep**: Begin HTML Report Builder or continue with API integration
-4. **Documentation**: Update examples and quickstart with new WaveDataset API
-
-#### **CLI Implementation Completed** ✅ **MAJOR MILESTONE**
-- **Command-Line Interface**: Complete CLI with proper browser rendering
-- **Core Commands Implemented**:
-  - ✅ `wave_view plot <raw_file> --spec <spec.yaml>` - Main plotting command
-  - ✅ `wave_view signals <raw_file>` - Signal listing utility
-  - ✅ Browser rendering with `pio.renderers.default = "browser"`
-  - ✅ Output options: HTML, PNG, PDF, SVG, JSON formats
-  - ✅ CLI overrides: --title, --width, --height, --theme options
-- **Package Integration**: Entry point configured in pyproject.toml
-- **User Experience**: Emoji-enhanced feedback and comprehensive help text
+2. **PlotSpec API**: Full Pydantic-based configuration system with 93% test coverage
+3. **TDD Methodology**: Strict Red-Green-Refactor cycle with comprehensive tests
+4. **Package Integration**: Both components properly exported in main package API
+5. **CLI Implementation**: Complete command-line interface with browser rendering
 
 ## Previous Sprint - Release 0.1.0 ✅ **SUCCESSFULLY PUBLISHED**
 
