@@ -147,39 +147,7 @@ y:
         self.assertIsNone(voltage_axis.range)
         self.assertIsNone(current_axis.range)
 
-    def test_plotspec_plot_method_returns_plotly_figure(self):
-        """Test that PlotSpec.plot(data) returns a Plotly Figure object."""
-        # Skip test if dependencies not available
-        if PlotSpec is None or SpiceData is None or go is None:
-            self.skipTest("PlotSpec, SpiceData, or plotly not available yet")
-        
-        # Create a simple PlotSpec
-        spec = PlotSpec.model_validate({
-            "title": "Test Plot",
-            "x": "time", 
-            "y": [
-                {
-                    "label": "Voltage",
-                    "signals": {"VDD": "v(vdd)"}
-                }
-            ]
-        })
-        
-        # Create a mock SpiceData object with required methods
-        mock_data = Mock(spec=SpiceData)
-        mock_data.get_signal.return_value = [0, 1, 2, 3, 4]  # Mock signal data
-        mock_data.signals = ["time", "v(vdd)"]  # Mock available signals
-        
-        # Call the plot method
-        fig = spec.plot(mock_data)
-        
-        # Verify it returns a Plotly Figure object
-        self.assertIsInstance(fig, go.Figure)
-        
-        # Verify the mock was called appropriately
-        # Should call get_signal for x-axis (time) and y-axis (v(vdd))
-        expected_calls = mock_data.get_signal.call_args_list
-        self.assertGreater(len(expected_calls), 0, "get_signal should be called at least once")
+
 
 
 if __name__ == '__main__':
@@ -234,72 +202,133 @@ height: 600
             # Clean up temporary file
             os.unlink(temp_file_path) 
 
-    def test_plotspec_show_method_displays_plot(self):
-        """Test that PlotSpec.show() method displays the plot directly."""
-        # Skip test if dependencies not available
-        if PlotSpec is None or SpiceData is None or go is None:
-            self.skipTest("PlotSpec, SpiceData, or plotly not available yet")
-        
-        # Create a simple PlotSpec
-        spec = PlotSpec.model_validate({
-            "title": "Test Show Method",
-            "x": "time", 
-            "y": [
-                {
-                    "label": "Voltage",
-                    "signals": {"VDD": "v(vdd)"}
-                }
-            ]
-        })
-        
-        # Create a mock SpiceData object
-        mock_data = Mock(spec=SpiceData)
-        mock_data.get_signal.return_value = [0, 1, 2, 3, 4]
-        mock_data.signals = ["time", "v(vdd)"]
-        
-        # Mock the figure.show() method to verify it's called
-        with patch('plotly.graph_objects.Figure.show') as mock_show:
-            # Call the show method
-            result = spec.show(mock_data)
-            
-            # Verify show() was called on the figure
-            mock_show.assert_called_once()
-            
-            # Verify the method returns None (it's a display method)
-            self.assertIsNone(result)
 
-    def test_plotspec_get_figure_method_returns_plotly_figure(self):
-        """Test that PlotSpec.get_figure() returns a Plotly Figure object (alias for plot())."""
-        # Skip test if dependencies not available
-        if PlotSpec is None or SpiceData is None or go is None:
-            self.skipTest("PlotSpec, SpiceData, or plotly not available yet")
+
+ 
+
+
+class TestPlotSpecV1_0_0_NewMethods(unittest.TestCase):
+    """Test PlotSpec v1.0.0 new methods - configuration-only functionality."""
+    
+    def test_plotspec_to_dict_method_returns_clean_config(self):
+        """Test that PlotSpec.to_dict() returns clean configuration dict for v1.0.0 plotting functions."""
+        # Skip test if PlotSpec not implemented yet
+        if PlotSpec is None:
+            self.skipTest("PlotSpec not implemented yet")
         
-        # Create a simple PlotSpec
-        spec = PlotSpec.model_validate({
-            "title": "Test Get Figure Method",
-            "x": "time", 
-            "y": [
-                {
-                    "label": "Voltage",
-                    "signals": {"VDD": "v(vdd)"}
-                }
-            ]
-        })
+        # Create a PlotSpec with comprehensive configuration
+        spec = PlotSpec.from_yaml("""
+title: "Test Plot"
+x: "time"
+y:
+  - label: "Voltages (V)"
+    signals:
+      Input: "v(in)"
+      Output: "v(out)"
+    log_scale: false
+    unit: "V"
+    range: [0, 3.3]
+    color: "blue"
+  - label: "Current (A)"
+    signals:
+      Supply: "i(vdd)"
+    log_scale: true
+    unit: "A"
+
+width: 1200
+height: 800
+theme: "plotly_dark"
+title_x: 0.5
+title_xanchor: "center"
+show_legend: true
+grid: true
+zoom_buttons: false
+zoom_buttons_x: 0.1
+zoom_buttons_y: 1.1
+show_rangeslider: false
+""")
         
-        # Create a mock SpiceData object
-        mock_data = Mock(spec=SpiceData)
-        mock_data.get_signal.return_value = [0, 1, 2, 3, 4]
-        mock_data.signals = ["time", "v(vdd)"]
+        # Call the to_dict() method - this should fail initially (TDD Red phase)
+        config_dict = spec.to_dict()
         
-        # Call both methods
-        fig1 = spec.plot(mock_data)
-        fig2 = spec.get_figure(mock_data)
+        # Verify the returned dictionary has the expected structure
+        self.assertIsInstance(config_dict, dict)
         
-        # Verify both return Plotly Figure objects
-        self.assertIsInstance(fig1, go.Figure)
-        self.assertIsInstance(fig2, go.Figure)
+        # Verify basic structure
+        self.assertEqual(config_dict["title"], "Test Plot")
+        self.assertEqual(config_dict["x"], "time")
+        self.assertIsInstance(config_dict["y"], list)
+        self.assertEqual(len(config_dict["y"]), 2)
         
-        # Verify both methods return equivalent figures
-        # (They should have the same data and layout structure)
-        self.assertEqual(type(fig1), type(fig2))
-        # Both should be Figure objects - that's sufficient for this test 
+        # Verify first Y-axis configuration
+        y1 = config_dict["y"][0]
+        self.assertEqual(y1["label"], "Voltages (V)")
+        self.assertEqual(y1["signals"], {"Input": "v(in)", "Output": "v(out)"})
+        self.assertEqual(y1["log_scale"], False)
+        self.assertEqual(y1["unit"], "V")
+        self.assertEqual(y1["range"], [0, 3.3])
+        self.assertEqual(y1["color"], "blue")
+        
+        # Verify second Y-axis configuration
+        y2 = config_dict["y"][1]
+        self.assertEqual(y2["label"], "Current (A)")
+        self.assertEqual(y2["signals"], {"Supply": "i(vdd)"})
+        self.assertEqual(y2["log_scale"], True)
+        self.assertEqual(y2["unit"], "A")
+        self.assertIsNone(y2.get("range"))  # Not specified, should be None
+        self.assertIsNone(y2.get("color"))  # Not specified, should be None
+        
+        # Verify styling options
+        self.assertEqual(config_dict["width"], 1200)
+        self.assertEqual(config_dict["height"], 800)
+        self.assertEqual(config_dict["theme"], "plotly_dark")
+        self.assertEqual(config_dict["title_x"], 0.5)
+        self.assertEqual(config_dict["title_xanchor"], "center")
+        self.assertEqual(config_dict["show_legend"], True)
+        self.assertEqual(config_dict["grid"], True)
+        self.assertEqual(config_dict["zoom_buttons"], False)
+        self.assertEqual(config_dict["zoom_buttons_x"], 0.1)
+        self.assertEqual(config_dict["zoom_buttons_y"], 1.1)
+        self.assertEqual(config_dict["show_rangeslider"], False)
+
+    def test_plotspec_to_dict_with_minimal_config(self):
+        """Test to_dict() with minimal configuration and default values."""
+        # Skip test if PlotSpec not implemented yet
+        if PlotSpec is None:
+            self.skipTest("PlotSpec not implemented yet")
+        
+        # Create minimal PlotSpec
+        spec = PlotSpec.from_yaml("""
+x: "time"
+y:
+  - label: "Voltage"
+    signals:
+      Output: "v(out)"
+""")
+        
+        # Call to_dict() method
+        config_dict = spec.to_dict()
+        
+        # Verify minimal structure
+        self.assertEqual(config_dict["x"], "time")
+        self.assertEqual(len(config_dict["y"]), 1)
+        
+        # Verify Y-axis with minimal config
+        y1 = config_dict["y"][0]
+        self.assertEqual(y1["label"], "Voltage")
+        self.assertEqual(y1["signals"], {"Output": "v(out)"})
+        self.assertEqual(y1["log_scale"], False)  # Default value
+        self.assertIsNone(y1.get("unit"))  # Default None
+        self.assertIsNone(y1.get("range"))  # Default None
+        self.assertIsNone(y1.get("color"))  # Default None
+        
+        # Verify default styling options
+        self.assertIsNone(config_dict.get("title"))  # Default None
+        self.assertIsNone(config_dict.get("width"))  # Default None
+        self.assertIsNone(config_dict.get("height"))  # Default None
+        self.assertEqual(config_dict["theme"], "plotly")  # Default value
+        self.assertEqual(config_dict["title_x"], 0.5)  # Default value
+        self.assertEqual(config_dict["title_xanchor"], "center")  # Default value
+        self.assertEqual(config_dict["show_legend"], True)  # Default value
+        self.assertEqual(config_dict["grid"], True)  # Default value
+        self.assertEqual(config_dict["zoom_buttons"], True)  # Default value 

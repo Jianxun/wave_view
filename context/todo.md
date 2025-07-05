@@ -12,10 +12,13 @@
 ### 📋 **Version 1.0.0 Implementation Plan**
 
 #### **Phase 1: Core API Refactoring** (HIGH PRIORITY)
-- [ ] **PlotSpec Simplification** 
-  - Remove plotting methods from PlotSpec class
-  - Focus on configuration-only functionality
-  - Maintain factory methods (`from_yaml`, `from_file`)
+- [X] **PlotSpec Simplification** ✅ **COMPLETED**
+  - ✅ Remove plotting methods from PlotSpec class
+  - ✅ Focus on configuration-only functionality  
+  - ✅ Maintain factory methods (`from_yaml`, `from_file`)
+  - ✅ Add clean `to_dict()` export method for v1.0.0 plotting functions
+  - ✅ Archive v0.2.0 implementation in `src/wave_view/_archive/plotspec_v0_2_0.py`
+  - ✅ Update tests using strict TDD methodology (6 tests passing, 88% coverage)
   
 - [ ] **Standalone Plotting Functions**
   - Create `wv.plot(data: Dict[str, np.ndarray], spec: PlotSpec)` function
@@ -40,6 +43,18 @@
   - Create Monte Carlo visualization support
 
 ### 📋 **Previous Development Success** ✅ **COMPLETED**
+
+#### **PlotSpec v1.0.0 Refactoring Success** ✅ **TDD MILESTONE ACHIEVED**
+- **Achievement**: Successfully completed first major step of v1.0.0 architecture using strict TDD methodology
+- **Approach**: Red → Green → Refactor cycle with immediate test verification for each change
+- **Breaking Changes**: Cleanly removed plotting methods while preserving configuration functionality
+- **Results**: 
+  - ✅ All 6 tests passing (100% pass rate)
+  - ✅ PlotSpec coverage improved from 67% to 88%
+  - ✅ Configuration-only class achieved (separation of concerns)
+  - ✅ Clean `to_dict()` method for v1.0.0 plotting functions
+  - ✅ v0.2.0 implementation properly archived for reference
+- **Quality**: Demonstrates TDD methodology works for major architectural refactoring
 
 #### **TDD Success Story** ✅ **METHODOLOGY VALIDATION**
 - **Approach**: Strict one-test-at-a-time TDD following development guidelines

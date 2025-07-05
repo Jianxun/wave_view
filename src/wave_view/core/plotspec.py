@@ -47,6 +47,9 @@ class PlotSpec(BaseModel):
     show_legend: bool = Field(True, description="Show legend")
     grid: bool = Field(True, description="Show grid")
     zoom_buttons: bool = Field(True, description="Show zoom control buttons")
+    zoom_buttons_x: float = Field(0.05, description="Zoom buttons X position (0=left, 1=right)")
+    zoom_buttons_y: float = Field(1.05, description="Zoom buttons Y position (1=top of plot)")
+    show_rangeslider: bool = Field(True, description="Show range slider below X-axis")
     
     # Factory methods
     @classmethod
@@ -85,61 +88,18 @@ class PlotSpec(BaseModel):
         except Exception as e:
             raise ValueError(f"Failed to load configuration from {file_path}: {e}")
     
-    # Fluent API methods
-    def plot(self, data, processed_data: Optional[Dict[str, np.ndarray]] = None) -> go.Figure:
+    # Configuration export methods
+    def to_dict(self) -> Dict[str, Any]:
         """
-        Create and return Plotly figure.
+        Export clean configuration dictionary for v1.0.0 plotting functions.
         
-        Args:
-            data: SpiceData object (pre-loaded)
-            processed_data: Optional processed signals dictionary
-            
         Returns:
-            Plotly Figure object
+            Dict containing clean configuration suitable for standalone plotting functions
         """
-        # Import here to avoid circular imports
-        from .plotter import SpicePlotter
-        
-        # Create plotter with data
-        plotter = SpicePlotter()
-        plotter._spice_data = data
-        plotter._processed_signals = processed_data or {}
-        
-        # Convert PlotSpec to legacy config format for SpicePlotter
-        legacy_config = self._to_legacy_config()
-        return plotter._create_plotly_figure(legacy_config)
-    
-    def get_figure(self, data, processed_data: Optional[Dict[str, np.ndarray]] = None) -> go.Figure:
-        """
-        Get the Plotly figure (alias for plot() method).
-        
-        Args:
-            data: SpiceData object (pre-loaded)
-            processed_data: Optional processed signals dictionary
-            
-        Returns:
-            Plotly Figure object
-        """
-        return self.plot(data, processed_data)
-    
-    def show(self, data, processed_data: Optional[Dict[str, np.ndarray]] = None) -> None:
-        """
-        Create and display the plot directly.
-        
-        Args:
-            data: SpiceData object (pre-loaded)
-            processed_data: Optional processed signals dictionary
-        """
-        fig = self.plot(data, processed_data)
-        fig.show()
-    
-    # Utility methods
-    def _to_legacy_config(self) -> Dict[str, Any]:
-        """Convert PlotSpec to legacy PlotConfig format for SpicePlotter."""
         return {
             "title": self.title,
-            "X": {"signal_key": self.x, "label": self.x},
-            "Y": [
+            "x": self.x,
+            "y": [
                 {
                     "label": y_spec.label,
                     "signals": y_spec.signals,
@@ -157,5 +117,8 @@ class PlotSpec(BaseModel):
             "title_xanchor": self.title_xanchor,
             "show_legend": self.show_legend,
             "grid": self.grid,
-            "zoom_buttons": self.zoom_buttons
+            "zoom_buttons": self.zoom_buttons,
+            "zoom_buttons_x": self.zoom_buttons_x,
+            "zoom_buttons_y": self.zoom_buttons_y,
+            "show_rangeslider": self.show_rangeslider
         } 
