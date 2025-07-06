@@ -1,14 +1,8 @@
-
-
 import wave_view as wv
-from wave_view.core.plotspec import PlotSpec
-import plotly.io as pio
-
-# Configure Plotly for standalone execution (not notebook)
-pio.renderers.default = 'browser'
 
 # v1.0.0 API Demo: Function-based plotting with Dict[str, np.ndarray] data
-# Architecture: load_spice_raw() → Dict[str, np.ndarray] → PlotSpec → plot_v1() → Figure
+# Architecture: load_spice_raw() → Dict[str, np.ndarray] → PlotSpec → plot() → Figure
+# Note: Plotly renderer is now configured automatically on import!
 
 # New v1.0.0 API: Load SPICE data directly in Dict format
 spice_file = "./raw_data/tb_ota_5t/test_tran/results.raw"
@@ -21,7 +15,7 @@ print(f"Available signals: {list(data.keys())[:10]}...")
 print(f"Metadata: {metadata}")
 
 # Create PlotSpec using the new v1.0.0 configuration-only model
-ps_tran = PlotSpec.from_yaml("""
+ps_tran = wv.PlotSpec.from_yaml("""
 title: "OTA Transient Analysis - New v1.0.0 API"
 x: "time"
 y:
@@ -46,5 +40,5 @@ show_rangeslider: true
 """)
 
 # New v1.0.0 API pattern: Dict[str, np.ndarray] → PlotSpec → Figure
-fig1 = wv.plot_v1(data, ps_tran)
-fig1.show()
+fig1 = wv.plot(spice_file, ps_tran)
+# fig1.show() is called automatically by plot() with show=True (default)

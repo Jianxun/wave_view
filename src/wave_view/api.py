@@ -14,7 +14,8 @@ from pathlib import Path
 
 from .core.reader import SpiceData
 from .core.config import PlotConfig
-from .core.plotter import SpicePlotter
+from .core.plotspec import PlotSpec
+from .core.plotting import plot as _plot_v1
 from .core.wavedataset import WaveDataset
 
 
@@ -129,22 +130,15 @@ def _categorize_signals(signals: List[str]) -> Tuple[List[str], List[str], List[
 
 
 def plot(raw_file: Union[str, Path], 
-         config: Union[Dict, PlotConfig],
-         show: bool = True,
-         processed_data: Optional[Dict[str, np.ndarray]] = None) -> go.Figure:
+         config: Union[Dict, PlotSpec],
+         show: bool = True) -> go.Figure:
     """
-    Simple plotting function for SPICE waveforms.
-    
-    This is the main API function that provides a simple interface for creating 
-    waveform plots with explicit configuration.
+    Simple plotting function for SPICE waveforms using v1.0.0 architecture.
     
     Args:
         raw_file: Path to SPICE .raw file (string or Path object)
-        config: PlotConfig object or configuration dictionary
+        config: PlotSpec object or configuration dictionary
         show: Whether to display the plot immediately (default: True)
-        processed_data: Optional dictionary of processed signals 
-                       {signal_name: numpy_array}. These can be referenced
-                       in config with "data.signal_name"
         
     Returns:
         Plotly Figure object
@@ -152,41 +146,27 @@ def plot(raw_file: Union[str, Path],
     Example:
         >>> import wave_view as wv
         >>> 
+        >>> # Using PlotSpec (recommended)
+        >>> spec = wv.PlotSpec.from_yaml('''
+        ... title: "My Analysis"
+        ... x: "time"
+        ... y:
+        ...   - label: "Voltage (V)"
+        ...     signals:
+        ...       Output: "v(out)"
+        ... ''')
+        >>> fig = wv.plot("simulation.raw", spec)
+        >>> 
         >>> # Using dictionary directly
         >>> config_dict = {
         ...     "title": "SPICE Analysis",
-        ...     "X": {"signal_key": "raw.time", "label": "Time (s)"},
-        ...     "Y": [{"label": "Voltage", "signals": {"VDD": "v(vdd)"}}]
+        ...     "x": "time",
+        ...     "y": [{
+        ...         "label": "Voltage (V)",
+        ...         "signals": {"VDD": "v(vdd)"}
+        ...     }]
         ... }
         >>> fig = wv.plot("simulation.raw", config_dict)
-        >>> 
-        >>> # Using factory functions (recommended)
-        >>> config = wv.config_from_file("analysis.yaml")
-        >>> fig = wv.plot("simulation.raw", config)
-        >>> 
-        >>> config = wv.config_from_yaml('''
-        ... title: "My Analysis"
-        ... X: {signal_key: "raw.time", label: "Time"}
-        ... Y: [{label: "Voltage", signals: {VDD: "v(vdd)"}}]
-        ... ''')
-        >>> fig = wv.plot("simulation.raw", config)
-        >>> 
-        >>> # With processed data
-        >>> import numpy as np
-        >>> data = wv.load_spice("simulation.raw")
-        >>> processed = {
-        ...     "vdb_out": 20 * np.log10(np.abs(data.get_signal("v(out)"))),
-        ...     "power": data.get_signal("v(vdd)") * data.get_signal("i(vdd)")
-        ... }
-        >>> config = {
-        ...     "title": "Analysis with Processed Data",
-        ...     "X": {"signal_key": "raw.time", "label": "Time (s)"},
-        ...     "Y": [
-        ...         {"label": "Magnitude (dB)", "signals": {"Output": "data.vdb_out"}},
-        ...         {"label": "Power (W)", "signals": {"Supply": "data.power"}}
-        ...     ]
-        ... }
-        >>> fig = wv.plot("simulation.raw", config, processed_data=processed)
     """
     # Input validation for raw_file
     if raw_file is None:
@@ -207,51 +187,25 @@ def plot(raw_file: Union[str, Path],
     
     # Input validation for config
     if config is None:
-        raise TypeError("config must be provided (PlotConfig object or dictionary)")
+        raise TypeError("configuration cannot be None")
     
-    if not isinstance(config, (dict, PlotConfig)):
-        raise TypeError("config must be a PlotConfig object or dictionary. Use config_from_file(), config_from_yaml(), or config_from_dict() to create a PlotConfig.")
-    
-    # Validate processed_data parameter
-    if processed_data is not None:
-        if not isinstance(processed_data, dict):
-            raise TypeError("processed_data must be a dictionary of signal names to arrays")
-        
-        for signal_name, signal_array in processed_data.items():
-            if not isinstance(signal_name, str):
-                raise TypeError("processed_data keys (signal names) must be strings")
-            
-            # Check if the value is array-like but not a string
-            if isinstance(signal_array, str):
-                raise TypeError(f"signal values must be array-like (lists, numpy arrays, etc.), got string for signal '{signal_name}'")
-            
-            # Check if the value is array-like (has __len__ and __getitem__)
-            if not hasattr(signal_array, '__len__') or not hasattr(signal_array, '__getitem__'):
-                raise TypeError(f"signal values must be array-like (lists, numpy arrays, etc.), got {type(signal_array).__name__} for signal '{signal_name}'")
+    if not isinstance(config, (dict, PlotSpec)):
+        raise TypeError("configuration must be a dictionary or PlotSpec object")
     
     # Auto-detect environment and set appropriate renderer
     _configure_plotly_renderer()
     
-    # Create plotter and load data
-    plotter = SpicePlotter(str(file_path))
+    # Load SPICE data using v1.0.0 API
+    data, metadata = load_spice_raw(raw_file)
     
-    # Add processed signals if provided
-    if processed_data:
-        for signal_name, signal_array in processed_data.items():
-            if not isinstance(signal_array, np.ndarray):
-                signal_array = np.array(signal_array, dtype=float)
-            plotter._processed_signals[signal_name] = signal_array
-    
-    # Load configuration
+    # Convert config to PlotSpec if needed
     if isinstance(config, dict):
-        # Convert dict to PlotConfig
-        plotter.load_config(PlotConfig(config))
+        spec = PlotSpec(config)
     else:
-        # Already a PlotConfig object
-        plotter.load_config(config)
+        spec = config
     
-    # Create figure
-    fig = plotter.create_figure()
+    # Create figure using v1.0.0 API
+    fig = _plot_v1(data, spec)
     
     if show:
         fig.show()

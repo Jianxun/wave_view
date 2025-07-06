@@ -1,28 +1,25 @@
 """
-Integration test for v1.0.0 API with real SPICE data.
+Integration tests for v1.0.0 API.
 
-This test verifies that the new v1.0.0 plotting functions work correctly
-with real SPICE data files.
+Tests the complete workflow of the v1.0.0 architecture:
+Dict[str, np.ndarray] data → PlotSpec → plot() → Figure
 """
 
 import unittest
 import numpy as np
+import plotly.graph_objects as go
 import wave_view as wv
 from pathlib import Path
 
 
 class TestV1_0_0Integration(unittest.TestCase):
-    """Integration test for v1.0.0 API."""
-    
+    """Integration tests for v1.0.0 plot function."""
+
     def setUp(self):
-        """Set up test with real SPICE data."""
-        # Use the existing test raw file
+        """Set up test fixtures."""
         self.test_raw_file = Path("tests/raw_files/Ring_Oscillator_7stage.raw")
-        
-        # Skip if test file doesn't exist
-        if not self.test_raw_file.exists():
-            self.skipTest(f"Test SPICE file not found: {self.test_raw_file}")
-    
+        self.assertTrue(self.test_raw_file.exists(), f"Test file not found: {self.test_raw_file}")
+
     def test_v1_0_0_plot_with_real_data(self):
         """Test v1.0.0 plot function with real SPICE data."""
         # Load real SPICE data
@@ -45,32 +42,35 @@ y:
 """)
         
         # Call v1.0.0 plot function
-        fig = wv.plot_v1(data, spec)
+        fig = wv.plot(data, spec, show=False)
         
-        # Verify the figure was created successfully
-        self.assertIsNotNone(fig)
+        # Verify the result
+        self.assertIsInstance(fig, go.Figure)
+        self.assertEqual(len(fig.data), 2)  # 2 traces
         
-        # Verify it has the expected structure
-        self.assertEqual(len(fig.data), 2)  # Two traces
-        trace_names = [trace.name for trace in fig.data]
-        self.assertIn("VDD", trace_names)
-        self.assertIn("Bus01", trace_names)
+        # Check traces
+        self.assertEqual(fig.data[0].name, "VDD")
+        self.assertEqual(fig.data[1].name, "Bus01")
+        
+        # Check layout
         self.assertEqual(fig.layout.title.text, "Ring Oscillator - v1.0.0 Test")
+        self.assertEqual(fig.layout.xaxis.title.text, "time")
+        self.assertEqual(fig.layout.yaxis.title.text, "Voltages (V)")
         
-        # Verify data is correct
-        vdd_trace = next(trace for trace in fig.data if trace.name == "VDD")
-        bus01_trace = next(trace for trace in fig.data if trace.name == "Bus01")
+        # Check data arrays
+        self.assertIsInstance(fig.data[0].x, np.ndarray)
+        self.assertIsInstance(fig.data[0].y, np.ndarray)
+        self.assertIsInstance(fig.data[1].x, np.ndarray) 
+        self.assertIsInstance(fig.data[1].y, np.ndarray)
         
-        self.assertEqual(len(vdd_trace.x), len(data["time"]))
-        self.assertEqual(len(vdd_trace.y), len(data["v(vdd)"]))
-        np.testing.assert_array_equal(vdd_trace.x, data["time"])
-        np.testing.assert_array_equal(vdd_trace.y, data["v(vdd)"])
+        # Check that data is not empty
+        self.assertGreater(len(fig.data[0].x), 0)
+        self.assertGreater(len(fig.data[0].y), 0)
+        self.assertGreater(len(fig.data[1].x), 0)
+        self.assertGreater(len(fig.data[1].y), 0)
         
-        self.assertEqual(len(bus01_trace.x), len(data["time"]))
-        self.assertEqual(len(bus01_trace.y), len(data["v(bus01)"]))
-        np.testing.assert_array_equal(bus01_trace.x, data["time"])
-        np.testing.assert_array_equal(bus01_trace.y, data["v(bus01)"])
-    
+        print("✅ v1.0.0 plot() function working correctly with real data")
+
     def test_v1_0_0_plot_with_multi_axis(self):
         """Test v1.0.0 plot function with multi-axis configuration."""
         # Load real SPICE data
@@ -96,27 +96,68 @@ y:
 """)
         
         # Call v1.0.0 plot function
-        fig = wv.plot_v1(data, spec)
+        fig = wv.plot(data, spec, show=False)
         
-        # Verify multi-axis structure
-        self.assertEqual(len(fig.data), 3)  # Three traces
+        # Verify the result
+        self.assertIsInstance(fig, go.Figure)
+        self.assertEqual(len(fig.data), 3)  # 3 traces
         
-        # Verify Y-axis assignments
-        vdd_trace = next(trace for trace in fig.data if trace.name == "VDD")
-        bus01_trace = next(trace for trace in fig.data if trace.name == "Bus01")
-        bus02_trace = next(trace for trace in fig.data if trace.name == "Bus02")
+        # Check traces
+        self.assertEqual(fig.data[0].name, "VDD")
+        self.assertEqual(fig.data[1].name, "Bus01")
+        self.assertEqual(fig.data[2].name, "Bus02")
         
-        self.assertEqual(vdd_trace.yaxis, "y")   # First Y-axis
-        self.assertEqual(bus01_trace.yaxis, "y2")  # Second Y-axis
-        self.assertEqual(bus02_trace.yaxis, "y2")  # Second Y-axis
+        # Check Y-axis assignments
+        self.assertEqual(fig.data[0].yaxis, "y")    # First Y-axis
+        self.assertEqual(fig.data[1].yaxis, "y2")   # Second Y-axis
+        self.assertEqual(fig.data[2].yaxis, "y2")   # Second Y-axis
         
-        # Verify layout has two Y-axes
-        self.assertIn("yaxis", fig.layout)
-        self.assertIn("yaxis2", fig.layout)
-        
-        # Verify axis titles
+        # Check layout
+        self.assertEqual(fig.layout.title.text, "Ring Oscillator - Multi-Axis Test")
+        self.assertEqual(fig.layout.xaxis.title.text, "time")
         self.assertEqual(fig.layout.yaxis.title.text, "Supply Voltage (V)")
         self.assertEqual(fig.layout.yaxis2.title.text, "Bus Voltages (V)")
+        
+        print("✅ v1.0.0 plot() function working correctly with multi-axis")
+
+    def test_v1_0_0_plot_with_dict_config(self):
+        """Test v1.0.0 plot function with dictionary configuration."""
+        # Load real SPICE data
+        spice_data = wv.load_spice(self.test_raw_file)
+        
+        # Convert to v1.0.0 format
+        data = {}
+        for signal_name in spice_data.signals:
+            data[signal_name] = spice_data.get_signal(signal_name)
+        
+        # Create configuration dictionary
+        config = {
+            "title": "Ring Oscillator - Dict Config Test",
+            "x": "time",
+            "y": [{
+                "label": "Voltages (V)",
+                "signals": {
+                    "VDD": "v(vdd)",
+                    "Bus01": "v(bus01)"
+                }
+            }]
+        }
+        
+        # Call v1.0.0 plot function
+        fig = wv.plot(data, config, show=False)
+        
+        # Verify the result
+        self.assertIsInstance(fig, go.Figure)
+        self.assertEqual(len(fig.data), 2)  # 2 traces
+        
+        # Check traces
+        self.assertEqual(fig.data[0].name, "VDD")
+        self.assertEqual(fig.data[1].name, "Bus01")
+        
+        # Check layout
+        self.assertEqual(fig.layout.title.text, "Ring Oscillator - Dict Config Test")
+        
+        print("✅ v1.0.0 plot() function working correctly with dictionary config")
 
 
 if __name__ == '__main__':

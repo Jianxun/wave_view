@@ -11,13 +11,9 @@ __author__ = "Wave View Development Team"
 
 # Core classes
 from .core.reader import SpiceData
-from .core.plotter import SpicePlotter
 from .core.config import PlotConfig
 from .core.plotspec import PlotSpec
 from .core.wavedataset import WaveDataset
-
-# v1.0.0 plotting functions
-from .core.plotting import plot as plot_v1
 
 # Main API functions
 from .api import (
@@ -29,9 +25,6 @@ from .api import (
     config_from_file,
     config_from_yaml
 )
-
-# Convenience imports for power users
-from .core.plotter import SpicePlotter
 
 # Plotly imports for user access
 import plotly.io as pio
@@ -61,9 +54,8 @@ def set_renderer(renderer: str = "auto"):
 __all__ = [
     # Main API
     'plot',
-    'plot_v1',  # v1.0.0 plotting function
     'load_spice',
-    'load_spice_raw',  # v1.0.0 data loading function
+    'load_spice_raw',
     'explore_signals', 
     'validate_config',
     
@@ -73,7 +65,6 @@ __all__ = [
     
     # Core classes
     'SpiceData',
-    'SpicePlotter', 
     'PlotConfig',
     'PlotSpec',
     'WaveDataset',
@@ -82,3 +73,12 @@ __all__ = [
     'set_renderer',
     'pio',  # Give users access to plotly.io
 ] 
+
+# Configure Plotly renderer automatically on import
+# This eliminates the need for manual renderer configuration in user code
+try:
+    from .api import _configure_plotly_renderer
+    _configure_plotly_renderer()
+except Exception:
+    # If auto-detection fails, default to browser (safe fallback)
+    pio.renderers.default = "browser" 
