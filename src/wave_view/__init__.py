@@ -15,12 +15,8 @@ from .core.plotspec import PlotSpec
 from .core.wavedataset import WaveDataset
 
 # Main API functions
-from .api import (
-    plot,
-    load_spice,
-    load_spice_raw,
-    explore_signals
-)
+from .core.plotting import plot
+from .api import load_spice_raw
 
 # Plotly imports for user access
 import plotly.io as pio
@@ -50,9 +46,7 @@ def set_renderer(renderer: str = "auto"):
 __all__ = [
     # Main API
     'plot',
-    'load_spice',
     'load_spice_raw',
-    'explore_signals', 
     
     # Core classes
     'SpiceData',

@@ -1,10 +1,27 @@
 # Project Memory
 
 ## Project Overview
-Wave_view is a Python package for SPICE simulation visualization with a modern, user-friendly API. The project features core modules for configuration management (config.py), data reading (reader.py), and v1.0.0 plotting functions (plotting.py), with comprehensive YAML-based configuration support and advanced features like log scale plotting and automatic renderer detection.
+Wave_view is a Python package for SPICE simulation visualization with a modern, user-friendly API. The project features core modules for data reading (reader.py), v1.0.0 plotting functions (plotting.py), and modern PlotSpec configuration management, with comprehensive YAML-based configuration support and advanced features like log scale plotting and automatic renderer detection.
 
 ## Current State
 **Version 1.0.0 Architecture Implementation - COMPLETED** 🚀 **MAJOR MILESTONE ACHIEVED**
+
+### **Phase 1.5: Ultimate API Simplification COMPLETED** ✅ **MAXIMUM SIMPLIFICATION ACHIEVED**
+- **Achievement**: Complete removal of redundant API functions AND wrapper layers for maximum clarity
+- **Function Elimination**: Removed `_categorize_signals()`, `explore_signals()`, `load_spice()`, and redundant `api.plot()` wrapper
+- **Core Exposure**: Direct exposure of `core.plotting.plot()` function for maximum simplicity
+- **API Streamlining**: Simplified to just 2 functions: `plot()` (from core) and `load_spice_raw()` (from api)
+- **Import Cleanup**: Removed all unnecessary imports and dependencies from public API
+- **User Experience**: Explicit data flow - users see exactly what happens: `load_spice_raw()` → `PlotSpec` → `plot()`
+- **Breaking Change**: 4 functions removed, API reduced to absolute essentials with zero redundancy
+
+### **Phase 1.4: Legacy Config Removal COMPLETED** ✅ **FINAL CLEANUP SUCCESS**
+- **Achievement**: Complete removal of legacy config.py system (commit c9cb970)
+- **Legacy Elimination**: Archived config.py as config_legacy.py in _archive/ directory
+- **API Purification**: Removed PlotConfig class and all related functions from package
+- **Function Cleanup**: Removed config_from_file(), config_from_yaml(), validate_config() functions
+- **Import Streamlining**: Cleaned package namespace - only PlotSpec remains for configuration
+- **Breaking Change**: 160 lines of legacy code removed, PlotConfig completely superseded by PlotSpec
 
 ### **Phase 1.3: Final API Migration COMPLETED** ✅ **BREAKING CHANGE SUCCESS**
 - **Achievement**: Successfully migrated from legacy plotter.py to pure v1.0.0 API
@@ -20,12 +37,16 @@ Wave_view is a Python package for SPICE simulation visualization with a modern, 
 - **Phase 1.2+**: ✅ **Code Quality Enhancement** - Refactored functions with single responsibility
 - **Phase 1.2++**: ✅ **Plotting Excellence** - Optimal zoom and Y-axis ordering
 - **Phase 1.3**: ✅ **Final API Migration** - Unified plot() function and legacy removal
+- **Phase 1.4**: ✅ **Legacy Config Removal** - Complete elimination of config.py system
 
-### **Current v1.0.0 API - PRODUCTION READY** 🎯 **CLEAN & ELEGANT**
+### **Current v1.0.0 API - ABSOLUTE MINIMALISM** 🎯 **EXPLICIT & POWERFUL**
 ```python
 import wave_view as wv
 
-# Create configuration
+# Ultra-simple explicit workflow (only way to use the API)
+data, metadata = wv.load_spice_raw("simulation.raw")
+print(f"Available signals: {list(data.keys())}")  # Direct signal examination
+
 spec = wv.PlotSpec.from_yaml("""
 title: "My Analysis"
 x: "time"
@@ -35,18 +56,23 @@ y:
       Output: "v(out)"
 """)
 
-# Plot with automatic renderer configuration
-fig = wv.plot("simulation.raw", spec)  # Automatically displays
+fig = wv.plot(data, spec)  # Core plotting function - no wrapper!
+fig.show()  # Explicit display control
 ```
 
 ### **Key Features Completed**
 - **✅ Automatic Renderer Detection**: Jupyter vs. standalone execution
 - **✅ Clean Import Structure**: Single `import wave_view as wv`
-- **✅ Elegant Namespace**: `wv.PlotSpec`, `wv.plot()`, `wv.load_spice_raw()`
-- **✅ Legacy-Free**: No more complex SpicePlotter class or plot_v1() function
-- **✅ Unified API**: One plot() function for all use cases
+- **✅ Ultra-Minimalist Namespace**: **ONLY** `wv.PlotSpec`, `wv.plot()`, `wv.load_spice_raw()` - **NOTHING ELSE!**
+- **✅ Legacy-Free**: No more complex SpicePlotter class, plot_v1() function, or PlotConfig
+- **✅ Direct Core Exposure**: `plot()` function is the actual core function, no wrapper layers
+- **✅ Modern Configuration**: Pure PlotSpec with Pydantic validation replacing legacy PlotConfig
+- **✅ Explicit Data Flow**: Users see exactly what happens: load → configure → plot → show
+- **✅ Zero Redundancy**: No duplicate functions, no wrappers, no hidden complexity
 
 ### **Previous Milestones**
+- **Phase 1.4: Legacy Config Removal** - Complete elimination of config.py system
+- **Phase 1.3: Final API Migration** - Unified plot() function and legacy removal
 - **Phase 1.2++: Plotting Excellence** - Significantly improved plotting usability
 - **Phase 1.2+: Code Quality Enhancement** - 75% complexity reduction with function extraction
 - **Phase 1.2: Standalone Plotting Functions** - Complete v1.0.0 plotting module
@@ -70,8 +96,9 @@ fig = wv.plot("simulation.raw", spec)  # Automatically displays
 ### **Breaking Changes Successfully Implemented**
 - **API Simplification**: `wv.plot(raw_file, spec)` replaces complex legacy API
 - **Import Cleanup**: Removed SpicePlotter exports and plot_v1 function
-- **Configuration Format**: PlotSpec format as the standard (not PlotConfig)
+- **Configuration Format**: PlotSpec format as the standard (PlotConfig completely removed)
 - **Data Interface**: Dict[str, np.ndarray] as the uniform data format
+- **Function Removal**: config_from_file(), config_from_yaml(), validate_config() no longer available
 
 ### **Architecture Principles Applied**
 - **Single Responsibility**: Each function has one clear purpose
@@ -109,7 +136,7 @@ fig = wv.plot("simulation.raw", config)
 - **Test Coverage**: 96% on plotting functions, 88% on PlotSpec
 - **Code Quality**: Excellent - clean functions with single responsibilities
 - **Documentation**: Complete Sphinx documentation system (needs update for v1.0.0)
-- **Legacy Code**: ✅ **REMOVED** - No more plotter.py or SpicePlotter dependencies
+- **Legacy Code**: ✅ **COMPLETELY REMOVED** - No more plotter.py, SpicePlotter, or config.py dependencies
 
 ## Open Questions
 - **Test Suite Refactoring**: Update integration tests to use new plot() API

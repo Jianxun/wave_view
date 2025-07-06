@@ -2,6 +2,28 @@
 
 ## Current Sprint - Version 1.0.0 Release Preparation 🚀 **ARCHITECTURE COMPLETE**
 
+### 📋 **API Cleanup Tasks** ✅ **COMPLETED** 🧹 **MAXIMUM SIMPLIFICATION SUCCESS**
+
+#### **Function Removal for API Clarity** ✅ **COMPLETED**
+- [X] **Remove `_categorize_signals()` function** ✅ **COMPLETED**
+  - Too specific - users can infer signal types from naming conventions
+  - Eliminates unnecessary complexity in signal exploration
+  
+- [X] **Remove `explore_signals()` function** ✅ **COMPLETED**
+  - Users can directly examine data dictionary keys now
+  - Redundant with `load_spice_raw()` approach
+  
+- [X] **Remove `load_spice()` legacy method** ✅ **COMPLETED**
+  - Superseded by `load_spice_raw()` with cleaner Dict format
+  - Eliminates SpiceData dependency from public API
+  - Updated `__init__.py` to remove function exports
+
+- [X] **Remove redundant `api.plot()` wrapper** ✅ **COMPLETED**
+  - Expose `core.plotting.plot()` directly for maximum simplicity
+  - Eliminates unnecessary file path handling and config conversion
+  - Users now have explicit control: `load_spice_raw()` → `PlotSpec` → `plot()`
+  - Cleaner data flow with single responsibility functions
+
 ### 📋 **v1.0.0 Implementation Status - COMPLETED** ✅ **MAJOR MILESTONE**
 
 #### **Phase 1: Core API Refactoring** ✅ **COMPLETED**
@@ -42,6 +64,15 @@
   - ✅ Implement automatic renderer configuration on import
   - ✅ Achieve single elegant import: `import wave_view as wv`
 
+- [X] **Legacy Config Removal** ✅ **COMPLETED**
+  - ✅ Archive config.py as config_legacy.py in _archive/ directory
+  - ✅ Remove PlotConfig class and all related functions from package
+  - ✅ Remove config_from_file(), config_from_yaml(), validate_config() functions from api.py
+  - ✅ Remove unused yaml import from api.py
+  - ✅ Update plot() function to use PlotSpec.model_validate() for dict configs
+  - ✅ Clean package namespace - only PlotSpec remains for configuration
+  - ✅ Breaking change: 160 lines of legacy code removed (commit c9cb970)
+
 ### 📋 **v1.0.0 Architecture - FULLY IMPLEMENTED** ✅ **SUCCESS**
 
 #### **Clean v1.0.0 API Achieved** ✅ **PRODUCTION READY**
@@ -61,8 +92,9 @@ fig = wv.plot("simulation.raw", config)
 - **✅ Automatic Renderer Detection**: Jupyter vs. standalone execution
 - **✅ Clean Import Structure**: Single `import wave_view as wv` line
 - **✅ Elegant Namespace**: `wv.PlotSpec`, `wv.plot()`, `wv.load_spice_raw()`
-- **✅ Legacy-Free Codebase**: No more SpicePlotter or plot_v1() complexity
+- **✅ Legacy-Free Codebase**: No more SpicePlotter, plot_v1(), or PlotConfig complexity
 - **✅ Unified API**: One plot() function for all plotting needs
+- **✅ Modern Configuration**: Pure PlotSpec with Pydantic validation
 
 ## Next Sprint - v1.0.0 Release and Documentation
 
@@ -139,7 +171,7 @@ fig = wv.plot("simulation.raw", config)
 - **Branch**: `1.0.0`
 - **Architecture Status**: ✅ **COMPLETE** - All v1.0.0 phases implemented
 - **API Status**: ✅ **UNIFIED** - Single plot() function with clean interface
-- **Legacy Code**: ✅ **REMOVED** - No more plotter.py or SpicePlotter
+- **Legacy Code**: ✅ **COMPLETELY REMOVED** - No more plotter.py, SpicePlotter, or config.py
 - **Test Status**: Needs refactoring for new API (integration tests)
 - **Demo Status**: ✅ **UPDATED** - Uses clean v1.0.0 API
 
@@ -150,6 +182,7 @@ fig = wv.plot("simulation.raw", config)
 - **Documentation**: Needs updating for v1.0.0 API changes
 
 ### **Recent Accomplishments**
+- **Config System Removal**: Successfully removed config.py system completely (commit c9cb970)
 - **Legacy Removal**: Successfully removed plotter.py without breaking functionality
 - **API Unification**: Replaced complex API with simple `wv.plot()` function
 - **Import Cleanup**: Achieved single elegant import pattern
@@ -158,5 +191,5 @@ fig = wv.plot("simulation.raw", config)
 ## Notes
 - **Current State**: v1.0.0 architecture fully implemented and tested
 - **Next Focus**: Test suite refactoring and documentation updates for release
-- **Major Achievement**: Complete migration from legacy to modern architecture
+- **Major Achievement**: Complete migration from legacy to modern architecture with full legacy removal
 - **Breaking Changes**: Ready for v1.0.0 major version release 

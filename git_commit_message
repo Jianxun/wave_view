@@ -1,0 +1,22 @@
+Remove legacy config.py system - v1.0.0 migration complete
+
+BREAKING CHANGE: PlotConfig class and related functions removed
+
+This commit completes the v1.0.0 architecture migration by removing the legacy
+config.py system that has been superseded by the modern PlotSpec implementation.
+
+Changes:
+- Archive config.py as config_legacy.py in _archive/ directory
+- Remove PlotConfig import/export from __init__.py
+- Remove config_from_file(), config_from_yaml(), validate_config() functions from api.py
+- Remove unused yaml import from api.py
+- Update plot() function to use PlotSpec.model_validate() for dict configs
+- Clean package namespace - only PlotSpec remains for configuration
+
+The v1.0.0 architecture is now complete with:
+- PlotSpec: Modern Pydantic-based configuration with validation
+- Standalone plotting functions: Clean separation of concerns
+- Unified API: Single wv.plot() function for all use cases
+
+All tests pass and package imports correctly. Test suite will be refactored
+separately to use the new PlotSpec-based API. 
