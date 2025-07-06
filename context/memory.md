@@ -175,3 +175,4 @@ fig = wv.plot("simulation.raw", config)
   * PlotSpec helper tests added (`tests/unit/plotspec/test_plotspec_basic.py`) – covers YAML parsing, dict export, and error handling
   * Layout edge-case tests added (`tests/unit/plotting/test_create_layout_edge.py`) – Stage C unit coverage rebuild complete (44 tests passing)
   * Loader tests added (`tests/unit/loader/test_loader_basic.py`) – project coverage now 86 %, Stage D coverage target met
+  * CLI tests added (`tests/unit/cli/test_cli_basic.py`) – overall coverage at 91 %, cli.py 81 %

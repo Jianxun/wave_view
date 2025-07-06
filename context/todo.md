@@ -267,5 +267,5 @@ fig = wv.plot("simulation.raw", config)
 ### **Stage D – Coverage & CI**
   - [X] **Overall coverage ≥ 85 %** – Added loader tests; project coverage now 86 %
   - [ ] **Add coverage gate to CI** – Update GitHub Actions workflow / pytest ini
-  - [ ] **CLI tests** – Raise `cli.py` coverage above 85 %
+  - [X] **CLI tests** – Added `tests/unit/cli/test_cli_basic.py`; cli.py coverage now 81 %, overall 91 %. (Consider additional tests later)
   - [ ] **env helper tests** – Bring `utils/env.py` coverage ≥ 90 %
