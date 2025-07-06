@@ -218,7 +218,7 @@ fig = wv.plot("simulation.raw", config)
 
 ## Current Branch Status - v1.0.0 READY 🎯
 
-- **Branch**: `1.0.0`
+- **Branch**: `test_suite_refactor`
 - **Architecture Status**: ✅ **COMPLETE** - All v1.0.0 phases implemented
 - **API Status**: ✅ **UNIFIED** - Single plot() function with clean interface
 - **Legacy Code**: ✅ **COMPLETELY REMOVED** - Zero legacy components remain

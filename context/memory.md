@@ -164,3 +164,7 @@ fig = wv.plot("simulation.raw", config)
 - **Test Suite Refactoring**: Update all legacy tests that reference SpiceData or other removed components
 - **Documentation Updates**: Update all examples and documentation for v1.0.0
 - **Migration Guide**: Create guide for users upgrading from v0.x.x to v1.0.0
+
+## Development Branch Status (2025-07-06)
+- New branch `test_suite_refactor` created from `1.0.0` to host the aggressive test-suite refactor aligned with v1.0.0 API.
+- `1.0.0` branch pushed to origin and now serves as stable baseline.
