@@ -187,9 +187,11 @@ fig = wv.plot("simulation.raw", config)
 ### 📋 **Future Development** (MEDIUM PRIORITY)
 
 #### **Enhanced Features** (v1.1.0)
-- [ ] **Complex Number Handling**
-  - Add smart complex number handling to `add_waveform()` function
-  - Implement automatic real/magnitude conversion with warnings
+- [X] **Complex Number Handling** ✅ **COMPLETED**
+  - ✅ Add smart complex number handling to `add_waveform()` function
+  - ✅ Implement automatic real/magnitude conversion for Plotly compatibility
+  - ✅ Fix JSON serialization errors for AC analysis complex signals
+  - ✅ Preserve complex number workflow for magnitude/phase calculations in processed_data
   
 - [ ] **Advanced Signal Processing**
   - Create utility functions for common signal processing operations

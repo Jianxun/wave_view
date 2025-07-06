@@ -60,7 +60,10 @@ print(f"Available signals: {list(data.keys())}")  # Direct signal examination
 
 spec = wv.PlotSpec.from_yaml("""
 title: "My Analysis"
-x: "time"
+x:
+  signal: "time"
+  label: "Time (s)"
+  log_scale: false
 y:
   - label: "Voltage (V)"
     signals:
@@ -80,9 +83,11 @@ fig.show()  # Explicit display control
 - **✅ Clean Import Structure**: Single `import wave_view as wv`
 - **✅ Ultra-Minimalist Namespace**: **ONLY** `wv.PlotSpec`, `wv.plot()`, `wv.load_spice_raw()`, `wv.WaveDataset` 
 - **✅ Direct Core Exposure**: `plot()` function is the actual core function, no wrapper layers
-- **✅ Modern Configuration**: Pure PlotSpec with Pydantic validation
+- **✅ Modern Configuration**: Pure PlotSpec with Pydantic validation and XAxisSpec support
 - **✅ Explicit Data Flow**: Users see exactly what happens: load → configure → plot → show
 - **✅ Zero Redundancy**: No duplicate functions, no wrappers, no hidden complexity
+- **✅ Complex Number Handling**: Automatic conversion of AC analysis complex signals for Plotly compatibility
+- **✅ X-Axis Configuration**: Full XAxisSpec support with labels, log scale, and range limits
 
 ### **Previous Milestones**
 - **Phase 1.6: Legacy Reader Removal** - Complete elimination of SpiceData class and reader.py
@@ -138,7 +143,9 @@ data, metadata = wv.load_spice_raw("simulation.raw")
 # 2. Create PlotSpec (YAML string / file / dict)
 spec = wv.PlotSpec.from_yaml("""
 title: "My Analysis"
-x: "time"
+x:
+  signal: "time"
+  label: "Time (s)"
 y:
   - label: "Voltage (V)"
     signals: {Out: "v(out)"}

@@ -380,6 +380,18 @@ def add_waveform(fig: go.Figure, x_data: np.ndarray, y_data: np.ndarray,
         y_axis: Y-axis identifier (y, y2, y3, etc.)
         **kwargs: Additional trace styling options
     """
+    # Convert complex signals to real for Plotly compatibility
+    # For complex signals, take the real part (magnitude would be np.abs())
+    if np.iscomplexobj(x_data):
+        # For most cases like frequency, time, we want the real part
+        # For AC analysis voltages/currents, users should use processed_data for magnitude/phase
+        x_data = np.real(x_data)
+    
+    if np.iscomplexobj(y_data):
+        # For most cases like frequency, time, we want the real part
+        # For AC analysis voltages/currents, users should use processed_data for magnitude/phase
+        y_data = np.real(y_data)
+    
     # Create scatter trace
     trace = go.Scatter(
         x=x_data,
