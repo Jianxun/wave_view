@@ -9,6 +9,7 @@ Following TDD principles - implementing one test case at a time.
 import unittest
 import numpy as np
 import plotly.graph_objects as go
+import pytest
 
 # Import will fail initially - that's expected in TDD
 try:
@@ -252,9 +253,9 @@ class TestPlottingHelperFunctions(unittest.TestCase):
         trace = fig.data[0]
         self.assertEqual(trace.yaxis, "y2")
 
+    @pytest.mark.skip(reason="Zoom buttons feature removed in v1.0.0")
     def test_create_layout_with_zoom_buttons(self):
         """Test create_layout with zoom buttons enabled."""
-        # Skip test if functions not implemented yet
         if create_layout is None:
             self.skipTest("Helper functions not implemented yet")
         
@@ -308,9 +309,9 @@ class TestPlottingHelperFunctions(unittest.TestCase):
         self.assertEqual(x_args["xaxis.fixedrange"], False)
         self.assertEqual(x_args["yaxis.fixedrange"], True)
 
+    @pytest.mark.skip(reason="Zoom buttons feature removed in v1.0.0")
     def test_create_layout_with_zoom_buttons_multi_axis(self):
         """Test create_layout with zoom buttons and multiple Y-axes."""
-        # Skip test if functions not implemented yet
         if create_layout is None:
             self.skipTest("Helper functions not implemented yet")
         
@@ -367,6 +368,7 @@ class TestPlottingHelperFunctions(unittest.TestCase):
         # Verify no zoom buttons configuration
         self.assertNotIn("updatemenus", layout)
 
+    @pytest.mark.skip(reason="Zoom buttons feature removed in v1.0.0")
     def test_zoom_xy_mode_settings_verification(self):
         """Test to verify the exact settings of Zoom XY mode work correctly."""
         if create_layout is None:

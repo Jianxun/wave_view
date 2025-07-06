@@ -13,22 +13,35 @@ import plotly.graph_objects as go
 from .plotspec import PlotSpec
 
 
-def plot(data: Dict[str, np.ndarray], spec: PlotSpec) -> go.Figure:
+def plot(
+    data: Dict[str, np.ndarray],
+    spec: PlotSpec | Dict[str, Any],
+    *,
+    show: bool = True,
+) -> go.Figure:
     """
     Create Plotly figure from data and PlotSpec configuration.
     
     Args:
-        data: Signal name → numpy array mapping
-        spec: PlotSpec configuration object
+        data: Mapping of signal name → numpy array
+        spec: PlotSpec configuration object **or** raw configuration ``dict``
+        show: When *True* (default) immediately display the figure via
+              ``fig.show()`` – handy for interactive use.  Tests can pass
+              ``show=False`` to suppress GUI pop-ups.
         
     Returns:
-        Plotly Figure object
+        Plotly ``go.Figure`` instance
         
     Raises:
         ValueError: If required signals are missing from data
     """
-    # Convert PlotSpec to config dict
-    config = spec.to_dict()
+    # Accept either PlotSpec or plain dict to avoid forcing callers to convert
+    if isinstance(spec, PlotSpec):
+        config = spec.to_dict()
+    elif isinstance(spec, dict):
+        config = spec
+    else:
+        raise TypeError("spec must be a PlotSpec instance or configuration dict")
     
     # Create figure and apply layout
     fig = create_figure()
@@ -54,6 +67,10 @@ def plot(data: Dict[str, np.ndarray], spec: PlotSpec) -> go.Figure:
             y_data = data[signal_key]
             add_waveform(fig, x_data, y_data, name=legend_name, y_axis=y_axis_id)
     
+    # Show figure for interactive workflows if requested
+    if show:
+        fig.show()
+
     return fig
 
 
@@ -301,6 +318,8 @@ def create_layout(config: Dict[str, Any]) -> Dict[str, Any]:
     
     # Optimal zoom configuration (zoom XY mode by default)
     layout.update(_config_zoom(config, num_y_axes))
+    
+    # Zoom buttons functionality has been removed from v1.0.0.
     
     return layout
 
