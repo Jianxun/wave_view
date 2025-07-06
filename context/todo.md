@@ -205,6 +205,17 @@ fig = wv.plot("simulation.raw", config)
   - Support for parametric analysis results
   - Advanced multi-dimensional plotting
 
+#### **CLI Enhancements** (Backlog)
+- [ ] **Batch Plotting Mode**
+  - Command: `wave_view batch-plot *.raw --spec spec.yml --output-dir plots/`
+  - *Status*: **Deferred** until batch loader (`wv.load_spice_raw_batch`) design is finalized
+- [ ] **Auto-generate Blank Spec**
+  - Command: `wave_view scaffold-spec sim.raw > spec.yml`
+  - *Status*: Added to backlog for future discussion
+- [ ] **Signals Command Improvements**
+  - Add `--grep / --regex` filtering, `--json` output, and colour highlighting
+  - *Status*: Discussion required before implementation
+
 ## Current Branch Status - v1.0.0 READY 🎯
 
 - **Branch**: `1.0.0`

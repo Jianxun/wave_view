@@ -15,7 +15,10 @@ from .core.wavedataset import WaveDataset
 
 # Main API functions
 from .core.plotting import plot
-from .api import load_spice_raw
+from .loader import load_spice_raw, load_spice_raw_batch
+
+# Renderer helpers
+from .utils.env import configure_plotly_renderer
 
 # Plotly imports for user access
 import plotly.io as pio
@@ -35,8 +38,7 @@ def set_renderer(renderer: str = "auto"):
         >>> wv.set_renderer("auto")      # Auto-detect (default)
     """
     if renderer == "auto":
-        from .api import _configure_plotly_renderer
-        _configure_plotly_renderer()
+        configure_plotly_renderer()
     else:
         pio.renderers.default = renderer
     
@@ -46,6 +48,7 @@ __all__ = [
     # Main API
     'plot',
     'load_spice_raw',
+    'load_spice_raw_batch',
     
     # Core classes
     'PlotSpec',
@@ -59,8 +62,7 @@ __all__ = [
 # Configure Plotly renderer automatically on import
 # This eliminates the need for manual renderer configuration in user code
 try:
-    from .api import _configure_plotly_renderer
-    _configure_plotly_renderer()
+    configure_plotly_renderer()
 except Exception:
     # If auto-detection fails, default to browser (safe fallback)
     pio.renderers.default = "browser" 
