@@ -156,6 +156,16 @@ fig = wv.plot("simulation.raw", config)
     - test_cli_plot.py (CLI smoke)
   All new tests pass.
 
+#### **Stage C – Unit Coverage Rebuild** (IN PROGRESS)
+- [X] **Plotting helper tests** – Added `tests/unit/plotting/test_plotting_helpers.py` covering:
+  - `_calculate_y_axis_domains()` single/multi
+  - `_config_zoom()` logic
+  - `add_waveform()` axis assignment + kwargs forwarding
+- [ ] **WaveDataset core tests** – Port & adapt tests to `tests/unit/wavedataset/` directory
+- [ ] **PlotSpec helper tests** – Validate YAML parsing & dict round-trip
+- [ ] **Create layout edge-case tests** – Domains, log-scale, range validation
+- [ ] **Coverage check** – Ensure `core.plotting` ≥ 90 %, `core.wavedataset` ≥ 95 %
+
 ### 📋 **Release Preparation Tasks** (HIGH PRIORITY)
 
 #### **Documentation Updates**

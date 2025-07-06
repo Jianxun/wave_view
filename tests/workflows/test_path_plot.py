@@ -28,7 +28,7 @@ class TestPathPlotWorkflow(unittest.TestCase):
         fig = wv.plot(data, spec, show=False)
         self.assertIsInstance(fig, go.Figure)
         self.assertEqual(len(fig.data), 1)
-        self.assertEqual(fig.data[0].name, "VDD")
+        self.assertEqual(fig.data[0].name, "Bus06")
 
 
 if __name__ == "__main__":

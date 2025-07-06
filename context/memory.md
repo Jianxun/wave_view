@@ -168,3 +168,5 @@ fig = wv.plot("simulation.raw", config)
 ## Development Branch Status (2025-07-06)
 - New branch `test_suite_refactor` created from `1.0.0` to host the aggressive test-suite refactor aligned with v1.0.0 API.
 - `1.0.0` branch pushed to origin and now serves as stable baseline.
+
+- **Test Suite Refactor – Stage C (Unit Coverage) IN PROGRESS**: Initial plotting helper tests added (`tests/unit/plotting/test_plotting_helpers.py`) – all tests passing, laying groundwork for ≥90 % coverage on `core.plotting`.
