@@ -22,13 +22,8 @@ class TestV1_0_0Integration(unittest.TestCase):
 
     def test_v1_0_0_plot_with_real_data(self):
         """Test v1.0.0 plot function with real SPICE data."""
-        # Load real SPICE data
-        spice_data = wv.load_spice(self.test_raw_file)
-        
-        # Convert to v1.0.0 format (Dict[str, np.ndarray])
-        data = {}
-        for signal_name in spice_data.signals:
-            data[signal_name] = spice_data.get_signal(signal_name)
+        # Load real SPICE data using v1.0.0 loader
+        data, _ = wv.load_spice_raw(self.test_raw_file)
         
         # Create PlotSpec configuration using actual signal names
         spec = wv.PlotSpec.from_yaml("""
@@ -74,12 +69,7 @@ y:
     def test_v1_0_0_plot_with_multi_axis(self):
         """Test v1.0.0 plot function with multi-axis configuration."""
         # Load real SPICE data
-        spice_data = wv.load_spice(self.test_raw_file)
-        
-        # Convert to v1.0.0 format
-        data = {}
-        for signal_name in spice_data.signals:
-            data[signal_name] = spice_data.get_signal(signal_name)
+        data, _ = wv.load_spice_raw(self.test_raw_file)
         
         # Create multi-axis PlotSpec using actual signal names
         spec = wv.PlotSpec.from_yaml("""
@@ -123,12 +113,7 @@ y:
     def test_v1_0_0_plot_with_dict_config(self):
         """Test v1.0.0 plot function with dictionary configuration."""
         # Load real SPICE data
-        spice_data = wv.load_spice(self.test_raw_file)
-        
-        # Convert to v1.0.0 format
-        data = {}
-        for signal_name in spice_data.signals:
-            data[signal_name] = spice_data.get_signal(signal_name)
+        data, _ = wv.load_spice_raw(self.test_raw_file)
         
         # Create configuration dictionary
         config = {

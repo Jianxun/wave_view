@@ -21,7 +21,7 @@ class TestPathPlotWorkflow(unittest.TestCase):
             y:
               - label: "VDD"
                 signals:
-                  VDD: "v(vdd)"
+                  Bus06: "v(bus06)"
             """
         )
 

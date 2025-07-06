@@ -35,7 +35,7 @@ class TestPreloadWorkflow(unittest.TestCase):
             y:
               - label: "BUS01"
                 signals:
-                  Bus01: "v(bus01)"
+                  Bus06: "v(bus06)"
             """
         )
         fig = wv.plot(self.data, spec, show=False)
