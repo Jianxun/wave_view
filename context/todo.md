@@ -162,7 +162,7 @@ fig = wv.plot("simulation.raw", config)
   - `_config_zoom()` logic
   - `add_waveform()` axis assignment + kwargs forwarding
 - [X] **WaveDataset core tests** – Added error-path tests (`tests/unit/wavedataset/test_wavedataset_error_paths.py`) – 100 % coverage
-- [ ] **PlotSpec helper tests** – Validate YAML parsing & dict round-trip
+- [X] **PlotSpec helper tests** – Added `tests/unit/plotspec/test_plotspec_basic.py` – YAML parse, round-trip, error paths
 - [ ] **Create layout edge-case tests** – Domains, log-scale, range validation
 - [X] **Coverage check** – `core.wavedataset` now 100 %; plotting helpers already ≥90 %
 

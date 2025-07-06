@@ -172,3 +172,4 @@ fig = wv.plot("simulation.raw", config)
 - **Test Suite Refactor – Stage C (Unit Coverage) IN PROGRESS**:
   * Plotting helper tests added (`tests/unit/plotting/test_plotting_helpers.py`) – `core.plotting` ≥90 %
   * WaveDataset error-path tests added (`tests/unit/wavedataset/test_wavedataset_error_paths.py`) – `core.wavedataset` 100 % coverage
+  * PlotSpec helper tests added (`tests/unit/plotspec/test_plotspec_basic.py`) – covers YAML parsing, dict export, and error handling
