@@ -2,6 +2,25 @@
 
 ## Current Sprint - Version 1.0.0 Release Preparation 🚀 **ARCHITECTURE COMPLETE**
 
+### 📋 **Engineering Notation Enhancement - COMPLETED** ✅ **FREQUENCY DOMAIN IMPROVEMENT**
+
+#### **Automatic SI Prefix Detection** ✅ **COMPLETED**
+- [X] **Enhanced frequency domain plotting** ✅ **COMPLETED**
+  - Added automatic detection of frequency signals in X-axis configuration
+  - Implemented SI engineering notation (1G, 1M, 1k) instead of American notation (1B, 1M, 1K)
+  - Fixed Plotly exponentformat to "SI" for signals containing "frequency" in the name
+  - Improves readability for AC analysis and frequency response plots
+  
+- [X] **Comprehensive test coverage** ✅ **COMPLETED**
+  - Added tests for frequency signal detection with and without log scale
+  - Added tests to ensure non-frequency signals use default formatting
+  - All tests passing with 100% coverage of new functionality
+  
+- [X] **User experience improvement** ✅ **COMPLETED**
+  - Automatic activation - no configuration required from users
+  - Works with existing YAML specifications and PlotSpec configurations
+  - Maintains backward compatibility for all existing plots
+
 ### 📋 **Legacy Code Removal - COMPLETED** ✅ **PURE v1.0.0 ARCHITECTURE**
 
 #### **Phase 1.6: Legacy Reader Removal** ✅ **COMPLETED**
@@ -261,3 +280,22 @@ fig = wv.plot("simulation.raw", config)
   - [X] **CLI tests** – Added `tests/unit/cli/test_cli_basic.py`; cli.py coverage now 81 %, overall 91 %
   - [X] **Legacy integration test removed** – Deleted redundant `tests/test_integration_v1_0_0.py`; suite now 59 tests
   - [ ] **env helper tests** – Bring `utils/env.py` coverage ≥ 90 %
+
+### 📋 **Engineering Notation Enhancement - COMPLETED** ✅ **FREQUENCY DOMAIN IMPROVEMENT**
+
+#### **Automatic SI Prefix Detection** ✅ **COMPLETED**
+- [X] **Enhanced frequency domain plotting** ✅ **COMPLETED**
+  - Added automatic detection of frequency signals in X-axis configuration
+  - Implemented SI engineering notation (1G, 1M, 1k) instead of American notation (1B, 1M, 1K)
+  - Fixed Plotly exponentformat to "SI" for signals containing "frequency" in the name
+  - Improves readability for AC analysis and frequency response plots
+  
+- [X] **Comprehensive test coverage** ✅ **COMPLETED**
+  - Added tests for frequency signal detection with and without log scale
+  - Added tests to ensure non-frequency signals use default formatting
+  - All tests passing with 100% coverage of new functionality
+  
+- [X] **User experience improvement** ✅ **COMPLETED**
+  - Automatic activation - no configuration required from users
+  - Works with existing YAML specifications and PlotSpec configurations
+  - Maintains backward compatibility for all existing plots

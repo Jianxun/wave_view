@@ -209,6 +209,12 @@ def _configure_x_axis(config: Dict[str, Any]) -> Dict[str, Any]:
     if x_spec.get("range"):
         x_axis_config["xaxis"]["range"] = x_spec["range"]
     
+    # Add engineering notation for frequency domain plots
+    # Use SI prefixes (1G, 1M, 1k) instead of American notation (1B, 1M, 1K)
+    signal_name = x_spec.get("signal", "").lower()
+    if "frequency" in signal_name:
+        x_axis_config["xaxis"]["exponentformat"] = "SI"
+    
     return x_axis_config
 
 

@@ -71,4 +71,78 @@ class TestCreateLayoutEdgeCases:
             "show_rangeslider": False,
         }
         layout = create_layout(cfg)
-        assert layout["xaxis"]["rangeslider"]["visible"] is False 
+        assert layout["xaxis"]["rangeslider"]["visible"] is False
+
+
+class TestXAxisConfigurationEdgeCases:
+    """Tests for edge cases in X-axis configuration."""
+
+    def test_log_scale_x_axis_with_engineering_notation(self):
+        """X-axis with log scale should use SI engineering notation for better frequency domain visualization."""
+        config = {
+            "title": "Frequency Response",
+            "x": {
+                "signal": "frequency",
+                "label": "Frequency (Hz)",
+                "log_scale": True
+            },
+            "y": [
+                {
+                    "label": "Magnitude (dB)",
+                    "signals": {"Output": "v(out)"}
+                }
+            ]
+        }
+        
+        layout = create_layout(config)
+        
+        # Engineering notation should be enabled for log scale frequency plots
+        assert layout["xaxis"]["exponentformat"] == "SI"
+        assert layout["xaxis"]["type"] == "log"
+        assert layout["xaxis"]["title"] == "Frequency (Hz)"
+    
+    def test_frequency_signal_with_engineering_notation(self):
+        """X-axis with frequency signal should use SI engineering notation even without log scale."""
+        config = {
+            "title": "Frequency Analysis",
+            "x": {
+                "signal": "frequency",
+                "label": "Frequency (Hz)",
+                "log_scale": False
+            },
+            "y": [
+                {
+                    "label": "Magnitude",
+                    "signals": {"Output": "v(out)"}
+                }
+            ]
+        }
+        
+        layout = create_layout(config)
+        
+        # Engineering notation should be enabled for frequency signals
+        assert layout["xaxis"]["exponentformat"] == "SI"
+        assert layout["xaxis"]["title"] == "Frequency (Hz)"
+
+    def test_non_frequency_signal_without_engineering_notation(self):
+        """Non-frequency signals should use default formatting."""
+        config = {
+            "title": "Time Domain Analysis",
+            "x": {
+                "signal": "time", 
+                "label": "Time (s)",
+                "log_scale": False
+            },
+            "y": [
+                {
+                    "label": "Voltage (V)",
+                    "signals": {"Output": "v(out)"}
+                }
+            ]
+        }
+        
+        layout = create_layout(config)
+        
+        # No engineering notation for non-frequency signals
+        assert "exponentformat" not in layout["xaxis"]
+        assert layout["xaxis"]["title"] == "Time (s)" 
