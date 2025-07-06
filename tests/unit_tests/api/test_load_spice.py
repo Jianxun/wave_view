@@ -10,9 +10,12 @@ import tempfile
 import os
 from pathlib import Path
 from unittest.mock import Mock, patch, MagicMock
+import numpy as np
 
+import wave_view as wv
 from wave_view.api import load_spice
 from wave_view.core.reader import SpiceData
+from wave_view.core.wavedataset import WaveDataset
 from . import (
     create_temp_raw_file, 
     cleanup_temp_file,
@@ -383,4 +386,96 @@ class TestLoadSpiceEdgeCases:
                 mock_spice_data_class.assert_called_once_with(raw_file)
                 
         finally:
-            cleanup_temp_file(raw_file) 
+            cleanup_temp_file(raw_file)
+
+
+class TestLoadSpiceRaw:
+    """Tests for load_spice_raw function."""
+
+    def test_load_spice_raw_returns_correct_format(self):
+        """Test that load_spice_raw returns Dict[str, np.ndarray] and metadata."""
+        # Mock WaveDataset for testing
+        mock_wave_data = MagicMock()
+        mock_wave_data.signals = ['time', 'v(out)', 'i(vdd)']
+        mock_wave_data.metadata = {'simulation': 'test'}
+        
+        # Mock get_signal to return numpy arrays
+        def mock_get_signal(signal):
+            return np.array([1.0, 2.0, 3.0])
+        
+        mock_wave_data.get_signal = mock_get_signal
+        
+        with patch.object(WaveDataset, 'from_raw', return_value=mock_wave_data):
+            with patch.object(Path, 'exists', return_value=True):
+                data, metadata = wv.load_spice_raw("test.raw")
+                
+                # Verify return types
+                assert isinstance(data, dict)
+                assert isinstance(metadata, dict)
+                
+                # Verify data structure
+                assert len(data) == 3
+                assert 'time' in data
+                assert 'v(out)' in data
+                assert 'i(vdd)' in data
+                
+                # Verify all values are numpy arrays
+                for signal, values in data.items():
+                    assert isinstance(values, np.ndarray)
+                    assert values.shape == (3,)
+                
+                # Verify metadata
+                assert metadata == {'simulation': 'test'}
+
+    def test_load_spice_raw_input_validation(self):
+        """Test input validation for load_spice_raw function."""
+        # Test None input
+        with pytest.raises(TypeError, match="file path must be a string or Path object, not None"):
+            wv.load_spice_raw(None)
+        
+        # Test invalid type
+        with pytest.raises(TypeError, match="file path must be a string or Path object"):
+            wv.load_spice_raw(123)
+        
+        # Test empty string
+        with pytest.raises(ValueError, match="file path cannot be empty"):
+            wv.load_spice_raw("")
+        
+        # Test non-existent file
+        with pytest.raises(FileNotFoundError, match="SPICE raw file not found"):
+            wv.load_spice_raw("nonexistent.raw")
+
+    def test_load_spice_raw_with_path_object(self):
+        """Test load_spice_raw with Path object input."""
+        mock_wave_data = MagicMock()
+        mock_wave_data.signals = ['time']
+        mock_wave_data.metadata = {}
+        mock_wave_data.get_signal = lambda signal: np.array([1.0, 2.0])
+        
+        with patch.object(WaveDataset, 'from_raw', return_value=mock_wave_data):
+            with patch.object(Path, 'exists', return_value=True):
+                data, metadata = wv.load_spice_raw(Path("test.raw"))
+                
+                assert isinstance(data, dict)
+                assert len(data) == 1
+                assert 'time' in data
+
+    def test_load_spice_raw_integration_with_real_file(self):
+        """Integration test with actual SPICE file."""
+        # Use the test file from the project
+        test_file = Path(__file__).parent.parent.parent / "raw_files" / "Ring_Oscillator_7stage.raw"
+        
+        if test_file.exists():
+            data, metadata = wv.load_spice_raw(str(test_file))
+            
+            # Verify basic structure
+            assert isinstance(data, dict)
+            assert isinstance(metadata, dict)
+            assert len(data) > 0
+            
+            # Verify all values are numpy arrays with same length
+            array_lengths = [len(arr) for arr in data.values()]
+            assert all(isinstance(arr, np.ndarray) for arr in data.values())
+            assert len(set(array_lengths)) <= 1  # All arrays should have same length
+        else:
+            pytest.skip("Test SPICE file not found") 

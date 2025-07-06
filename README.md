@@ -11,6 +11,7 @@ A Python package for visualizing SPICE simulation waveforms with interactive Plo
 
 - 📊 **Interactive Plotly Visualization**: Modern, web-based plots with zoom, pan, and hover
 - 🔧 **Simple API**: Plot waveforms with a single function call
+- 🖥️ **Command Line Interface**: Quick plotting from terminal with `wave_view plot`
 - ⚙️ **YAML Configuration**: Flexible, reusable plotting configurations
 - 🔤 **Case-Insensitive Signal Access**: Access signals regardless of case (`V(VDD)` = `v(vdd)`)
 - 🧮 **Processed Signals**: Generate derived signals with lambda functions
@@ -84,6 +85,29 @@ Y:
       IN: "v(vin)"
 """)
 fig = wv.plot("simulation.raw", config)
+```
+
+### Command Line Interface
+
+Wave View includes a powerful CLI for quick plotting without writing Python code:
+
+```bash
+# Plot with specification file
+wave_view plot simulation.raw --spec config.yaml
+
+# Plot with custom options
+wave_view plot simulation.raw --spec config.yaml --title "My Analysis" --theme plotly_dark
+
+# Save to file
+wave_view plot simulation.raw --spec config.yaml --output plot.html
+
+# List available signals
+wave_view signals simulation.raw
+wave_view signals simulation.raw --limit 20
+
+# Get help
+wave_view --help
+wave_view plot --help
 ```
 
 ### Advanced Usage
@@ -242,6 +266,7 @@ wave_view/
   - `numpy` >= 1.20.0 (Numerical operations)
   - `PyYAML` >= 6.0 (Configuration files)
   - `spicelib` >= 1.0.0 (SPICE file reading)
+  - `click` >= 8.0.0 (Command line interface)
 
 ## 🤝 Contributing
 

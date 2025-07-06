@@ -4,7 +4,61 @@
 Wave_view is a Python package for SPICE simulation visualization with a modern, user-friendly API. The project features core modules for configuration management (config.py), data reading (reader.py), and plotting (plotter.py), with comprehensive YAML-based configuration support and advanced features like log scale plotting and processed signal generation.
 
 ## Current State
-**Version 1.0.0 Architecture Implementation - Phase 1 In Progress** 🚀 **TDD SUCCESS**
+**Version 1.0.0 Architecture Implementation - Phase 1.2 COMPLETED** 🚀 **TDD SUCCESS**
+
+### **Phase 1.2: Standalone Plotting Functions COMPLETED** ✅ **MAJOR MILESTONE**
+- **Achievement**: Successfully implemented v1.0.0 standalone plotting functions using strict TDD methodology
+- **New Module**: Created `src/wave_view/core/plotting.py` with clean function-based API
+- **Core Functions**: 
+  - `plot(data: Dict[str, np.ndarray], spec: PlotSpec)` - Main plotting function
+  - `create_figure()` - Empty figure creation
+  - `create_layout()` - Layout configuration
+  - `add_waveform()` - Trace addition helper
+- **API Integration**: Exported as `wave_view.plot_v1()` for testing and transition
+- **Direct Signal Lookup**: No complex resolution logic, simple dictionary access
+- **Multi-Axis Support**: Full support for multiple Y-axes with proper domain calculation
+
+### **TDD Methodology Success - Phase 1.2** ✅ **DEVELOPMENT APPROACH VALIDATION**
+- **Red Phase**: Created 7 failing tests for plotting functions ✅
+- **Green Phase**: Implemented functions to make all tests pass ✅
+- **Integration**: Added real data integration tests ✅
+- **Results**: 15 tests passing (100% pass rate)
+- **Coverage**: plotting.py 93% coverage, PlotSpec 88% coverage
+- **Quality**: Clean separation of concerns, no coupling to old architecture
+
+### **v1.0.0 Implementation Progress**
+- **Phase 1.1**: ✅ **PlotSpec Simplification** - COMPLETED
+  - ✅ Removed plotting methods from PlotSpec class
+  - ✅ Focus on configuration-only functionality
+  - ✅ Maintained factory methods (`from_yaml`, `from_file`)
+  - ✅ Added clean `to_dict()` export method
+- **Phase 1.2**: ✅ **Standalone Plotting Functions** - COMPLETED
+  - ✅ Created `plotting.py` module with function-based API
+  - ✅ Implemented `plot()`, `create_figure()`, `create_layout()`, `add_waveform()`
+  - ✅ Direct signal lookup without complex resolution
+  - ✅ Multi-axis support with proper domain calculation
+  - ✅ Full test coverage with real data integration tests
+- **Phase 1.3**: 🔄 **Next** - API Migration and Final Cleanup
+
+### **Current Branch**: `1.0.0` 
+- **Working Directory**: Ready for commit
+- **Test Status**: All v1.0.0 tests passing (15/15)
+- **Coverage**: plotting.py 93%, PlotSpec 88%
+- **Files Added**: 
+  - `src/wave_view/core/plotting.py` - New v1.0.0 plotting functions
+  - `tests/unit_tests/test_plotting_v1_0_0.py` - Comprehensive unit tests
+  - `tests/test_integration_v1_0_0.py` - Integration tests with real data
+- **Files Modified**: 
+  - `src/wave_view/__init__.py` - Added plot_v1 export
+
+### **Phase 1.2 Implementation Details**
+- **Architecture Compliance**: Perfect adherence to v1.0.0 architecture design
+- **Simple Data Interface**: `Dict[str, np.ndarray]` input, no complex objects
+- **PlotSpec Integration**: Clean use of `spec.to_dict()` for configuration
+- **Multi-Axis Excellence**: Proper domain calculation and Y-axis assignment
+- **Error Handling**: Clear error messages for missing signals
+- **Theme Support**: Full Plotly theme integration
+- **Real Data Validation**: Integration tests with actual Ring Oscillator SPICE data
 
 ### **PlotSpec v1.0.0 Refactoring COMPLETED** ✅ **MAJOR MILESTONE**
 - **Achievement**: Successfully refactored PlotSpec from v0.2.0 to v1.0.0 architecture using strict TDD methodology
@@ -13,419 +67,64 @@ Wave_view is a Python package for SPICE simulation visualization with a modern, 
 - **New Functionality**: Added clean `to_dict()` method for v1.0.0 plotting functions
 - **Archive Created**: v0.2.0 implementation preserved in `src/wave_view/_archive/plotspec_v0_2_0.py`
 
-### **TDD Methodology Success** ✅ **DEVELOPMENT APPROACH VALIDATION**
-- **Red Phase**: Created failing tests for new `to_dict()` method ✅
-- **Green Phase**: Implemented `to_dict()` method to make tests pass ✅
-- **Refactor Phase**: Removed old plotting methods and obsolete tests ✅
-- **Results**: All 6 tests passing, PlotSpec coverage improved to 88% (from 67%)
-- **Quality**: Clean separation of concerns achieved following architecture design
-
-### **v1.0.0 Implementation Progress**
-- **Phase 1.1**: ✅ **PlotSpec Simplification** - COMPLETED
-  - ✅ Removed plotting methods from PlotSpec class
-  - ✅ Focus on configuration-only functionality
-  - ✅ Maintained factory methods (`from_yaml`, `from_file`)
-  - ✅ Added clean `to_dict()` export method
-- **Phase 1.2**: 🔄 **Next** - Standalone Plotting Functions
-- **Phase 1.3**: 🔄 **Next** - Signal Resolution Simplification
-
-### **Current Branch**: `1.0.0` 
-- **Working Directory**: Clean, ready for commit
-- **Test Status**: All PlotSpec tests passing (6/6)
-- **Coverage**: PlotSpec module 88% coverage
-- **Files Modified**: 
-  - `src/wave_view/core/plotspec.py` - Refactored to v1.0.0
-  - `src/wave_view/_archive/plotspec_v0_2_0.py` - Archived v0.2.0 implementation
-  - `tests/unit_tests/config/test_plotspec.py` - Updated tests for v1.0.0
-
 ### **Major Architecture Decision: v1.0.0 API Simplification** 
 - **Architecture Document**: Complete v1.0.0 architecture design documented in `context/architecture_v1.0.0.md`
 - **Breaking Changes**: Major API simplification with function-based approach
 - **Future Extensibility**: Designed for multi-case plotting (PVT, Monte Carlo, parameter sweeps)
-- **Implementation Plan**: Phase 1 Step 1 completed successfully ✅
-
-### **Previous State: Version 0.2.0 Phase 1 Development - PlotSpec API Implementation COMPLETED** ✅
-
-### **Major Achievement: Complete PlotSpec API Implementation** 
-- **Full PlotSpec API**: Successfully implemented all core methods:
-  - `PlotSpec.from_yaml()` - Factory method with YAML parsing
-  - `PlotSpec.from_file()` - YAML file loading with proper error handling
-  - `PlotSpec.plot(data)` - Core plotting method returning Plotly figures
-  - `PlotSpec.show()` - Direct figure display method
-  - `PlotSpec.get_figure()` - Plotly figure access (alias for plot)
-  
-- **Comprehensive Testing**: All 10 PlotSpec tests passing with high coverage:
-  - Test coverage for all new methods including edge cases
-  - Integration tests with SpiceData
-  - File I/O and error handling tests
-  - TDD methodology successfully applied throughout
-
-- **Package Integration**: PlotSpec properly exported in main `__init__.py`
-  - Available as `import wave_view as wv; wv.PlotSpec`
-  - Maintains backward compatibility with existing API
-  - Demo script verified working as Jupyter notebook
-
-### **Next Phase**: Ready to begin Phase 2 - HTML Report Builder (WaveDataset implementation COMPLETED)
-
-### **Version 0.2.0 Phase 1 Development** ✅ **COMPLETED**
-- **Current Branch**: `API_refactor` 
-- **Phase Status**: **Both PlotSpec and WaveDataset Implementation** - Successfully completed using strict TDD methodology
-- **Coverage**: PlotSpec module 93% coverage, WaveDataset module 80% coverage, SpicePlotter improved to 66% coverage
-- **Tests**: 19 comprehensive test cases passing (10 PlotSpec + 9 WaveDataset)
-
-#### **PlotSpec Implementation Completed** ✅ **MAJOR MILESTONE**
-- **Pydantic Models**: Created PlotSpec and YAxisSpec classes with full validation
-- **Core Features Implemented**:
-  - ✅ Basic initialization from dict configuration
-  - ✅ YAML factory method (`PlotSpec.from_yaml()`) with error handling
-  - ✅ Multi-axis Y configuration support (leveraging real configs from demo_ota_5t.py)
-  - ✅ Core plotting method (`plot(data)`) returning Plotly figures
-- **Integration**: PlotSpec successfully uses existing SpicePlotter infrastructure
-- **Dependencies**: Added pydantic>=2.0.0 to requirements.txt
-
-#### **TDD Methodology Success** ✅ **DEVELOPMENT APPROACH**
-- **Approach**: Strict one-test-at-a-time TDD following development guidelines
-- **Process**: Red → Green → Refactor cycle with immediate test verification
-- **Quality**: Each feature fully tested before moving to next feature
-- **Coverage**: Achieved excellent test coverage through systematic TDD approach
-
-#### **WaveDataset Implementation Completed** ✅ **MAJOR MILESTONE**
-- **Modern Data Container**: Complete replacement for SpiceData with metadata support
-- **Core Features Implemented**:
-  - ✅ `WaveDataset.from_raw()` factory method with optional metadata
-  - ✅ `signals` property (lowercase normalized signal names)
-  - ✅ `get_signal()` method with case-insensitive signal access
-  - ✅ `has_signal()` method for signal existence checking
-  - ✅ `metadata` property with proper encapsulation (returns copy)
-- **Package Integration**: Available as `import wave_view as wv; wv.WaveDataset`
-- **Test Coverage**: 9 comprehensive tests, 80% coverage achieved
-
-#### **CLI Interface Implementation Completed** ✅ **MAJOR MILESTONE**
-- **Command-Line Interface**: Complete CLI with proper browser rendering
-- **Core Commands Implemented**:
-  - ✅ `wave_view plot <raw_file> --spec <spec.yaml>` - Main plotting command
-  - ✅ `wave_view signals <raw_file>` - Signal listing utility
-  - ✅ Browser rendering with `pio.renderers.default = "browser"`
-  - ✅ Output options: HTML, PNG, PDF, SVG, JSON formats
-  - ✅ CLI overrides: --title, --width, --height, --theme options
-- **Package Integration**: Entry point configured in pyproject.toml
-- **User Experience**: Emoji-enhanced feedback and comprehensive help text
-
-#### **Current v0.2.0 API**
-```python
-# New API Pattern (v0.2.0)
-data = wv.WaveDataset.from_raw("simulation.raw", metadata={"temp": 25})
-spec = wv.PlotSpec.from_yaml(yaml_config)
-fig = spec.plot(data)  # Returns plotly.graph_objects.Figure
-
-# PlotSpec usage
-config = {"x": "time", "y": [{"label": "Voltage", "signals": {"out": "v(out)"}}]}
-spec = wv.PlotSpec(**config)
-fig = spec.plot(data)
-
-# WaveDataset usage
-data = wv.WaveDataset.from_raw("test.raw", metadata={"corner": "tt"})
-print(data.signals)  # ['time', 'v(out)', 'i(vin)']
-signal_data = data.get_signal("v(out)")  # numpy array
-has_signal = data.has_signal("v(out)")  # True
-metadata = data.metadata  # {'corner': 'tt'}
-```
-
-#### **Integration Status**
-- **Demo Script**: Created `examples/demo_plotspec_api.py` (needs integration fixes)
-- **Module Integration**: PlotSpec successfully imports and uses existing SpicePlotter
-- **Test Infrastructure**: Comprehensive test suite in `tests/unit_tests/config/test_plotspec.py`
-
-### **Release 0.1.0 Status** ✅ **SUCCESSFULLY PUBLISHED TO PyPI**
-- **Version**: 0.1.0 (Released and Live)
-- **PyPI Status**: ✅ **LIVE** - https://pypi.org/project/wave-view/
-- **Installation**: `pip install wave_view` (verified working)
-- **GitHub Release**: ✅ **PUBLISHED** - https://github.com/jianxun/wave_view/releases/tag/v0.1.0
-- **Test Coverage**: 234 tests passing, 91% coverage  
-- **Documentation**: Complete and professional
-- **CI/CD**: GitHub Actions workflows operational
-- **Package Quality**: Production-ready with comprehensive feature set
-- **Verification**: ✅ All API functions working, dependencies resolved correctly
-
-### **Architecture: Clean 3-Step Workflow**
-```python
-# Step 1: Discovery - "What's available?"
-signals = wv.explore_signals("simulation.raw")
-
-# Step 2: Configuration - "What do I want?"  
-config = {...}  # Explicit user choices
-
-# Step 3: Plotting - "Show me the results"
-fig = wv.plot("simulation.raw", config)  # Required config, no magic
-```
-
-### **Package Status** 
-- **Installation**: `pip install -e .` (development mode)
-- **Test Coverage**: ✅ **ALL PASSING**: 234 passing, 0 failing (includes new AC complex number tests)
-- **API Coverage**: 87% with comprehensive validation
-- **Overall Coverage**: 91% with comprehensive test suite
-- **Repository Structure**: Modern src/ layout ready for PyPI publication
-- **Documentation**: ✅ **COMPLETE** - Professional Sphinx documentation with comprehensive guides
-- **Current Branch**: `main` (release ready)
-- **Git Status**: Clean working tree, ready for release tagging
-
-### **Core Modules Status**
-- **SpiceData (reader.py)**: 100% coverage, case-insensitive signal access
-- **PlotConfig (config.py)**: 96% coverage, YAML configuration system
-- **SpicePlotter (plotter.py)**: 95% coverage, advanced Plotly integration
-- **API (api.py)**: 87% coverage, comprehensive input validation
-
-### **Key API Functions**
-- `plot()` - Main plotting function with required config parameter
-- `load_spice()` - SPICE file loading with Path object support
-- `explore_signals()` - Signal discovery with categorized output
-- `validate_config()` - Configuration validation with helpful warnings
-- `config_from_file()` - Load configuration from YAML files
-- `config_from_yaml()` - Create configuration from YAML strings
-
-### **Documentation System** ✅ **COMPLETE & UPDATED**
-- **Sphinx Setup**: Professional documentation with Read the Docs theme
-- **Comprehensive Structure**:
-  - User guides (installation, quickstart, configuration, examples)
-  - API reference with autosummary and cross-references
-  - Core modules documentation
-  - Development guides (changelog, contributing)
-- **Build System**: Clean HTML generation with minimal warnings
-- **Configuration Format**: ✅ **UPDATED** - All examples now use correct YAML X/Y format instead of deprecated dictionary plots format
-- **Ready for Publication**: Documentation ready for hosting and user onboarding
+- **Implementation Plan**: Phase 1.1 and 1.2 completed successfully ✅
 
 ## Key Decisions
 
 ### **Version 1.0.0 Architecture (Major Refactoring)**
-- **Function-Based API**: Shift from `spec.plot(data)` to `wv.plot(data, spec)` for better extensibility
-- **PlotSpec Simplification**: Remove plotting methods, focus on configuration-only class
-- **Signal Resolution**: Direct dictionary lookup instead of complex prefix handling
-- **Data Interface**: Unified `Dict[str, np.ndarray]` interface replacing SpiceData + processed_data
-- **Plotter Refactoring**: Standalone functions using simple data structures
-- **Multi-Case Foundation**: Architecture designed for future PVT/Monte Carlo/parameter sweep support
+- **Function-Based API**: Shift from `spec.plot(data)` to `wv.plot_v1(data, spec)` for better extensibility
+- **Separation of Concerns**: PlotSpec handles only configuration, plotting functions handle only visualization
+- **Direct Signal Lookup**: Replace complex resolution with simple `Dict[str, np.ndarray]` access
+- **Multi-Case Foundation**: Architecture designed for future multi-case plotting support
 
-### **Previous: PlotSpec Architecture (v0.2.0 Phase 1)**
-- **Pydantic Migration**: Complete replacement of PlotConfig with Pydantic-based PlotSpec
-- **Fluent API Design**: `PlotSpec(config).plot(data)` pattern for clean method chaining
-- **Backward Compatibility**: Maintain existing `wv.plot()` API as convenience wrapper
-- **TDD Methodology**: Strict one-test-at-a-time approach for high-quality implementation
-- **Simple WaveDataset**: Defer complex features to focus on core single-figure plotting
+### **TDD-Driven Development**
+- **Methodology**: Strict Red → Green → Refactor cycle with immediate test verification
+- **Quality Results**: 93% plotting function coverage, 88% PlotSpec coverage
+- **Success Metrics**: 15/15 tests passing with comprehensive integration tests
+- **Architecture Validation**: Clean separation of concerns achieved without coupling
 
-### **API Design Philosophy**
-- **Explicit over implicit**: No hidden magic, all behavior transparent
-- **Path object support**: Modern pathlib integration throughout
-- **Comprehensive validation**: Clear error messages guide users
-- **Test-driven development**: All features have comprehensive test coverage
+### **Breaking Changes for v1.0.0**
+- **PlotSpec Methods Removed**: `plot()`, `show()`, `get_figure()` methods removed
+- **New API**: `wave_view.plot_v1(data: Dict[str, np.ndarray], spec: PlotSpec)`
+- **Signal Interface**: Direct dictionary lookup instead of complex resolution
+- **Migration Strategy**: Gradual transition with `plot_v1` during development
 
-### **Configuration System**
-- **YAML-based**: Flexible configuration with file, string, or dict input
-- **Multi-figure support**: Single config can define multiple plots
-- **Processed data integration**: Users can pass computed signals via `processed_data` parameter
-- **Log scale support**: Both X and Y axes support logarithmic scaling
+## Current API (v1.0.0)
+```python
+# New v1.0.0 API Pattern
+import wave_view as wv
 
-### **Signal Handling**
-- **Case-insensitive**: All signal names normalized to lowercase
-- **Signal categorization**: Voltage (v()), current (i()), and other signals
-- **Path objects**: Consistent Union[str, Path] support across all functions
+# Load data and convert to simple format
+spice_data = wv.load_spice("simulation.raw")
+data = {signal: spice_data.get_signal(signal) for signal in spice_data.signals}
 
-### **Documentation Strategy**
-- **Sphinx-based**: Professional documentation system with modern theme
-- **User-focused**: Clear tutorials and examples for common use cases
-- **API-complete**: Comprehensive reference with autogenerated content
-- **Development-ready**: Contributing guides and development setup instructions
+# Create configuration
+spec = wv.PlotSpec.from_yaml("""
+title: "SPICE Analysis"
+x: "time"
+y:
+  - label: "Voltage (V)"
+    signals:
+      Output: "v(out)"
+""")
 
-## API Changes Successfully Implemented ✅
+# Plot with v1.0.0 function
+fig = wv.plot_v1(data, spec)
+fig.show()
+```
 
-### **Explicit Configuration API**
-- **Removed auto-detection**: PlotConfig constructor only accepts Path, dict, or list
-- **Added factory functions**: `config_from_file()`, `config_from_yaml()`, `config_from_dict()`
-- **Simplified API surface**: Removed `plot_batch()` function
-- **Enhanced type safety**: Proper isinstance() checks and type validation
+## Release Status
+- **Current Version**: 0.1.0 (Published to PyPI)
+- **Next Version**: 1.0.0 (Breaking changes with v1.0.0 architecture)
+- **PyPI Status**: ✅ **LIVE** - https://pypi.org/project/wave-view/
+- **Installation**: `pip install wave_view` (v0.1.0)
 
-### **Test Fixes Completed** ✅
-All 23 failing tests have been successfully fixed:
-
-1. **PlotConfig Constructor Tests** (11 tests) - Updated to use factory functions
-2. **plot() Function API Tests** (4 tests) - Updated mock expectations for PlotConfig objects
-3. **plot_batch Tests** (8 tests) - Removed entire test file as function was deleted
-4. **Internal Method Tests** (4 tests) - Removed TestFilePathDetection class
-5. **Type Import Issues** (1 test) - Fixed isinstance() checks with proper imports
-
-### **Code Quality Improvements Completed** ✅
-
-#### **Signal Categorization Utility** 
-- **Location**: `src/wave_view/api.py`
-- **Change**: Extracted `_categorize_signals()` utility function from `explore_signals()`
-- **Benefit**: Reusable logic for voltage/current/other signal categorization
-- **Return**: `Tuple[List[str], List[str], List[str]]` for (voltage, current, other) signals
-
-#### **Named Constants**
-- **Location**: `src/wave_view/core/reader.py`
-- **Change**: Added `MAX_SIGNALS_TO_SHOW = 5` constant
-- **Replaced**: Hardcoded `[:5]` slice in error messages
-- **Benefit**: Better maintainability and readability
-
-#### **Type Annotations**
-- **Location**: `src/wave_view/api.py`
-- **Functions Updated**: 
-  - `_configure_plotly_renderer() -> None`
-  - `_is_jupyter_environment() -> bool`
-- **Benefit**: Complete type coverage on all API functions
-
-### **Documentation System Completed** ✅
-
-#### **Sphinx Configuration**
-- **Extensions**: autodoc, autosummary, napoleon, intersphinx, myst-parser
-- **Theme**: Read the Docs theme with professional navigation
-- **Build System**: Clean HTML generation with autosummary support
-- **Cross-references**: Intersphinx links to Python, NumPy, Plotly docs
-
-#### **Documentation Structure**
-- **User Guides**: Installation, quickstart, configuration, examples
-- **API Reference**: Complete function documentation with autosummary
-- **Core Modules**: Internal module documentation for developers
-- **Development**: Changelog and contributing guidelines
-
-#### **Content Quality**
-- **Tutorial-based**: 3-step workflow clearly explained with examples
-- **Example-rich**: Practical use cases for common scenarios
-- **Configuration-complete**: Comprehensive guide to all options
-- **Development-ready**: Clear setup and contribution instructions
-
-### **Key Changes Made**
-- Updated all tests to use `config_from_file()` instead of passing file paths to PlotConfig
-- Updated all tests to use `config_from_yaml()` instead of passing YAML strings to PlotConfig
-- Fixed mock expectations to expect PlotConfig objects instead of dictionaries
-- Removed tests for deprecated auto-detection functionality
-- Fixed isinstance() type checking issues in path support tests
-- Created comprehensive Sphinx documentation with professional structure
-- Set up autosummary for automatic API reference generation
-- Configured Read the Docs theme with proper navigation and cross-references
-
-## Recent Updates ✅ **COMPLETED**
-1. **PyPI Release Preparation**: Package fully prepared for PyPI publication with modernized metadata, CI/CD workflows, and validated distribution files
-2. **GitHub Actions CI/CD**: Added automated testing workflow (Python 3.8-3.12) and PyPI publishing workflow with trusted publishing
-3. **Package Metadata Modernization**: Updated to SPDX license format, correct author information, and proper GitHub URLs
-4. **Type Information Support**: Added py.typed marker file for proper type information distribution
-5. **Documentation Configuration Format Update**: All Sphinx documentation examples updated from deprecated dictionary `plots` format to current YAML `X`/`Y` axis structure
-6. **Configuration Examples Modernized**: Updated quickstart.rst, index.rst, configuration.rst, and examples.rst with proper YAML configurations
-7. **API Consistency**: Documentation now correctly shows `config_from_yaml()` and `config_from_file()` usage instead of raw dictionaries
-8. **Signal Reference Simplification**: Removed all `raw.` prefixes from signal references since signals default to raw file signals (e.g., `raw.time` → `time`, `raw.frequency` → `frequency`)
-
-## Current Issues Identified
-
-### **Multi-Figure Removal Progress** ✅ **PHASE 1.5 COMPLETED**
-**PHASE 1** ✅ - PlotConfig class and factory function updates (81dfc2e)
-- ✅ **PlotConfig Class**: Removed `is_multi_figure`, `figure_count`, `get_figure_config()` methods
-- ✅ **Factory Functions**: Updated `config_from_yaml()` and `config_from_file()` to reject YAML lists
-- ✅ **Error Messages**: Added helpful migration guidance for multi-figure rejection
-
-**PHASE 1.5** ✅ **COMPLETED** - Critical SpicePlotter Fix & All Test Updates (c851d92)
-- ✅ **SpicePlotter Fix**: Updated `create_figure()` to use `config.config` directly instead of removed methods
-- ✅ **Comprehensive Test Updates**: Fixed all 31 failing tests across basic, config, and plotter test suites
-- ✅ **Multi-Figure Migration Tests**: Updated tests to verify proper rejection with helpful error messages
-- ✅ **Single-Figure API**: All tests now use direct config access pattern for single-figure support
-- ✅ **Test Results**: 220 passing, 0 failing (was 189 passing, 31 failing)
-
-**PHASE 2** ✅ **COMPLETED** - Documentation and Examples Cleanup (09df5ac)
-- ✅ **Documentation Updates**: Removed multi-figure references from docs/index.rst, configuration.rst, and examples.rst
-- ✅ **README Updates**: Updated features list, examples, and configuration format to current single-figure API
-- ✅ **Example Files**: Converted multi-figure examples to demonstrate separate configuration approach
-- ✅ **CHANGELOG**: Added breaking change documentation and migration guidance
-- ✅ **Migration Guidance**: All documentation shows recommended separate plot() calls approach
-
-**PHASE 3** ✅ **COMPLETED** - Final Cleanup and Validation (3efeb71)
-- ✅ **Integration Test Fix**: Updated `test_package_integration.py` to use `config_from_file()` instead of removed properties
-- ✅ **Test Helper Cleanup**: Updated `get_multi_figure_test_config()` docstring to clarify rejection testing purpose
-- ✅ **Obsolete Test Removal**: Removed obsolete multi-figure validation tests from `test_config_validation.py`
-- ✅ **Final Validation**: All 220 tests passing, 91% coverage, multi-figure removal comprehensive and complete
-- ✅ **Branch Status**: Ready for merge - all multi-figure functionality cleanly removed with proper migration guidance
-
-### **UI Polish Improvements** ✅ **COMPLETED**
-1. **Zoom Button Configuration**: ✅ Existing `show_zoom_buttons` configuration works correctly
-2. **Zoom XY Functionality**: ✅ Fixed broken zoom XY button - now properly resets all axis fixedrange properties
-3. **Plot Title Alignment**: ✅ Implemented center-aligned titles by default with configurable positioning
-
-#### **Technical Implementation Details**
-- **Fixed Zoom XY Bug**: Updated zoom button args to explicitly set `xaxis.fixedrange: False` and `yaxis.fixedrange: False`
-- **Title Configuration**: Added structured title object with `x` and `xanchor` properties (default: center)
-- **Configuration Options**: Added `title_x` and `title_xanchor` for custom title positioning
-- **Backward Compatibility**: All existing configurations continue to work unchanged
-
-### **Recently Fixed Issues** ✅
-
-#### **AC Simulation Complex Number Parsing** ✅ **FIXED**
-- **Issue**: AC analysis results were returning only real numbers instead of complex numbers
-- **Root Cause**: Line 118 in `src/wave_view/core/reader.py` forced `dtype=float` conversion, discarding imaginary parts
-- **Fix**: Removed `dtype=float` parameter to preserve original data types from spicelib
-- **Impact**: Transfer function analysis (magnitude/phase) now works correctly for AC simulations
-- **Test Coverage**: Added comprehensive test suite in `tests/unit_tests/reader/test_reader_complex_numbers.py`
-- **Verification**: ✅ Complex signals preserved, magnitude/phase calculations work, mixed real/complex signals supported
-
-#### **Plotly JSON Serialization for Complex Numbers** ✅ **FIXED**
-- **Issue**: "Object of type complex is not JSON serializable" when plotting AC data
-- **Root Cause**: Complex numbers from raw AC signals were passed directly to Plotly without conversion
-- **Fix**: Added complex number handling in plotter's `_get_signal_data()` function to convert complex raw signals to real parts
-- **Impact**: AC frequency response plots now display correctly without JSON serialization errors
-- **Verification**: ✅ AC analysis plots work, transient analysis unaffected, all tests pass
-
-#### **Documentation Updates for AC Analysis** ✅ **COMPLETED**
-- **Updated examples.rst**: Replaced basic AC example with comprehensive complex signal processing guide
-- **Enhanced quickstart.rst**: Added AC analysis section to advanced features
-- **Updated index.rst**: Added "Complex Signal Processing" to features list
-- **Content Added**: Bode plot examples, transfer function analysis, complex number handling guide
-- **Documentation Build**: ✅ Successfully built with new AC analysis examples
-
-### **Other Issues**
-- **Error message enhancement opportunity** for signal name suggestions (reader.py:97-101)
-
-## Open Questions
-None - AC simulation complex number parsing issue has been resolved.
-
-## Next Steps
-
-### **Version 0.2.0 Architecture Planning** ✅ **ANALYZED**
-Based on comprehensive API improvement analysis, v0.2.0 will focus on:
-
-1. **HTML Report Builder** (Higher Priority)
-   - `ReportSpec` Pydantic model for declarative reports
-   - Jinja2 template system for HTML generation
-   - Self-contained HTML with embedded Plotly JSON data
-   - CLI command: `wave_view report report.yaml --out report.html`
-
-2. **PlotSpec API Refactoring** (Foundation)
-   - New composable API: `data = wv.load_spice()`, `ps = wv.PlotSpec(config)`, `ps.plot(data).show()`
-   - Addresses efficiency concern of parsing files multiple times
-   - Maintains backward compatibility with existing `wv.plot()` API
-   - Enables fluent chaining and better extensibility
-
-3. **Parameter Sweep Engine** (Future v0.3.0)
-   - Metadata-as-DataFrame approach for PVT corners, Monte Carlo
-   - Filtering/grouping: `slice: {temperature: 85}`, `group: [temperature, corner]`
-   - Legend templating: `"{corner}_{temperature}°C"`
-   - Statistical aggregators (envelope, mean, etc.)
-
-### **Implementation Phases**
-- **Phase 1**: Core API refactoring with PlotSpec class
-- **Phase 2**: HTML Report Builder with ReportSpec
-- **Phase 3**: Parameter Sweep Engine with multi-file support
-
-### **Completed Sprints**
-
-### **Multi-Figure Removal Sprint** ✅ **COMPLETED**
-- **Phase 1**: ✅ **COMPLETED** - Core removal from PlotConfig class and tests  
-- **Phase 1.5**: ✅ **COMPLETED** - Critical plotter fix and comprehensive test updates
-- **Phase 2**: ✅ **COMPLETED** - Documentation and examples cleanup
-- **Phase 3**: ✅ **COMPLETED** - Final cleanup and validation
-- **Result**: Multi-figure support completely removed with clean migration path
-
-### **UI Polish Sprint** (After Multi-Figure Completion)
-1. **Zoom Button Configuration**: Add option to disable zoom buttons
-2. **Zoom XY Functionality**: Fix broken zoom XY button behavior  
-3. **Plot Title Alignment**: Center-justify plot titles
-
-### **Future Work**
-1. **PyPI Publication**: Execute final PyPI release (package prepared, pending completion of current changes)
-2. **Enhanced Error Messages**: Add fuzzy matching suggestions for signal name typos
-3. **Documentation Hosting**: Consider Read the Docs or GitHub Pages for documentation hosting
-4. **Post-Release**: Monitor PyPI metrics, gather user feedback, plan next version features
+## Architecture Status
+- **Clean 3-Step Workflow**: Discovery → Configuration → Plotting
+- **Package Quality**: Production-ready with comprehensive feature set
+- **Test Coverage**: 93% on new plotting functions, 88% on PlotSpec
+- **Documentation**: Complete Sphinx documentation system

@@ -231,7 +231,25 @@ class SpicePlotter:
 
         # Global layout settings
         layout_update_dict["height"] = plot_config.get("plot_height", 600 if num_y_axes <= 1 else 300 * num_y_axes)
+        layout_update_dict["width"] = plot_config.get("width")  # None if not specified
         layout_update_dict["dragmode"] = plot_config.get("default_dragmode", "zoom")
+        
+        # Legend configuration
+        layout_update_dict["showlegend"] = plot_config.get("show_legend", True)
+        
+        # Grid configuration
+        if plot_config.get("grid", True):
+            layout_update_dict["xaxis"] = layout_update_dict.get("xaxis", {})
+            layout_update_dict["xaxis"]["showgrid"] = True
+            for i in range(num_y_axes):
+                axis_key = f"yaxis{i+1}" if i > 0 else "yaxis"
+                if axis_key in layout_update_dict:
+                    layout_update_dict[axis_key]["showgrid"] = True
+        
+        # Theme configuration
+        theme = plot_config.get("theme")
+        if theme and theme != "plotly":
+            layout_update_dict["template"] = theme
 
         x_axis_layout = {
             "title": x_axis_title,
@@ -272,8 +290,8 @@ class SpicePlotter:
                 dict(
                     type="buttons",
                     direction="right",
-                    x=0.5, xanchor="center",
-                    y=1.15, yanchor="top",
+                    x=plot_config.get("zoom_buttons_x", 0.05), xanchor="left",
+                    y=plot_config.get("zoom_buttons_y", 1.05), yanchor="bottom",
                     showactive=True,
                     buttons=zoom_buttons
                 )

@@ -15,6 +15,7 @@ from pathlib import Path
 from .core.reader import SpiceData
 from .core.config import PlotConfig
 from .core.plotter import SpicePlotter
+from .core.wavedataset import WaveDataset
 
 
 def config_from_file(file_path: Union[str, Path]) -> PlotConfig:
@@ -351,6 +352,62 @@ def load_spice(raw_file: Union[str, Path]) -> SpiceData:
         raise FileNotFoundError(f"SPICE raw file not found: {file_path}")
     
     return SpiceData(str(file_path))
+
+
+def load_spice_raw(raw_file: Union[str, Path]) -> Tuple[Dict[str, np.ndarray], Dict[str, Any]]:
+    """
+    Load SPICE data from a raw file in v1.0.0 format.
+    
+    This function provides a convenient way to load SPICE data directly in the
+    Dict[str, np.ndarray] format required by v1.0.0 plotting functions, along
+    with any associated metadata.
+    
+    Args:
+        raw_file: Path to SPICE .raw file (string or Path object)
+        
+    Returns:
+        Tuple of (data, metadata) where:
+        - data: Dict[str, np.ndarray] mapping signal names to numpy arrays
+        - metadata: Dict[str, Any] with any associated metadata
+        
+    Example:
+        >>> import wave_view as wv
+        >>> data, metadata = wv.load_spice_raw("simulation.raw")
+        >>> print(f"Loaded {len(data)} signals")
+        >>> print(f"Available signals: {list(data.keys())}")
+        >>> 
+        >>> # Use directly with v1.0.0 plotting
+        >>> spec = wv.PlotSpec.from_yaml("config.yaml")
+        >>> fig = wv.plot_v1(data, spec)
+        >>> fig.show()
+    """
+    # Input validation (same pattern as other functions)
+    if raw_file is None:
+        raise TypeError("file path must be a string or Path object, not None")
+    
+    if not isinstance(raw_file, (str, Path)):
+        raise TypeError("file path must be a string or Path object")
+    
+    if isinstance(raw_file, str) and raw_file.strip() == "":
+        raise ValueError("file path cannot be empty")
+    
+    # Convert to Path for consistent handling
+    file_path = Path(raw_file)
+    
+    # Check if file exists
+    if not file_path.exists():
+        raise FileNotFoundError(f"SPICE raw file not found: {file_path}")
+    
+    # Load data using WaveDataset
+    wave_data = WaveDataset.from_raw(str(file_path))
+    
+    # Convert all signals to Dict[str, np.ndarray] format
+    data = {signal: wave_data.get_signal(signal) for signal in wave_data.signals}
+    
+    # Get metadata
+    metadata = wave_data.metadata
+    
+    return data, metadata
 
 
 def explore_signals(raw_file: Union[str, Path]) -> List[str]:

@@ -16,10 +16,14 @@ from .core.config import PlotConfig
 from .core.plotspec import PlotSpec
 from .core.wavedataset import WaveDataset
 
+# v1.0.0 plotting functions
+from .core.plotting import plot as plot_v1
+
 # Main API functions
 from .api import (
     plot,
     load_spice,
+    load_spice_raw,
     explore_signals,
     validate_config,
     config_from_file,
@@ -57,7 +61,9 @@ def set_renderer(renderer: str = "auto"):
 __all__ = [
     # Main API
     'plot',
+    'plot_v1',  # v1.0.0 plotting function
     'load_spice',
+    'load_spice_raw',  # v1.0.0 data loading function
     'explore_signals', 
     'validate_config',
     

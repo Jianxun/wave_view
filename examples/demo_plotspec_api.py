@@ -61,9 +61,11 @@ y:
       I_Supply: "i(v_vdda)"
 
 width: 900
-height: 600
+height: 400
 title_x: 0.5
 show_legend: true
+zoom_buttons: false
+show_rangeslider: false
 """)
 
 # New v0.2.0 API pattern: WaveDataset → PlotSpec → Figure
