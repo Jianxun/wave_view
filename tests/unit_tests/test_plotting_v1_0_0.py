@@ -351,26 +351,114 @@ class TestPlottingHelperFunctions(unittest.TestCase):
         self.assertIn("yaxis2.fixedrange", x_args)
 
     def test_create_layout_without_zoom_buttons(self):
-        """Test create_layout without zoom buttons (default behavior)."""
-        # Skip test if functions not implemented yet
+        """Test create_layout() without zoom buttons enabled."""
         if create_layout is None:
             self.skipTest("Helper functions not implemented yet")
         
         config = {
-            "title": "Test Plot",
+            "title": "No Zoom Buttons",
+            "x": "time",
+            "y": [{"label": "Voltage", "signals": {"Out": "v(out)"}}],
+            "zoom_buttons": False  # Explicitly disabled
+        }
+        
+        layout = create_layout(config)
+        
+        # Verify no zoom buttons configuration
+        self.assertNotIn("updatemenus", layout)
+
+    def test_zoom_xy_mode_settings_verification(self):
+        """Test to verify the exact settings of Zoom XY mode work correctly."""
+        if create_layout is None:
+            self.skipTest("Helper functions not implemented yet")
+        
+        # Test with multi-axis to verify all axes are configured
+        config = {
+            "title": "Zoom XY Test",
             "x": "time",
             "y": [
-                {
-                    "label": "Voltage (V)",
-                    "signals": {"VDD": "v(vdd)"}
-                }
+                {"label": "Voltage", "signals": {"Out": "v(out)"}},
+                {"label": "Current", "signals": {"Supply": "i(vdd)"}},
+                {"label": "Power", "signals": {"Power": "p(load)"}}
+            ],
+            "zoom_buttons": True
+        }
+        
+        layout = create_layout(config)
+        
+        # Verify zoom buttons are present
+        self.assertIn("updatemenus", layout)
+        buttons = layout["updatemenus"][0]["buttons"]
+        
+        # Find the Zoom XY button
+        zoom_xy_button = next((btn for btn in buttons if btn["label"] == "Zoom XY"), None)
+        self.assertIsNotNone(zoom_xy_button, "Zoom XY button should exist")
+        
+        # Extract the exact settings
+        zoom_xy_args = zoom_xy_button["args"][0]
+        
+        # Verify the exact settings we want to make default
+        expected_settings = {
+            "dragmode": "zoom",
+            "xaxis.fixedrange": False,
+            "yaxis.fixedrange": False,
+            "yaxis2.fixedrange": False,
+            "yaxis3.fixedrange": False
+        }
+        
+        for key, expected_value in expected_settings.items():
+            self.assertEqual(zoom_xy_args.get(key), expected_value, 
+                           f"Setting '{key}' should be {expected_value}")
+        
+        # Verify these are the optimal settings for default behavior
+        self.assertEqual(zoom_xy_args["dragmode"], "zoom")
+        self.assertFalse(zoom_xy_args["xaxis.fixedrange"])
+        self.assertFalse(zoom_xy_args["yaxis.fixedrange"])
+        self.assertFalse(zoom_xy_args["yaxis2.fixedrange"])
+        self.assertFalse(zoom_xy_args["yaxis3.fixedrange"])
+
+    def test_y_axis_domain_ordering_matches_yaml_order(self):
+        """Test that Y-axis domains are ordered correctly - first axis at top."""
+        if create_layout is None:
+            self.skipTest("Helper functions not implemented yet")
+        
+        # Test with 3 Y-axes to verify domain ordering
+        config = {
+            "title": "Y-Axis Ordering Test",
+            "x": "time",
+            "y": [
+                {"label": "First (Top)", "signals": {"Signal1": "v(out)"}},
+                {"label": "Second (Middle)", "signals": {"Signal2": "i(vdd)"}},
+                {"label": "Third (Bottom)", "signals": {"Signal3": "p(load)"}}
             ]
         }
         
         layout = create_layout(config)
         
-        # Test that zoom buttons are not included by default
-        self.assertNotIn("updatemenus", layout)
+        # Verify Y-axis domains are ordered correctly
+        # First axis (yaxis) should be at the top
+        first_domain = layout["yaxis"]["domain"]
+        second_domain = layout["yaxis2"]["domain"]
+        third_domain = layout["yaxis3"]["domain"]
+        
+        # Verify ordering: first axis at top, third axis at bottom
+        self.assertGreater(first_domain[0], second_domain[0], 
+                          "First axis should be higher than second axis")
+        self.assertGreater(first_domain[1], second_domain[1], 
+                          "First axis should be higher than second axis")
+        
+        self.assertGreater(second_domain[0], third_domain[0], 
+                          "Second axis should be higher than third axis")
+        self.assertGreater(second_domain[1], third_domain[1], 
+                          "Second axis should be higher than third axis")
+        
+        # Verify first axis is at the top (domain[1] close to 1.0)
+        self.assertGreater(first_domain[1], 0.9, 
+                          "First axis should be near the top of the figure")
+        
+        # Verify third axis is at the bottom (domain[0] close to 0.0)
+        self.assertLess(third_domain[0], 0.1, 
+                       "Third axis should be near the bottom of the figure")
 
 
 if __name__ == '__main__':

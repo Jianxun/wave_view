@@ -156,6 +156,8 @@ def _calculate_y_axis_domains(num_y_axes: int) -> List[List[float]]:
     """
     Calculate Y-axis domain splits for multi-axis plots.
     
+    First Y-axis appears at the top (matching YAML order), subsequent axes below.
+    
     Args:
         num_y_axes: Number of Y-axes to create
         
@@ -166,18 +168,22 @@ def _calculate_y_axis_domains(num_y_axes: int) -> List[List[float]]:
         # Single Y-axis gets full domain
         return [[0, 1]]
     else:
-        # Multiple Y-axes share the space
+        # Multiple Y-axes share the space from top to bottom
         gap = 0.05
         total_gap_space = gap * (num_y_axes - 1)
         effective_height = 1.0 - total_gap_space
         single_axis_height = effective_height / num_y_axes
         
         domains = []
-        current_bottom = 0
+        current_top = 1.0  # Start from the top
         for i in range(num_y_axes):
-            domain_top = current_bottom + single_axis_height
-            domains.append([current_bottom, domain_top])
-            current_bottom = domain_top + gap
+            domain_bottom = current_top - single_axis_height
+            # Ensure domains are within [0, 1] bounds to avoid floating-point precision issues
+            domain_bottom = max(0.0, domain_bottom)
+            current_top = min(1.0, current_top)
+            
+            domains.append([domain_bottom, current_top])
+            current_top = domain_bottom - gap  # Move down for next axis
         
         return domains
 
@@ -218,61 +224,33 @@ def _create_single_y_axis_config(
     return axis_config
 
 
-def _configure_zoom_buttons(config: Dict[str, Any], num_y_axes: int) -> Dict[str, Any]:
+def _config_zoom(config: Dict[str, Any], num_y_axes: int) -> Dict[str, Any]:
     """
-    Create zoom buttons configuration for Plotly figure.
+    Configure optimal zoom settings for Plotly figure.
+    
+    Sets the zoom XY mode by default - enables flexible zooming on all axes.
+    Users can drag in X-only, Y-only, or XY directions naturally.
     
     Args:
         config: Configuration dictionary from PlotSpec.to_dict()
         num_y_axes: Number of Y-axes in the plot
         
     Returns:
-        Zoom buttons configuration dictionary (empty if not enabled)
+        Zoom configuration dictionary with optimal settings
     """
     zoom_config = {}
     
-    if not config.get("zoom_buttons", False) or num_y_axes == 0:
+    if num_y_axes == 0:
         return zoom_config
     
-    # Create Y-axis identifiers for zoom button configuration
-    y_axis_ids = []
+    # Apply optimal zoom XY settings by default
+    zoom_config["dragmode"] = "zoom"
+    zoom_config["xaxis.fixedrange"] = False
+    
+    # Enable flexible zooming on all Y-axes
     for i in range(num_y_axes):
         axis_id = "yaxis" if i == 0 else f"yaxis{i + 1}"
-        y_axis_ids.append(axis_id)
-    
-    # Zoom XY (both X and Y axes free)
-    xy_zoom_args = {"dragmode": "zoom", "xaxis.fixedrange": False}
-    for axis_id in y_axis_ids:
-        xy_zoom_args[f"{axis_id}.fixedrange"] = False
-    
-    zoom_buttons = [
-        dict(label="Zoom XY", method="relayout", args=[xy_zoom_args])
-    ]
-    
-    # Zoom Y (all Y axes, X fixed)
-    y_zoom_args = {"dragmode": "zoom", "xaxis.fixedrange": True}
-    for axis_id in y_axis_ids:
-        y_zoom_args[f"{axis_id}.fixedrange"] = False
-    zoom_buttons.append(dict(label="Zoom Y", method="relayout", args=[y_zoom_args]))
-    
-    # Zoom X (X axis, Y axes fixed)
-    x_zoom_args = {"dragmode": "zoom", "xaxis.fixedrange": False}
-    for axis_id in y_axis_ids:
-        x_zoom_args[f"{axis_id}.fixedrange"] = True
-    zoom_buttons.append(dict(label="Zoom X", method="relayout", args=[x_zoom_args]))
-    
-    zoom_config["updatemenus"] = [
-        dict(
-            type="buttons",
-            direction="right",
-            x=config.get("zoom_buttons_x", 0.05), 
-            xanchor="left",
-            y=config.get("zoom_buttons_y", 1.05), 
-            yanchor="bottom",
-            showactive=True,
-            buttons=zoom_buttons
-        )
-    ]
+        zoom_config[f"{axis_id}.fixedrange"] = False
     
     return zoom_config
 
@@ -321,8 +299,8 @@ def create_layout(config: Dict[str, Any]) -> Dict[str, Any]:
             
             layout[axis_key] = axis_config
     
-    # Zoom buttons configuration
-    layout.update(_configure_zoom_buttons(config, num_y_axes))
+    # Optimal zoom configuration (zoom XY mode by default)
+    layout.update(_config_zoom(config, num_y_axes))
     
     return layout
 

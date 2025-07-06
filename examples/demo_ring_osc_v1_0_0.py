@@ -39,11 +39,9 @@ y:
     signals:
       I_Supply: "i(v_vdda)"
 
-width: 1200
+#width: 900
 height: 800
-title_x: 0.5
 show_legend: true
-zoom_buttons: true
 show_rangeslider: true
 """)
 
