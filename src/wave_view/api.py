@@ -9,95 +9,12 @@ from typing import Union, Dict, List, Optional, Any, Tuple
 import numpy as np
 import plotly.graph_objects as go
 import plotly.io as pio
-import yaml
 from pathlib import Path
 
 from .core.reader import SpiceData
-from .core.config import PlotConfig
 from .core.plotspec import PlotSpec
 from .core.plotting import plot as _plot_v1
 from .core.wavedataset import WaveDataset
-
-
-def config_from_file(file_path: Union[str, Path]) -> PlotConfig:
-    """
-    Create a plot configuration from a YAML file.
-    
-    Args:
-        file_path: Path to YAML configuration file
-        
-    Returns:
-        PlotConfig object
-        
-    Example:
-        >>> import wave_view as wv
-        >>> config = wv.config_from_file("analysis.yaml")
-        >>> fig = wv.plot("simulation.raw", config)
-    """
-    if file_path is None:
-        raise TypeError("file path must be a string or Path object, not None")
-    
-    if not isinstance(file_path, (str, Path)):
-        raise TypeError("file path must be a string or Path object")
-    
-    if isinstance(file_path, str) and file_path.strip() == "":
-        raise ValueError("file path cannot be empty")
-    
-    config_path = Path(file_path)
-    if not config_path.exists():
-        raise FileNotFoundError(f"Configuration file not found: {config_path}")
-    
-    return PlotConfig(config_path)
-
-
-def config_from_yaml(yaml_string: str) -> PlotConfig:
-    """
-    Create a plot configuration from a YAML string.
-    
-    Args:
-        yaml_string: YAML configuration as a string
-        
-    Returns:
-        PlotConfig object
-        
-    Example:
-        >>> import wave_view as wv
-        >>> config = wv.config_from_yaml('''
-        ... title: "SPICE Analysis"
-        ... X:
-        ...   signal_key: "raw.time"
-        ...   label: "Time (s)"
-        ... Y:
-        ...   - label: "Voltage (V)"
-        ...     signals:
-        ...       VDD: "v(vdd)"
-        ... ''')
-        >>> fig = wv.plot("simulation.raw", config)
-    """
-    if yaml_string is None:
-        raise TypeError("YAML string cannot be None")
-    
-    if not isinstance(yaml_string, str):
-        raise TypeError("YAML string must be a string")
-    
-    if yaml_string.strip() == "":
-        raise ValueError("YAML string cannot be empty")
-    
-    try:
-        config_dict = yaml.safe_load(yaml_string)
-    except yaml.YAMLError as e:
-        raise yaml.YAMLError(f"Invalid YAML content: {e}")
-    
-    # Check for multi-figure configuration (YAML list) and reject it
-    if isinstance(config_dict, list):
-        raise ValueError(
-            "Multi-figure configurations are no longer supported. "
-            "The YAML string contains a list of figures. "
-            "Please create separate YAML configurations for each figure and "
-            "call plot() multiple times instead."
-        )
-    
-    return PlotConfig(config_dict)
 
 
 def _categorize_signals(signals: List[str]) -> Tuple[List[str], List[str], List[str]]:
@@ -200,7 +117,7 @@ def plot(raw_file: Union[str, Path],
     
     # Convert config to PlotSpec if needed
     if isinstance(config, dict):
-        spec = PlotSpec(config)
+        spec = PlotSpec.model_validate(config)
     else:
         spec = config
     
@@ -437,73 +354,6 @@ def explore_signals(raw_file: Union[str, Path]) -> List[str]:
     print("=" * 50)
     
     return signals
-
-
-def validate_config(config: Union[str, Path, Dict, PlotConfig], 
-                   raw_file: Optional[Union[str, Path]] = None) -> List[str]:
-    """
-    Validate a configuration against optional SPICE data.
-    
-    Args:
-        config: Configuration file path (string or Path object), dictionary, or PlotConfig object
-        raw_file: Optional raw file to validate signals against (string or Path object)
-        
-    Returns:
-        List of warning messages (empty if no warnings)
-        
-    Example:
-        >>> # Using factory functions (recommended)
-        >>> config = wv.config_from_file("config.yaml")
-        >>> warnings = wv.validate_config(config, "simulation.raw")
-        >>> if warnings:
-        ...     for warning in warnings:
-        ...         print(f"Warning: {warning}")
-        
-        >>> # Legacy support for file paths
-        >>> warnings = wv.validate_config("config.yaml", "simulation.raw")
-    """
-    try:
-        # Validate config parameter
-        if config is None:
-            raise TypeError("config must be a string, Path object, dictionary, or PlotConfig object, not None")
-        
-        # Handle different config types
-        if isinstance(config, PlotConfig):
-            plot_config = config
-        elif isinstance(config, dict):
-            plot_config = PlotConfig(config)
-        elif isinstance(config, (str, Path)):
-            # Legacy support - treat as file path
-            if isinstance(config, str) and config.strip() == "":
-                raise ValueError("config path cannot be empty")
-            
-            config_path = Path(config)
-            if not config_path.exists():
-                raise FileNotFoundError(f"Configuration file not found: {config_path}")
-            
-            plot_config = PlotConfig(config_path)
-        else:
-            raise TypeError("config must be a string, Path object, dictionary, or PlotConfig object")
-        
-        # Validate raw_file if provided
-        spice_data = None
-        if raw_file is not None:
-            if not isinstance(raw_file, (str, Path)):
-                raise TypeError("raw file path must be a string or Path object")
-            
-            if isinstance(raw_file, str) and raw_file.strip() == "":
-                raise ValueError("raw file path cannot be empty")
-            
-            raw_file_path = Path(raw_file)
-            if not raw_file_path.exists():
-                raise FileNotFoundError(f"SPICE raw file not found: {raw_file_path}")
-            
-            spice_data = SpiceData(str(raw_file_path))
-        
-        return plot_config.validate(spice_data)
-        
-    except Exception as e:
-        return [f"Configuration error: {e}"]
 
 
 

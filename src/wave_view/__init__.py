@@ -11,7 +11,6 @@ __author__ = "Wave View Development Team"
 
 # Core classes
 from .core.reader import SpiceData
-from .core.config import PlotConfig
 from .core.plotspec import PlotSpec
 from .core.wavedataset import WaveDataset
 
@@ -20,10 +19,7 @@ from .api import (
     plot,
     load_spice,
     load_spice_raw,
-    explore_signals,
-    validate_config,
-    config_from_file,
-    config_from_yaml
+    explore_signals
 )
 
 # Plotly imports for user access
@@ -57,22 +53,16 @@ __all__ = [
     'load_spice',
     'load_spice_raw',
     'explore_signals', 
-    'validate_config',
-    
-    # Configuration factories
-    'config_from_file',
-    'config_from_yaml',
     
     # Core classes
     'SpiceData',
-    'PlotConfig',
     'PlotSpec',
     'WaveDataset',
     
     # Utilities
     'set_renderer',
     'pio',  # Give users access to plotly.io
-] 
+]
 
 # Configure Plotly renderer automatically on import
 # This eliminates the need for manual renderer configuration in user code
