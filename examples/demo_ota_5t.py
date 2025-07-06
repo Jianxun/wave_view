@@ -4,24 +4,24 @@ import numpy as np
 
 # %%
 
+# ────────────────────────────────────────────────────────────────────────────
+# Time-domain transient example – v1.0.0 API
+# ────────────────────────────────────────────────────────────────────────────
 spice_file = "./raw_data/tb_ota_5t/test_tran/results.raw"
 
-data = wv.load_spice(spice_file)
+# v1.0.0 loader returns (data_dict, metadata)
+data, _ = wv.load_spice_raw(spice_file)
 
-print(f"Total signals: {len(data.signals)}")
-for signal in data.signals:
+print(f"Total signals: {len(data)}")
+for signal in data:
     print(f"  - {signal}")
 
-
-# Now proceed with plotting using YAML configuration
-custom_config = wv.config_from_yaml("""
+custom_spec = wv.PlotSpec.from_yaml("""
 title: "SPICE Simulation - Key Signals"
 
-X:
-  signal_key: "raw.time"
-  label: "Time (s)"
+x: "time"
 
-Y:
+y:
   - label: "Voltages (V)"
     signals:
       Input: "v(in)"
@@ -38,112 +38,94 @@ show_zoom_buttons: true
 show_rangeslider: true
 """)
 
-fig1 = wv.plot(spice_file, custom_config, show=True)
+fig1 = wv.plot(data, custom_spec, show=True)
 
 # %%
 # CORRECTED: AC Analysis with Processed Data using plot() function
 print("🔧 AC Analysis with Processed Data - CORRECTED")
 
+# ────────────────────────────────────────────────────────────────────────────
+# AC analysis – add derived dB traces directly into *data*
+# ────────────────────────────────────────────────────────────────────────────
 spice_file = "./raw_data/tb_ota_5t/test_ac/results.raw"
-data = wv.load_spice(spice_file)
+data, _ = wv.load_spice_raw(spice_file)
 
-print(f"Total signals: {len(data.signals)}")
-for signal in data.signals:
+print(f"Total signals: {len(data)}")
+for signal in data:
     print(f"  - {signal}")
 
-# Compute processed signals (dB conversion: 20*log10 for voltage)
-processed_data = {
-    "vdb_out": 20 * np.log10(np.abs(data.get_signal("v(out)"))),
-    "vdb_in": 20 * np.log10(np.abs(data.get_signal("v(in)")))
-}
+# Append processed (dB) signals to the data dict
+data["vdb_out"] = 20 * np.log10(np.abs(data["v(out)"]))
+data["vdb_in"] = 20 * np.log10(np.abs(data["v(in)"]))
 
-# YAML config referencing processed signals with "data." prefix
-# Using log scale for frequency axis (typical for Bode plots)
-ac_config = wv.config_from_yaml("""
+ac_spec = wv.PlotSpec.from_yaml("""
 title: "AC Analysis - Frequency Response (Bode Plot)"
 
-X:
-  signal_key: "raw.frequency"
+x:
+  signal_key: "frequency"
   label: "Frequency (Hz)"
   scale: log
 
-Y:
+y:
   - label: "Magnitude (dB)"
     signals:
-      Input: "data.vdb_in"
-      Output: "data.vdb_out"
+      Input: "vdb_in"
+      Output: "vdb_out"
 
 plot_height: 600
-show_zoom_buttons: False
 show_rangeslider: true
 """)
 
 # Create figure using the new processed_data parameter
-fig2 = wv.plot(spice_file, ac_config, processed_data=processed_data, show=True)
+fig2 = wv.plot(data, ac_spec, show=True)
 
 print("✅ AC analysis with processed data created successfully!")
 
 # %%
 
+# ────────────────────────────────────────────────────────────────────────────
+# Single-trace magnitude example (tf_db)
+# ────────────────────────────────────────────────────────────────────────────
 spice_file = "./raw_data/tb_ota_5t/test_ac/results.raw"
 
-data = wv.load_spice(spice_file)
+data, _ = wv.load_spice_raw(spice_file)
 
-#print(f"Total signals: {len(data.signals)}")
-#for signal in data.signals:
-#    print(f"  - {signal}")
+data["tf_db"] = 20 * np.log10(np.abs(data["v(out)"]))
+data["tf"] = np.abs(data["v(out)"])
 
-processed_data = {
-    "tf_db" : 20*np.log10(np.abs(data.get_signal("v(out)"))),
-    "tf" : np.abs(data.get_signal("v(out)"))
-}
+print({"tf_db": data["tf_db"], "tf": data["tf"]})
 
-print(processed_data)
-
-
-
-# Now proceed with plotting using YAML configuration
-custom_config = wv.config_from_yaml("""
+custom_spec = wv.PlotSpec.from_yaml("""
 title: "SPICE Simulation - Key Signals"
 
-X:
-  signal_key: "frequency"
-  label: "Frequency (Hz)"
-  scale: "log"
-
+X: "frequency"
+  
 Y:
   - label: "Voltages (V)"
     signals:
-      Output: "data.tf_db"
+      Output: "tf_db"
     
 
 plot_height: 600
 show_rangeslider: true
 """)
 
-fig2 = wv.plot(spice_file, config=custom_config, processed_data=processed_data, show=True)
+fig2 = wv.plot(data, custom_spec)
 
 # %%
+# ────────────────────────────────────────────────────────────────────────────
+# Magnitude & phase example
+# ────────────────────────────────────────────────────────────────────────────
 spice_file = "./raw_data/tb_ota_5t/test_ac/results.raw"
 
-data = wv.load_spice(spice_file)
+data, _ = wv.load_spice_raw(spice_file)
 
-#print(f"Total signals: {len(data.signals)}")
-#for signal in data.signals:
-#    print(f"  - {signal}")
-print(data.get_signal("v(out)"))
+data["tf_db"] = 20 * np.log10(np.abs(data["v(out)"]))
+data["tf_phase"] = np.angle(data["v(out)"]) * 180 / np.pi
 
-processed_data = {
-    "tf_db" : 20*np.log10(np.abs(data.get_signal("v(out)"))),
-    "tf_phase" : np.angle(data.get_signal("v(out)"))
-}
+print({"tf_db": data["tf_db"], "tf_phase": data["tf_phase"]})
 
-print(processed_data)
-
-
-
-# Now proceed with plotting using YAML configuration
-custom_config = wv.config_from_yaml("""
+custom_spec = wv.PlotSpec.from_yaml("""
 title: "AC Analysis - Frequency Response"
 
 X:
@@ -165,6 +147,6 @@ show_zoom_buttons: false
 show_rangeslider: true
 """)
 
-fig2 = wv.plot(spice_file, config=custom_config, processed_data=processed_data, show=True)
+fig2 = wv.plot(data, custom_spec, show=True)
 
 # %%

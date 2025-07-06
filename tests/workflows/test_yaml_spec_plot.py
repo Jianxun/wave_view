@@ -6,7 +6,8 @@ import tempfile
 
 yaml_content = """
 title: "YAML Spec Workflow"
-x: "time"
+x:
+  signal: "time"
 y:
   - label: "VDD"
     signals:

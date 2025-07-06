@@ -8,7 +8,7 @@ class TestCreateLayoutEdgeCases:
 
     def test_single_axis_defaults(self):
         cfg = {
-            "x": "time",
+            "x": {"signal": "time"},
             "y": [
                 {"label": "Voltage", "signals": {"Out": "v(out)"}}
             ],
@@ -25,7 +25,7 @@ class TestCreateLayoutEdgeCases:
 
     def test_multi_axis_domain_order_and_gap(self):
         cfg = {
-            "x": "time",
+            "x": {"signal": "time"},
             "y": [
                 {"label": "Top", "signals": {"A": "a"}},
                 {"label": "Bottom", "signals": {"B": "b"}},
@@ -47,7 +47,7 @@ class TestCreateLayoutEdgeCases:
 
     def test_log_scale_and_range_propagation(self):
         cfg = {
-            "x": "time",
+            "x": {"signal": "time"},
             "y": [
                 {
                     "label": "Current",
@@ -64,7 +64,7 @@ class TestCreateLayoutEdgeCases:
 
     def test_disable_rangeslider(self):
         cfg = {
-            "x": "time",
+            "x": {"signal": "time"},
             "y": [
                 {"label": "Voltage", "signals": {"Out": "v(out)"}},
             ],

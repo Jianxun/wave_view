@@ -7,7 +7,7 @@ signal processing capabilities.
 """
 
 __version__ = "1.0.0"
-__author__ = "Wave View Development Team"
+__author__ = "Jianxun Zhu"
 
 # Core classes
 from .core.plotspec import PlotSpec

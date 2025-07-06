@@ -19,7 +19,8 @@ class TestCLIPlotWorkflow(unittest.TestCase):
 
         yaml_spec = """
         title: "CLI Plot Test"
-        x: "time"
+        x:
+          signal: "time"
         y:
           - label: "BUS06"
             signals:

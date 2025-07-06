@@ -9,22 +9,25 @@ the v1.0.0 architecture design.
 from typing import Dict, List, Optional, Any, Union
 import numpy as np
 import plotly.graph_objects as go
+from pathlib import Path
 
 from .plotspec import PlotSpec
 
 
 def plot(
-    data: Dict[str, np.ndarray],
+    data: Union[Dict[str, np.ndarray], str, "Path"],
     spec: PlotSpec | Dict[str, Any],
     *,
+    processed_data: Optional[Dict[str, np.ndarray]] = None,
     show: bool = True,
 ) -> go.Figure:
     """
     Create Plotly figure from data and PlotSpec configuration.
     
     Args:
-        data: Mapping of signal name → numpy array
+        data: Mapping of signal name → numpy array or raw-file path
         spec: PlotSpec configuration object **or** raw configuration ``dict``
+        processed_data: Optional mapping of processed signal name → numpy array
         show: When *True* (default) immediately display the figure via
               ``fig.show()`` – handy for interactive use.  Tests can pass
               ``show=False`` to suppress GUI pop-ups.
@@ -35,7 +38,29 @@ def plot(
     Raises:
         ValueError: If required signals are missing from data
     """
-    # Accept either PlotSpec or plain dict to avoid forcing callers to convert
+    # ---------------------------------------------
+    # 1) Normalize *data* argument – support file paths
+    # ---------------------------------------------
+    if isinstance(data, (str, Path)):
+        # Lazy-load raw file on-demand so docs snippets like
+        # wv.plot("sim.raw", spec) keep working.
+        from ..loader import load_spice_raw  # local import to avoid cycle
+
+        data_dict, _ = load_spice_raw(data)
+        data = data_dict  # type: ignore[assignment]
+    elif not isinstance(data, dict):
+        raise TypeError(
+            "data must be a dict mapping signal → ndarray or a raw-file path (str/Path)"
+        )
+
+    # Merge any processed/derived signals directly into the data dict.
+    if processed_data:
+        # Shallow copy to avoid mutating caller-supplied object
+        data = {**data, **processed_data}
+
+    # ---------------------------------------------
+    # 2) Normalize *spec* argument
+    # ---------------------------------------------
     if isinstance(spec, PlotSpec):
         config = spec.to_dict()
     elif isinstance(spec, dict):
@@ -49,7 +74,7 @@ def plot(
     fig.update_layout(layout)
     
     # Get X-axis data
-    x_signal = config["x"]
+    x_signal = config["x"]["signal"]
     if x_signal not in data:
         raise ValueError(f"X-axis signal '{x_signal}' not found in data. Available: {list(data.keys())}")
     x_data = data[x_signal]
@@ -61,10 +86,15 @@ def plot(
         
         # Add each signal in this Y-axis
         for legend_name, signal_key in y_spec["signals"].items():
-            if signal_key not in data:
-                raise ValueError(f"Signal '{signal_key}' not found in data. Available: {list(data.keys())}")
+            # Support legacy "data." prefix used in documentation examples
+            lookup_key = signal_key[5:] if signal_key.startswith("data.") else signal_key
+
+            if lookup_key not in data:
+                raise ValueError(
+                    f"Signal '{signal_key}' not found in data. Available: {list(data.keys())}"
+                )
             
-            y_data = data[signal_key]
+            y_data = data[lookup_key]
             add_waveform(fig, x_data, y_data, name=legend_name, y_axis=y_axis_id)
     
     # Show figure for interactive workflows if requested
@@ -158,13 +188,26 @@ def _configure_x_axis(config: Dict[str, Any]) -> Dict[str, Any]:
     Returns:
         X-axis configuration dictionary
     """
+    x_spec = config.get("x", {})
+    
+    # Use custom label if provided, otherwise fall back to signal key
+    title = x_spec.get("label") or x_spec.get("signal", "X-axis")
+    
     x_axis_config = {
         "xaxis": {
-            "title": config.get("x", "X-axis"),
+            "title": title,
             "showgrid": config.get("grid", True),
             "rangeslider": {"visible": config.get("show_rangeslider", True)}
         }
     }
+    
+    # Add log scale support
+    if x_spec.get("log_scale", False):
+        x_axis_config["xaxis"]["type"] = "log"
+    
+    # Add range support
+    if x_spec.get("range"):
+        x_axis_config["xaxis"]["range"] = x_spec["range"]
     
     return x_axis_config
 
