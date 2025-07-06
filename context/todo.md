@@ -2,7 +2,29 @@
 
 ## Current Sprint - Version 1.0.0 Release Preparation 🚀 **ARCHITECTURE COMPLETE**
 
-### 📋 **API Cleanup Tasks** ✅ **COMPLETED** 🧹 **MAXIMUM SIMPLIFICATION SUCCESS**
+### 📋 **Legacy Code Removal - COMPLETED** ✅ **PURE v1.0.0 ARCHITECTURE**
+
+#### **Phase 1.6: Legacy Reader Removal** ✅ **COMPLETED**
+- [X] **Remove legacy reader.py file** ✅ **COMPLETED**
+  - Deleted src/wave_view/core/reader.py completely
+  - SpiceData class no longer exists in the package
+  
+- [X] **Update CLI to use v1.0.0 API** ✅ **COMPLETED**
+  - Migrated CLI from SpiceData to WaveDataset
+  - Updated CLI to use v1.0.0 plotting functions
+  - Both `plot` and `signals` commands now use modern API
+  
+- [X] **Clean up package imports and exports** ✅ **COMPLETED**
+  - Removed SpiceData from __init__.py exports
+  - Removed all imports from reader module
+  - Package now only exports modern v1.0.0 components
+  
+- [X] **Remove legacy reader tests** ✅ **COMPLETED**
+  - Deleted entire tests/unit_tests/reader/ directory
+  - Fixed test imports to remove SpiceData references
+  - Cleaned up test dependencies
+
+#### **API Cleanup Tasks** ✅ **COMPLETED** 🧹 **MAXIMUM SIMPLIFICATION SUCCESS**
 
 #### **Function Removal for API Clarity** ✅ **COMPLETED**
 - [X] **Remove `_categorize_signals()` function** ✅ **COMPLETED**
@@ -73,6 +95,13 @@
   - ✅ Clean package namespace - only PlotSpec remains for configuration
   - ✅ Breaking change: 160 lines of legacy code removed (commit c9cb970)
 
+- [X] **Legacy Reader Removal** ✅ **COMPLETED**
+  - ✅ Remove reader.py file and SpiceData class completely
+  - ✅ Update CLI to use WaveDataset and v1.0.0 plotting functions
+  - ✅ Clean up package imports and exports
+  - ✅ Remove legacy reader tests directory
+  - ✅ Zero legacy code remains in the package
+
 ### 📋 **v1.0.0 Architecture - FULLY IMPLEMENTED** ✅ **SUCCESS**
 
 #### **Clean v1.0.0 API Achieved** ✅ **PRODUCTION READY**
@@ -89,33 +118,43 @@ fig = wv.plot("simulation.raw", config)
 ```
 
 #### **Key Features Successfully Implemented**
+- **✅ Zero Legacy Code**: Complete removal of SpiceData, reader.py, and all legacy components
+- **✅ Single Data Interface**: Only WaveDataset for data loading (no more dual APIs)
+- **✅ Modern CLI**: CLI updated to use v1.0.0 API with WaveDataset and plotting functions
+- **✅ Clean Package Structure**: Removed all legacy imports and exports
 - **✅ Automatic Renderer Detection**: Jupyter vs. standalone execution
 - **✅ Clean Import Structure**: Single `import wave_view as wv` line
-- **✅ Elegant Namespace**: `wv.PlotSpec`, `wv.plot()`, `wv.load_spice_raw()`
-- **✅ Legacy-Free Codebase**: No more SpicePlotter, plot_v1(), or PlotConfig complexity
+- **✅ Elegant Namespace**: `wv.PlotSpec`, `wv.plot()`, `wv.load_spice_raw()`, `wv.WaveDataset`
 - **✅ Unified API**: One plot() function for all plotting needs
 - **✅ Modern Configuration**: Pure PlotSpec with Pydantic validation
 
 ## Next Sprint - v1.0.0 Release and Documentation
 
-### 📋 **Release Preparation Tasks** (HIGH PRIORITY)
+### 📋 **Test Suite Refactoring** (HIGH PRIORITY)
 
-#### **Test Suite Modernization** 
+#### **Legacy Test Cleanup** 
+- [ ] **Update API Tests**
+  - Fix `tests/unit_tests/api/test_load_spice.py` to remove SpiceData references
+  - Update tests to use `load_spice_raw()` instead of legacy `load_spice()` 
+  - Ensure all API tests pass with WaveDataset-based implementation
+  
 - [ ] **Update Integration Tests**
   - Refactor `tests/test_integration_v1_0_0.py` to use new `plot()` API
   - Fix test methods to work with file-path-based plotting
   - Ensure all v1.0.0 tests pass with updated API
   
-- [ ] **Legacy Test Cleanup**
-  - Review and update/remove tests that reference SpicePlotter
+- [ ] **Legacy Test Archive**
+  - Review and update/remove tests that reference SpiceData or other removed components
   - Update plotter tests in `tests/unit_tests/plotter/` directory
   - Consider archiving legacy tests vs. updating them
+
+### 📋 **Release Preparation Tasks** (HIGH PRIORITY)
 
 #### **Documentation Updates**
 - [ ] **API Documentation**
   - Update all docstrings to reflect v1.0.0 API
   - Update Sphinx documentation in `docs/` directory
-  - Remove references to SpicePlotter in documentation
+  - Remove references to SpiceData in documentation
   
 - [ ] **Examples and Demos**
   - Update all example files to use new plot() API
@@ -171,25 +210,27 @@ fig = wv.plot("simulation.raw", config)
 - **Branch**: `1.0.0`
 - **Architecture Status**: ✅ **COMPLETE** - All v1.0.0 phases implemented
 - **API Status**: ✅ **UNIFIED** - Single plot() function with clean interface
-- **Legacy Code**: ✅ **COMPLETELY REMOVED** - No more plotter.py, SpicePlotter, or config.py
-- **Test Status**: Needs refactoring for new API (integration tests)
+- **Legacy Code**: ✅ **COMPLETELY REMOVED** - Zero legacy components remain
+- **Test Status**: Needs refactoring for removed SpiceData components
 - **Demo Status**: ✅ **UPDATED** - Uses clean v1.0.0 API
+- **CLI Status**: ✅ **UPDATED** - Uses modern v1.0.0 API exclusively
 
 ### **Ready for Release**
 - **Code Quality**: Excellent with single-responsibility functions
 - **Test Coverage**: 96% on plotting functions, 88% on PlotSpec
 - **API Design**: Clean, elegant, and production-ready
 - **Documentation**: Needs updating for v1.0.0 API changes
+- **Package Structure**: Pure v1.0.0 architecture with zero legacy code
 
 ### **Recent Accomplishments**
-- **Config System Removal**: Successfully removed config.py system completely (commit c9cb970)
-- **Legacy Removal**: Successfully removed plotter.py without breaking functionality
-- **API Unification**: Replaced complex API with simple `wv.plot()` function
-- **Import Cleanup**: Achieved single elegant import pattern
-- **Automatic Configuration**: Renderer detection works seamlessly
+- **Legacy Reader Removal**: Successfully removed reader.py and SpiceData completely
+- **CLI Migration**: Updated CLI to use WaveDataset and v1.0.0 plotting functions
+- **Import Cleanup**: Removed all SpiceData references from package
+- **Test Cleanup**: Removed legacy reader tests and fixed import issues
+- **API Purification**: Package now contains only modern v1.0.0 components
 
 ## Notes
-- **Current State**: v1.0.0 architecture fully implemented and tested
+- **Current State**: v1.0.0 architecture fully implemented with zero legacy code
 - **Next Focus**: Test suite refactoring and documentation updates for release
-- **Major Achievement**: Complete migration from legacy to modern architecture with full legacy removal
-- **Breaking Changes**: Ready for v1.0.0 major version release 
+- **Major Achievement**: Complete elimination of all legacy components - pure v1.0.0 architecture
+- **Breaking Changes**: Ready for v1.0.0 major version release with clean migration path

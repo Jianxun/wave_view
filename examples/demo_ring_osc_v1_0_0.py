@@ -40,5 +40,5 @@ show_rangeslider: true
 """)
 
 # New v1.0.0 API pattern: Dict[str, np.ndarray] → PlotSpec → Figure
-fig1 = wv.plot(spice_file, ps_tran)
-# fig1.show() is called automatically by plot() with show=True (default)
+fig1 = wv.plot(data, ps_tran)
+fig1.show()

@@ -10,7 +10,6 @@ __version__ = "0.1.0"
 __author__ = "Wave View Development Team"
 
 # Core classes
-from .core.reader import SpiceData
 from .core.plotspec import PlotSpec
 from .core.wavedataset import WaveDataset
 
@@ -49,7 +48,6 @@ __all__ = [
     'load_spice_raw',
     
     # Core classes
-    'SpiceData',
     'PlotSpec',
     'WaveDataset',
     

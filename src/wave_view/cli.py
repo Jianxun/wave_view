@@ -1,7 +1,7 @@
 """
 Wave View CLI interface.
 
-Provides command-line interface for plotting SPICE waveforms using the PlotSpec API.
+Provides command-line interface for plotting SPICE waveforms using the v1.0.0 API.
 """
 
 import click
@@ -10,6 +10,8 @@ from typing import Optional
 import sys
 
 from .core.plotspec import PlotSpec
+from .core.wavedataset import WaveDataset
+from .core.plotting import plot as create_plot
 
 
 @click.group()
@@ -66,14 +68,16 @@ def plot(raw_file: Path, spec_file: Path, output_file: Optional[Path] = None,
         if theme:
             spec.theme = theme
         
-        # Load the SPICE data
+        # Load the SPICE data using v1.0.0 API
         click.echo(f"📈 Loading SPICE data from: {raw_file}")
-        from .core.reader import SpiceData
-        spice_data = SpiceData(str(raw_file))
+        wave_data = WaveDataset.from_raw(str(raw_file))
         
-        # Create the plot
+        # Convert to Dict[str, np.ndarray] format for v1.0.0 plotting
+        data = {signal: wave_data.get_signal(signal) for signal in wave_data.signals}
+        
+        # Create the plot using v1.0.0 API
         click.echo("🎯 Creating plot...")
-        fig = spec.plot(spice_data)
+        fig = create_plot(data, spec)
         
         if output_file:
             # Save to file
@@ -140,10 +144,9 @@ def signals(raw_file: Path, limit: int):
     """
     try:
         click.echo(f"📊 Loading SPICE data from: {raw_file}")
-        from .core.reader import SpiceData
-        spice_data = SpiceData(str(raw_file))
+        wave_data = WaveDataset.from_raw(str(raw_file))
         
-        signals = spice_data.signals
+        signals = wave_data.signals
         click.echo(f"\n🔍 Found {len(signals)} signals:")
         
         # Display signals with numbering

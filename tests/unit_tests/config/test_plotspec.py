@@ -12,12 +12,10 @@ from pydantic import ValidationError
 # Import will fail initially - that's expected in TDD
 try:
     from wave_view.core.plotspec import PlotSpec, YAxisSpec
-    from wave_view.core.reader import SpiceData
     import plotly.graph_objects as go
 except ImportError:
     PlotSpec = None
     YAxisSpec = None
-    SpiceData = None
     go = None
 
 

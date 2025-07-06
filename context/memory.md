@@ -1,10 +1,19 @@
 # Project Memory
 
 ## Project Overview
-Wave_view is a Python package for SPICE simulation visualization with a modern, user-friendly API. The project features core modules for data reading (reader.py), v1.0.0 plotting functions (plotting.py), and modern PlotSpec configuration management, with comprehensive YAML-based configuration support and advanced features like log scale plotting and automatic renderer detection.
+Wave_view is a Python package for SPICE simulation visualization with a modern, user-friendly API. The project features core modules for data reading (WaveDataset), v1.0.0 plotting functions (plotting.py), and modern PlotSpec configuration management, with comprehensive YAML-based configuration support and advanced features like log scale plotting and automatic renderer detection.
 
 ## Current State
 **Version 1.0.0 Architecture Implementation - COMPLETED** 🚀 **MAJOR MILESTONE ACHIEVED**
+
+### **Phase 1.6: Legacy Reader Removal COMPLETED** ✅ **BREAKING CHANGE SUCCESS**
+- **Achievement**: Complete removal of legacy reader.py and SpiceData class
+- **Breaking Change**: SpiceData class completely removed from public API
+- **CLI Migration**: Updated CLI to use WaveDataset and v1.0.0 plotting functions
+- **Import Cleanup**: Removed SpiceData from __init__.py exports and all imports
+- **Test Cleanup**: Removed entire tests/unit_tests/reader/ directory
+- **API Unification**: Only WaveDataset remains for data loading (no more dual APIs)
+- **File Removal**: Deleted src/wave_view/core/reader.py completely
 
 ### **Phase 1.5: Ultimate API Simplification COMPLETED** ✅ **MAXIMUM SIMPLIFICATION ACHIEVED**
 - **Achievement**: Complete removal of redundant API functions AND wrapper layers for maximum clarity
@@ -38,8 +47,10 @@ Wave_view is a Python package for SPICE simulation visualization with a modern, 
 - **Phase 1.2++**: ✅ **Plotting Excellence** - Optimal zoom and Y-axis ordering
 - **Phase 1.3**: ✅ **Final API Migration** - Unified plot() function and legacy removal
 - **Phase 1.4**: ✅ **Legacy Config Removal** - Complete elimination of config.py system
+- **Phase 1.5**: ✅ **Ultimate API Simplification** - Maximum API reduction with zero redundancy
+- **Phase 1.6**: ✅ **Legacy Reader Removal** - Complete SpiceData elimination
 
-### **Current v1.0.0 API - ABSOLUTE MINIMALISM** 🎯 **EXPLICIT & POWERFUL**
+### **Current v1.0.0 API - PURE MODERN ARCHITECTURE** 🎯 **ZERO LEGACY CODE**
 ```python
 import wave_view as wv
 
@@ -61,16 +72,21 @@ fig.show()  # Explicit display control
 ```
 
 ### **Key Features Completed**
+- **✅ Zero Legacy Code**: Complete removal of SpiceData, reader.py, and all legacy components
+- **✅ Single Data Interface**: Only WaveDataset for data loading (no more dual APIs)
+- **✅ Modern CLI**: CLI updated to use v1.0.0 API with WaveDataset and plotting functions
+- **✅ Clean Package Structure**: Removed all legacy imports and exports
 - **✅ Automatic Renderer Detection**: Jupyter vs. standalone execution
 - **✅ Clean Import Structure**: Single `import wave_view as wv`
-- **✅ Ultra-Minimalist Namespace**: **ONLY** `wv.PlotSpec`, `wv.plot()`, `wv.load_spice_raw()` - **NOTHING ELSE!**
-- **✅ Legacy-Free**: No more complex SpicePlotter class, plot_v1() function, or PlotConfig
+- **✅ Ultra-Minimalist Namespace**: **ONLY** `wv.PlotSpec`, `wv.plot()`, `wv.load_spice_raw()`, `wv.WaveDataset` 
 - **✅ Direct Core Exposure**: `plot()` function is the actual core function, no wrapper layers
-- **✅ Modern Configuration**: Pure PlotSpec with Pydantic validation replacing legacy PlotConfig
+- **✅ Modern Configuration**: Pure PlotSpec with Pydantic validation
 - **✅ Explicit Data Flow**: Users see exactly what happens: load → configure → plot → show
 - **✅ Zero Redundancy**: No duplicate functions, no wrappers, no hidden complexity
 
 ### **Previous Milestones**
+- **Phase 1.6: Legacy Reader Removal** - Complete elimination of SpiceData class and reader.py
+- **Phase 1.5: Ultimate API Simplification** - Maximum API reduction with zero redundancy
 - **Phase 1.4: Legacy Config Removal** - Complete elimination of config.py system
 - **Phase 1.3: Final API Migration** - Unified plot() function and legacy removal
 - **Phase 1.2++: Plotting Excellence** - Significantly improved plotting usability
@@ -87,24 +103,29 @@ fig.show()  # Explicit display control
 ## Key Decisions
 
 ### **Version 1.0.0 Final Architecture**
-- **Unified API**: Single `wv.plot()` function replacing both legacy plot() and plot_v1()
-- **Legacy Removal**: Complete removal of plotter.py and SpicePlotter class
+- **Single Data Interface**: WaveDataset as the only data loading mechanism
+- **Complete Legacy Removal**: No more SpiceData class or reader.py module
+- **Unified API**: Single `wv.plot()` function with clean interface
+- **Modern CLI**: CLI uses v1.0.0 API exclusively
 - **Function-Based Design**: Clean separation between configuration (PlotSpec) and plotting (plotting.py)
 - **Automatic Setup**: Renderer configuration happens on package import
 - **Direct Signal Lookup**: Simple Dict[str, np.ndarray] interface without complex resolution
 
 ### **Breaking Changes Successfully Implemented**
-- **API Simplification**: `wv.plot(raw_file, spec)` replaces complex legacy API
-- **Import Cleanup**: Removed SpicePlotter exports and plot_v1 function
+- **Data Loading**: `wv.load_spice_raw()` returns Dict[str, np.ndarray] format
+- **API Simplification**: `wv.plot(data, spec)` replaces all legacy plotting methods
+- **Import Cleanup**: SpiceData completely removed from public API
 - **Configuration Format**: PlotSpec format as the standard (PlotConfig completely removed)
 - **Data Interface**: Dict[str, np.ndarray] as the uniform data format
-- **Function Removal**: config_from_file(), config_from_yaml(), validate_config() no longer available
+- **Class Removal**: SpiceData class no longer exists in the package
+- **Function Removal**: All legacy functions removed from public API
 
 ### **Architecture Principles Applied**
 - **Single Responsibility**: Each function has one clear purpose
 - **Separation of Concerns**: Configuration vs. visualization cleanly separated
 - **User Experience**: Automatic renderer detection and clean imports
 - **Extensibility**: Architecture designed for future multi-case plotting support
+- **Modern Design**: Only WaveDataset for data loading with metadata support
 
 ## Current API (v1.0.0) - FINAL
 ```python
@@ -129,6 +150,7 @@ fig = wv.plot("simulation.raw", config)
 - **Next Version**: 1.0.0 (Major version with breaking changes)
 - **Migration Status**: ✅ **COMPLETE** - Ready for v1.0.0 release
 - **API Stability**: Production-ready with clean, unified interface
+- **Legacy Code**: ✅ **COMPLETELY ELIMINATED** - Zero legacy components remain
 
 ## Architecture Status
 - **Clean 3-Step Workflow**: Discovery → Configuration → Plotting
@@ -136,9 +158,9 @@ fig = wv.plot("simulation.raw", config)
 - **Test Coverage**: 96% on plotting functions, 88% on PlotSpec
 - **Code Quality**: Excellent - clean functions with single responsibilities
 - **Documentation**: Complete Sphinx documentation system (needs update for v1.0.0)
-- **Legacy Code**: ✅ **COMPLETELY REMOVED** - No more plotter.py, SpicePlotter, or config.py dependencies
+- **Legacy Code**: ✅ **COMPLETELY REMOVED** - No more reader.py, plotter.py, SpicePlotter, SpiceData, or config.py dependencies
 
 ## Open Questions
-- **Test Suite Refactoring**: Update integration tests to use new plot() API
+- **Test Suite Refactoring**: Update all legacy tests that reference SpiceData or other removed components
 - **Documentation Updates**: Update all examples and documentation for v1.0.0
 - **Migration Guide**: Create guide for users upgrading from v0.x.x to v1.0.0

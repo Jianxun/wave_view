@@ -13,8 +13,7 @@ from unittest.mock import Mock, patch, MagicMock
 import numpy as np
 
 import wave_view as wv
-from wave_view.api import load_spice
-from wave_view.core.reader import SpiceData
+from wave_view.api import load_spice_raw
 from wave_view.core.wavedataset import WaveDataset
 from . import (
     create_temp_raw_file, 
