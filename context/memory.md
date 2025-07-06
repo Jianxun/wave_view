@@ -177,3 +177,7 @@ fig = wv.plot("simulation.raw", config)
   * Loader tests added (`tests/unit/loader/test_loader_basic.py`) – project coverage now 86 %, Stage D coverage target met
   * CLI tests added (`tests/unit/cli/test_cli_basic.py`) – overall coverage at 91 %, cli.py 81 %
   * Removed outdated integration test (`tests/test_integration_v1_0_0.py`) – suite count 59 tests, no coverage impact
+
+## Recent Documentation Work
+- Full Sphinx documentation updated for v1.0.0: api.rst, quickstart.rst, configuration.rst, examples.rst, index.rst, contributing.rst, changelog.rst, README.md. Obsolete core.rst removed.
+- Build succeeds; pending minor warning cleanup.

@@ -10,7 +10,7 @@ Development Setup
 
 .. code-block:: bash
 
-   git clone https://github.com/yourusername/wave_view.git
+   git clone https://github.com/Jianxun/wave_view.git
    cd wave_view
 
 2. **Create Virtual Environment**:
@@ -170,12 +170,17 @@ Core Principles
 Module Organization
 ~~~~~~~~~~~~~~~~~~~
 
-* ``src/wave_view/api.py`` - Public API functions
-* ``src/wave_view/core/`` - Core implementation modules:
+* ``src/wave_view/`` – Public package root
+  * ``__init__.py`` – Exposes **only** ``load_spice_raw``, ``PlotSpec``, ``plot``, and ``WaveDataset``
+  * ``core/`` – Core implementation modules
+    * ``plotspec.py`` – Pydantic model that defines the PlotSpec schema
+    * ``plotting.py`` – Pure function-based plotting helpers and ``plot``
+    * ``wavedataset.py`` – Thin wrapper around ``spicelib`` for fast raw-file loading
+  * ``loader.py`` – Convenience wrapper that powers ``load_spice_raw``
+  * ``cli.py`` – Command-line interface built on the v1.0.0 API
+  * ``utils/`` – Small internal utilities (e.g. ``env.py`` for renderer selection)
 
-  * ``reader.py`` - SPICE file reading (SpiceData class)
-  * ``config.py`` - Configuration management (PlotConfig class)  
-  * ``plotter.py`` - Plotting functionality (SpicePlotter class)
+Legacy files (``reader.py``, ``config.py``, ``plotter.py``) were removed in 1.0.0 – do **not** add code to those names.
 
 API Design
 ~~~~~~~~~~

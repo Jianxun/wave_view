@@ -13,19 +13,17 @@ Plot input and output voltages from an amplifier simulation:
    import wave_view as wv
 
    # Simple voltage plot using YAML configuration
-   config = wv.config_from_yaml("""
+   spec = wv.PlotSpec.from_yaml("""
    title: "Amplifier Response"
-   X:
-     signal_key: "time"
-     label: "Time (s)"
-   Y:
+   x: "time"
+   y:
      - label: "Voltage (V)"
        signals:
          Input: "v(in)"
          Output: "v(out)"
    """)
 
-   fig = wv.plot("amplifier.raw", config)
+   fig = wv.plot("amplifier.raw", spec)
    fig.show()
 
 Current Analysis
@@ -92,11 +90,11 @@ Combine SPICE signals with computed power calculations:
    import wave_view as wv
 
    # Load SPICE data
-   spice_data = wv.load_spice("power_analysis.raw")
+   data, _ = wv.load_spice_raw("power_analysis.raw")
    
    # Compute power signals
-   v_out = spice_data.get_signal_data("v(out)")
-   i_out = spice_data.get_signal_data("i(rload)")
+   v_out = data["v(out)"]
+   i_out = data["i(rload)"]
    power = v_out * i_out
    
    # Create processed data dictionary
@@ -105,12 +103,10 @@ Combine SPICE signals with computed power calculations:
        "power_avg": np.ones_like(power) * np.mean(power)
    }
 
-   config = wv.config_from_yaml("""
+   spec = wv.PlotSpec.from_yaml("""
    title: "Power Analysis"
-   X:
-     signal_key: "time"
-     label: "Time (s)"
-   Y:
+   x: "time"
+   y:
      - label: "Voltage (V)"
        signals:
          Output: "v(out)"
@@ -120,7 +116,7 @@ Combine SPICE signals with computed power calculations:
          Average_Power: "data.power_avg"
    """)
 
-   fig = wv.plot("power_analysis.raw", config, processed_data=processed_signals)
+   fig = wv.plot("power_analysis.raw", spec, processed_data=processed_signals)
 
 AC Analysis with Complex Signal Processing
 --------------------------------------------
@@ -134,11 +130,11 @@ magnitude and phase analysis for transfer functions and Bode plots:
    import numpy as np
 
    # Load AC analysis data (contains complex numbers)
-   data = wv.load_spice("ac_analysis.raw")
+   data, _ = wv.load_spice_raw("ac_analysis.raw")
    
    # AC signals are automatically returned as complex numbers
-   v_out = data.get_signal("v(out)")  # Returns complex128 array
-   v_in = data.get_signal("v(in)")    # Returns complex128 array
+   v_out = data["v(out)"]  # complex128 array
+   v_in = data["v(in)"]    # complex128 array
    
    print(f"v_out dtype: {v_out.dtype}")  # complex128
    print(f"Is complex: {np.iscomplexobj(v_out)}")  # True
@@ -148,19 +144,16 @@ magnitude and phase analysis for transfer functions and Bode plots:
 .. code-block:: python
 
    # Simple magnitude plot (uses real part of complex signal)
-   config = wv.config_from_yaml("""
+   spec = wv.PlotSpec.from_yaml("""
    title: "AC Magnitude Response"
-   X:
-     signal_key: "frequency"
-     label: "Frequency (Hz)"
-     scale: "log"
-   Y:
+   x: "frequency"
+   y:
      - label: "Voltage (V)"
        signals:
          Output: "v(out)"  # Automatically uses real part
    """)
 
-   fig = wv.plot("ac_analysis.raw", config)
+   fig = wv.plot("ac_analysis.raw", spec)
 
 **Complete Bode Plot (Magnitude and Phase):**
 
@@ -174,13 +167,10 @@ magnitude and phase analysis for transfer functions and Bode plots:
        "phase_rad": np.angle(v_out)                        # Phase in radians
    }
 
-   config = wv.config_from_yaml("""
+   spec = wv.PlotSpec.from_yaml("""
    title: "Transfer Function Bode Plot"
-   X:
-     signal_key: "frequency"
-     label: "Frequency (Hz)"
-     scale: "log"
-   Y:
+   x: "frequency"
+   y:
      - label: "Magnitude (dB)"
        signals:
          H(jω): "data.magnitude_db"
@@ -192,7 +182,7 @@ magnitude and phase analysis for transfer functions and Bode plots:
    show_rangeslider: true
    """)
 
-   fig = wv.plot("ac_analysis.raw", config, processed_data=processed_data)
+   fig = wv.plot("ac_analysis.raw", spec, processed_data=processed_data)
 
 **Transfer Function Analysis:**
 
@@ -319,8 +309,8 @@ For complex configurations, use YAML files:
    import wave_view as wv
 
    # Load configuration from file
-   config = wv.config_from_file("analysis_config.yaml")
-   fig = wv.plot("opamp.raw", config)
+   spec = wv.PlotSpec.from_yaml("analysis_config.yaml")
+   fig = wv.plot("opamp.raw", spec)
 
 Batch Processing
 ----------------
@@ -358,37 +348,14 @@ Process multiple simulation files with the same configuration:
 Interactive Exploration
 -----------------------
 
-Use explore_signals to discover what's available:
+Discover available signals by loading the data and printing the keys:
 
 .. code-block:: python
 
    import wave_view as wv
 
-   # Discover available signals
-   signals = wv.explore_signals("mystery_circuit.raw")
-   
-   print("Voltage signals:", signals['voltage_signals'])
-   print("Current signals:", signals['current_signals'])
-   print("Other signals:", signals['other_signals'])
-
-   # Create configuration based on discovery
-   voltage_signals = {f"V{i+1}": sig for i, sig in enumerate(signals['voltage_signals'][:3])}
-   current_signals = {f"I{i+1}": sig for i, sig in enumerate(signals['current_signals'][:2])}
-   
-   config = wv.config_from_yaml(f"""
-   title: "Discovered Signals Analysis"
-   X:
-     signal_key: "time"
-     label: "Time (s)"
-   Y:
-     - label: "Main Voltages (V)"
-       signals: {voltage_signals}
-     - label: "Main Currents (A)"
-       scale: "log"
-       signals: {current_signals}
-   """)
-
-   fig = wv.plot("mystery_circuit.raw", config)
+   data, _ = wv.load_spice_raw("mystery_circuit.raw")
+   print(list(data))
 
 Error Handling
 --------------
@@ -402,12 +369,6 @@ Robust error handling for production use:
    def safe_plot(raw_file, config):
        """Safely plot with error handling."""
        try:
-           # Validate configuration first
-           errors = wv.validate_config(config)
-           if errors:
-               print(f"Configuration errors: {errors}")
-               return None
-           
            # Try to create plot
            fig = wv.plot(raw_file, config)
            return fig
@@ -440,8 +401,8 @@ Compare results from different simulation runs:
 .. code-block:: python
 
    # Load multiple simulations
-   data1 = wv.load_spice("before_optimization.raw")
-   data2 = wv.load_spice("after_optimization.raw")
+   data1, _ = wv.load_spice_raw("before_optimization.raw")
+   data2, _ = wv.load_spice_raw("after_optimization.raw")
 
    # Create comparison signals
    processed_signals = {

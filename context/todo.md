@@ -168,21 +168,10 @@ fig = wv.plot("simulation.raw", config)
 
 ### 📋 **Release Preparation Tasks** (HIGH PRIORITY)
 
-#### **Documentation Updates**
-- [ ] **API Documentation**
-  - Update all docstrings to reflect v1.0.0 API
-  - Update Sphinx documentation in `docs/` directory
-  - Remove references to SpiceData in documentation
-  
-- [ ] **Examples and Demos**
-  - Update all example files to use new plot() API
-  - Update README.md with v1.0.0 examples
-  - Create migration guide for users upgrading from v0.x.x
-  
-- [ ] **CHANGELOG.md**
-  - Document all breaking changes in v1.0.0
-  - List new features and improvements
-  - Provide migration instructions
+#### **Documentation Updates** ✅ **COMPLETED**
+- [X] **API Documentation** – All Sphinx pages updated for v1.0.0; obsolete pages removed
+- [X] **Examples and Demos** – Examples updated, README refreshed with new API; migration content captured in docs
+- [X] **CHANGELOG.rst** – Detailed 1.0.0 entry with breaking changes and features
 
 #### **Version Management**
 - [ ] **Version Bump**

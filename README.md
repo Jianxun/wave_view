@@ -65,26 +65,21 @@ python -c "import wave_view as wv; print(f'Wave View {wv.__version__} installed 
 ```python
 import wave_view as wv
 
-# Simple plotting - just provide a SPICE file
-fig = wv.plot("simulation.raw")
-
-# With configuration file
-fig = wv.plot("simulation.raw", "config.yaml")
-
-# Direct configuration  
-config = wv.config_from_yaml("""
+# 1️⃣ Build a PlotSpec (YAML file, YAML string, or dict)
+spec = wv.PlotSpec.from_yaml("""
 title: "Voltage Analysis"
-X:
-  signal_key: "time"
-  label: "Time (s)"
-Y:
+x: "time"
+y:
   - label: "Voltage (V)"
     signals:
       VDD: "v(vdd)"
-      OUT: "v(vout)"
-      IN: "v(vin)"
+      OUT: "v(out)"
+      IN:  "v(in)"
 """)
-fig = wv.plot("simulation.raw", config)
+
+# 2️⃣ Quick plot – let plot() load the file lazily
+fig = wv.plot("simulation.raw", spec)
+fig.show()
 ```
 
 ### Command Line Interface
@@ -113,22 +108,31 @@ wave_view plot --help
 ### Advanced Usage
 
 ```python
-import wave_view as wv
+import numpy as np, wave_view as wv
 
-# Load SPICE data
-data = wv.load_spice("simulation.raw")
-print(f"Found {len(data.signals)} signals")
+# Pre-load data for inspection or heavy processing
+data, _ = wv.load_spice_raw("simulation.raw")
+print(f"Signals → {list(data)[:10]}")
 
-# Advanced plotting with SpicePlotter
-plotter = wv.SpicePlotter("simulation.raw")
+# Create a derived signal
+power = data["v(out)"] * data["i(out)"]
 
-# Add processed signals
-plotter.add_processed_signal("power", lambda d: d["v(vdd)"] * d["i(vdd)"])
+spec = wv.PlotSpec.from_yaml("""
+x: "time"
+y:
+  - label: "Voltage & Power"
+    signals:
+      OUT:   "v(out)"
+      Power: "power"
+""")
 
-# Load configuration and plot
-plotter.load_config("plot_config.yaml")
-fig = plotter.create_figure()
+fig = wv.plot(data, spec, processed_data={"power": power})
+fig.show()
 ```
+
+### Configuration Validation
+
+PlotSpec uses Pydantic, so validation happens automatically when you call ``PlotSpec.from_yaml`` or ``PlotSpec.model_validate``.  Invalid specs raise ``ValidationError`` with helpful messages.
 
 ## 📖 Documentation
 
@@ -245,17 +249,18 @@ mypy src/
 
 ```
 wave_view/
-├── src/wave_view/           # Main package
-│   ├── core/               # Core functionality
-│   │   ├── reader.py       # SPICE file reading
-│   │   ├── config.py       # Configuration handling
-│   │   └── plotter.py      # Plotting logic
-│   ├── utils/              # Utility functions
-│   └── api.py              # Main API
-├── tests/                  # Test suite
-├── examples/               # Usage examples
-├── docs/                   # Documentation
-└── pyproject.toml          # Package configuration
+├── src/wave_view/
+│   ├── core/
+│   │   ├── plotspec.py      # PlotSpec model
+│   │   ├── plotting.py      # Plotting helpers + plot()
+│   │   └── wavedataset.py   # WaveDataset + low-level loaders
+│   ├── loader.py            # load_spice_raw convenience wrapper
+│   ├── cli.py               # Command-line interface
+│   └── __init__.py          # Public symbols (plot, PlotSpec, load_spice_raw,...)
+├── tests/                   # Test suite
+├── examples/                # Usage examples
+├── docs/                    # Documentation
+└── pyproject.toml           # Packaging
 ```
 
 ## 📋 Requirements
