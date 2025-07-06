@@ -6,7 +6,7 @@ for Jupyter notebook integration with both simple plotting functions and advance
 signal processing capabilities.
 """
 
-__version__ = "0.1.0"
+__version__ = "1.0.0"
 __author__ = "Wave View Development Team"
 
 # Core classes
