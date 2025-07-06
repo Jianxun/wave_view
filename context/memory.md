@@ -164,3 +164,16 @@ fig = wv.plot("simulation.raw", config)
 - **Test Suite Refactoring**: Update all legacy tests that reference SpiceData or other removed components
 - **Documentation Updates**: Update all examples and documentation for v1.0.0
 - **Migration Guide**: Create guide for users upgrading from v0.x.x to v1.0.0
+
+## Development Branch Status (2025-07-06)
+- New branch `test_suite_refactor` created from `1.0.0` to host the aggressive test-suite refactor aligned with v1.0.0 API.
+- `1.0.0` branch pushed to origin and now serves as stable baseline.
+
+- **Test Suite Refactor – Stage C (Unit Coverage) IN PROGRESS**:
+  * Plotting helper tests added (`tests/unit/plotting/test_plotting_helpers.py`) – `core.plotting` ≥90 %
+  * WaveDataset error-path tests added (`tests/unit/wavedataset/test_wavedataset_error_paths.py`) – `core.wavedataset` 100 % coverage
+  * PlotSpec helper tests added (`tests/unit/plotspec/test_plotspec_basic.py`) – covers YAML parsing, dict export, and error handling
+  * Layout edge-case tests added (`tests/unit/plotting/test_create_layout_edge.py`) – Stage C unit coverage rebuild complete (44 tests passing)
+  * Loader tests added (`tests/unit/loader/test_loader_basic.py`) – project coverage now 86 %, Stage D coverage target met
+  * CLI tests added (`tests/unit/cli/test_cli_basic.py`) – overall coverage at 91 %, cli.py 81 %
+  * Removed outdated integration test (`tests/test_integration_v1_0_0.py`) – suite count 59 tests, no coverage impact

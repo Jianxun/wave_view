@@ -50,4 +50,60 @@ tests/
 ## 6. Future Considerations
 * Add new workflow tests whenever user-facing behaviour is added (e.g. complex-number handling, corner plotting).  These act both as regression tests and living documentation.
 * Legacy tests can be fully removed once confidence in new suite is established.
-* Consider generating HTML docs from workflow test docstrings for user guides. 
+* Consider generating HTML docs from workflow test docstrings for user guides.
+
+## Stage C – Unit Coverage Rebuild Plan (v1.0.0)
+
+### 1. Directory Layout
+```
+tests/
+  unit/
+    plotting/          # algorithm helpers (layout, domains…)
+    wavedataset/       # IO & data-lookup behaviour
+    plotspec/          # validation & YAML round-trip
+    fixtures/          # tiny raw/YAML snippets (if needed)
+```
+
+### 2. Coverage Targets
+| Module | Target |
+|--------|--------|
+| `core.plotting`   | ≥ 90 % |
+| `core.wavedataset`| ≥ 95 % |
+| `core.plotspec`   | ≥ 85 % |
+
+### 3. Naming & Style
+* Filenames: `test_<feature>_<behaviour>.py`
+* One narrative assertion per test – black-box behaviour only.
+
+### 4. Fixtures & Mocking
+* Tiny NumPy arrays for plotting cases.
+* Patch `WaveDataset.RawRead` to avoid file IO.
+* `show=False` everywhere; no renderer side-effects.
+
+### 5. Incremental TDD Roadmap
+1. **plotting**
+   * `_calculate_y_axis_domains()` single vs multi.
+   * `_config_zoom()` flag logic.
+   * `add_waveform()` y-axis assignment.
+   * `create_layout()` happy path & edge cases.
+2. **wavedataset**
+   * `signals` normalisation.
+   * `get_signal()` ndarray & case-insensitive.
+   * `has_signal()` truth table.
+   * `from_raw()` validation errors.
+3. **plotspec**
+   * `from_yaml()` parse.
+   * `to_dict()` round-trip.
+   * invalid YAML raises error.
+   * override precedence via `_apply_overrides()`.
+
+### 6. Cleanup Tasks
+* Delete legacy `tests/unit_tests/*` once parity met.
+* Remove zoom-button skips when legacy files archived.
+
+### 7. Milestones / PR Slices
+1. plotting helper tests (get plotting coverage to 90 %).
+2. wavedataset suite.
+3. plotspec suite.
+4. remove old unit_tests tree & adjust `pytest.ini`.
+5. add coverage gate in CI. 
