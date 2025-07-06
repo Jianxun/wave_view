@@ -148,8 +148,13 @@ fig = wv.plot("simulation.raw", config)
   - Update plotter tests in `tests/unit_tests/plotter/` directory
   - Consider archiving legacy tests vs. updating them
 
-#### **Legacy Test Cleanup** 
-- [X] **Phase A – Clean slate: Updated pytest.ini to ignore legacy tests, fixed integration test to use load_spice_raw, removed zoom button tests (marked skipped) and reverted core zoom button code.
+#### **Stage B – Documentation workflows**
+[X] Added tests/workflows/ directory with 4 high-level user-story tests:
+    - test_path_plot.py
+    - test_preload_plot.py
+    - test_yaml_spec_plot.py
+    - test_cli_plot.py (CLI smoke)
+  All new tests pass.
 
 ### 📋 **Release Preparation Tasks** (HIGH PRIORITY)
 
