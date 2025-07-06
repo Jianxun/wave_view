@@ -17,7 +17,7 @@ Creating a PlotSpec
    import wave_view as wv
 
    # from a YAML file
-   spec = wv.PlotSpec.from_yaml("config.yaml")
+   spec = wv.PlotSpec.from_file("config.yaml")
 
    # from an inline YAML string
    spec = wv.PlotSpec.from_yaml("""
@@ -36,7 +36,7 @@ Creating a PlotSpec
    }
    spec = wv.PlotSpec.model_validate(dict_spec)
 
-Once you have a PlotSpec, pass it to :func:`wave_view.plot` together with either a file path **or** data returned by :func:`wave_view.load_spice_raw`.
+Once you have a PlotSpec, pass it to :func:`wave_view.plot` together with the *data* dictionary returned by :func:`wave_view.load_spice_raw`.
 
 YAML / Dict Schema
 ------------------
@@ -81,7 +81,7 @@ Example PlotSpec
 Processed / Derived Signals
 ---------------------------
 
-``plot()`` accepts an optional ``processed_data`` dictionary that can be mixed with raw traces.  Reference these arrays with either ``data.<name>`` **or** by the plain legend key if you prefer brevity.
+To plot *derived* signals just insert them into the same ``data`` dictionary – they behave exactly like native SPICE traces.
 
 .. code-block:: python
 
@@ -89,6 +89,9 @@ Processed / Derived Signals
 
    data, _ = wv.load_spice_raw("simulation.raw")
    power = data["v(out)"] * data["i(out)"]
+
+   # Append the derived signal to the data dict
+   data["power"] = power
 
    spec = wv.PlotSpec.from_yaml("""
    x: "time"
@@ -99,7 +102,7 @@ Processed / Derived Signals
          Power: "power"   # shorthand for data key
    """)
 
-   fig = wv.plot(data, spec, processed_data={"power": power})
+   fig = wv.plot(data, spec)
 
 Multiple Configurations
 -----------------------
@@ -108,11 +111,12 @@ For complex analyses you can create multiple PlotSpecs and call :func:`wave_view
 
 .. code-block:: python
 
-   voltage_spec = wv.PlotSpec.from_yaml("voltage.yaml")
-   current_spec = wv.PlotSpec.from_yaml("current.yaml")
+   voltage_spec = wv.PlotSpec.from_file("voltage.yaml")
+   current_spec = wv.PlotSpec.from_file("current.yaml")
 
-   fig_v = wv.plot("simulation.raw", voltage_spec)
-   fig_i = wv.plot("simulation.raw", current_spec)
+   data, _ = wv.load_spice_raw("simulation.raw")
+   fig_v = wv.plot(data, voltage_spec)
+   fig_i = wv.plot(data, current_spec)
 
 Best Practices
 --------------

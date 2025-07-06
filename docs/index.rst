@@ -8,7 +8,7 @@ wave_view: SPICE Simulation Visualization
 
 *wave_view* is a modern Python toolkit for turning raw SPICE ``.raw`` files into beautiful, interactive Plotly graphs.  Version 1.0.0 introduces an ultra-simple **three-step workflow**:
 
-1. **Data Loading** – load with :func:`wave_view.load_spice_raw` or let :func:`wave_view.plot` load on demand.  
+1. **Data Loading** – load with :func:`wave_view.load_spice_raw`.  
 2. **Configuration** – describe your plot in YAML, JSON, or a Python dict using :class:`wave_view.PlotSpec`.  
 3. **Plotting** – call :func:`wave_view.plot` and get an interactive figure you can display, embed, or export.
 
@@ -43,7 +43,7 @@ Quick Start
    """)
 
    # Create the plot (pass the file path *or* pre-loaded data)
-   fig = wv.plot(data, spec)  # or wv.plot("simulation.raw", spec)
+   fig = wv.plot(data, spec)
    fig.show()
 
 Installation
