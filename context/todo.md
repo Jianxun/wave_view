@@ -263,3 +263,9 @@ fig = wv.plot("simulation.raw", config)
 - **Next Focus**: Test suite refactoring and documentation updates for release
 - **Major Achievement**: Complete elimination of all legacy components - pure v1.0.0 architecture
 - **Breaking Changes**: Ready for v1.0.0 major version release with clean migration path
+
+### **Stage D – Coverage & CI**
+  - [X] **Overall coverage ≥ 85 %** – Added loader tests; project coverage now 86 %
+  - [ ] **Add coverage gate to CI** – Update GitHub Actions workflow / pytest ini
+  - [ ] **CLI tests** – Raise `cli.py` coverage above 85 %
+  - [ ] **env helper tests** – Bring `utils/env.py` coverage ≥ 90 %

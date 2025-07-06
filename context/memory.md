@@ -174,3 +174,4 @@ fig = wv.plot("simulation.raw", config)
   * WaveDataset error-path tests added (`tests/unit/wavedataset/test_wavedataset_error_paths.py`) – `core.wavedataset` 100 % coverage
   * PlotSpec helper tests added (`tests/unit/plotspec/test_plotspec_basic.py`) – covers YAML parsing, dict export, and error handling
   * Layout edge-case tests added (`tests/unit/plotting/test_create_layout_edge.py`) – Stage C unit coverage rebuild complete (44 tests passing)
+  * Loader tests added (`tests/unit/loader/test_loader_basic.py`) – project coverage now 86 %, Stage D coverage target met
