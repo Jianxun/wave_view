@@ -169,4 +169,6 @@ fig = wv.plot("simulation.raw", config)
 - New branch `test_suite_refactor` created from `1.0.0` to host the aggressive test-suite refactor aligned with v1.0.0 API.
 - `1.0.0` branch pushed to origin and now serves as stable baseline.
 
-- **Test Suite Refactor – Stage C (Unit Coverage) IN PROGRESS**: Initial plotting helper tests added (`tests/unit/plotting/test_plotting_helpers.py`) – all tests passing, laying groundwork for ≥90 % coverage on `core.plotting`.
+- **Test Suite Refactor – Stage C (Unit Coverage) IN PROGRESS**:
+  * Plotting helper tests added (`tests/unit/plotting/test_plotting_helpers.py`) – `core.plotting` ≥90 %
+  * WaveDataset error-path tests added (`tests/unit/wavedataset/test_wavedataset_error_paths.py`) – `core.wavedataset` 100 % coverage
