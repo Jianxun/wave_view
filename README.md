@@ -3,7 +3,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 
-A Python package for visualizing SPICE simulation waveforms with interactive Plotly-based plotting, designed for seamless integration with Jupyter notebooks.
+Wave View is a lightweight yet powerful Python toolkit that transforms raw SPICE ``.raw`` files into beautiful, interactive Plotly figures with minimal code.  It reads simulation traces straight into a plain ``{signal_name: np.ndarray}`` dictionary, lets you define multi-axis plots declaratively via YAML (or override them on the command line), and automatically selects the best renderer whether you are in a Jupyter notebook, VS Code, or a headless CI job.  Case-insensitive signal lookup, engineering-notation tick labels, and first-class multi-strip support help you focus on circuit analysis rather than plotting boilerplate.
 
 ![Demo](examples/screenshots/wave_view_demo.png)
 
@@ -13,7 +13,7 @@ A Python package for visualizing SPICE simulation waveforms with interactive Plo
 - **YAML Configuration**: Flexible, reusable plotting configurations
 - **Simple API**: Plot waveforms with a single function call
 - **Command Line Interface**: Quick plotting from terminal with `wave_view plot`
-- **Jupyter-First Design**: Auto-detection and inline plotting
+- **Automatic Environment Detection**: Auto-detection and inline plotting for Jupyter Notebooks, render in browser when running in standalone Python scripts.
 
 ## Quick Start
 

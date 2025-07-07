@@ -23,6 +23,7 @@ Y:
     signals:
       Supply Current: "i(c1)"
 
+width: 900
 height: 600
 show_rangeslider: true
 """)
