@@ -209,11 +209,10 @@ def _configure_x_axis(config: Dict[str, Any]) -> Dict[str, Any]:
     if x_spec.get("range"):
         x_axis_config["xaxis"]["range"] = x_spec["range"]
     
-    # Add engineering notation for frequency domain plots
+    # Add engineering notation for all plots
     # Use SI prefixes (1G, 1M, 1k) instead of American notation (1B, 1M, 1K)
-    signal_name = x_spec.get("signal", "").lower()
-    if "frequency" in signal_name:
-        x_axis_config["xaxis"]["exponentformat"] = "SI"
+    # This provides consistent engineering notation across all axes
+    x_axis_config["xaxis"]["exponentformat"] = "SI"
     
     return x_axis_config
 
@@ -276,7 +275,8 @@ def _create_single_y_axis_config(
         "title": y_spec.get("label", f"Y-axis {axis_index + 1}"),
         "showgrid": global_config.get("grid", True),
         "domain": domain,
-        "anchor": "x"
+        "anchor": "x",
+        "exponentformat": "SI"  # Use SI engineering notation for all Y-axes
     }
     
     # Log scale support

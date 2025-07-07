@@ -1,0 +1,14 @@
+title: "AC Analysis - Frequency Response (Bode Plot)"
+
+x:
+    signal: "frequency"
+    label: "Frequency (Hz)"
+    log_scale: true
+y:
+  - label: "Magnitude (dB)"
+    signals:
+      Input: "v(in)"
+      Output: "v(out)"
+
+height: 600
+show_rangeslider: true
