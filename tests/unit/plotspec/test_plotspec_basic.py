@@ -8,7 +8,8 @@ class TestPlotSpecFromYaml:
 
     VALID_YAML = """
     title: "Voltage vs Time"
-    x: "time"
+    x:
+      signal: "time"
     y:
       - label: "Voltage (V)"
         signals:
@@ -20,7 +21,7 @@ class TestPlotSpecFromYaml:
     def test_parse_valid_yaml(self):
         spec = PlotSpec.from_yaml(self.VALID_YAML)
         assert spec.title == "Voltage vs Time"
-        assert spec.x == "time"
+        assert spec.x.signal == "time"
         assert len(spec.y) == 1
         assert spec.y[0].label == "Voltage (V)"
         assert spec.y[0].signals == {"Out": "v(out)"}
@@ -36,12 +37,12 @@ class TestPlotSpecFromYaml:
     def test_multifigure_yaml_not_supported(self):
         multi_yaml = """
         - title: "Plot 1"
-          x: time
+          x: {signal: time}
           y:
             - label: Voltage
               signals: {Out: v(out)}
         - title: "Plot 2"
-          x: freq
+          x: {signal: freq}
           y:
             - label: Current
               signals: {In: i(in)}
@@ -55,7 +56,8 @@ class TestPlotSpecRoundTrip:
 
     def test_round_trip_dict_contains_core_fields(self):
         yaml_str = """
-        x: time
+        x:
+          signal: time
         y:
           - label: Voltage
             signals:
@@ -70,7 +72,7 @@ class TestPlotSpecRoundTrip:
 
         # YAML had no title so value should be None and preserved
         assert d["title"] is None
-        assert d["x"] == "time"
+        assert d["x"]["signal"] == "time"
         assert isinstance(d["y"], list) and len(d["y"]) == 1
         assert d["y"][0]["label"] == "Voltage"
 
@@ -85,6 +87,6 @@ class TestPlotSpecFromFile:
 
     def test_from_file_success(self, tmp_path):
         cfg_path = tmp_path / "spec.yml"
-        cfg_path.write_text("x: time\ny:\n  - label: V\n    signals: {Out: v(out)}\n")
+        cfg_path.write_text("x: {signal: time}\ny:\n  - label: V\n    signals: {Out: v(out)}\n")
         spec = PlotSpec.from_file(cfg_path)
-        assert spec.x == "time" 
+        assert spec.x.signal == "time" 

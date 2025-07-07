@@ -1,6 +1,15 @@
 Examples
 ========
 
+.. note::
+   All code below targets *wave_view* **1.0.0**.  The modern workflow is:
+
+   1. ``data, _ = wv.load_spice_raw("my.raw")`` – obtain a ``dict`` of NumPy arrays
+   2. ``spec = wv.PlotSpec.from_yaml(""" ... """)`` – build a PlotSpec (YAML string or file)
+   3. ``fig = wv.plot(data, spec)`` – create the Plotly figure
+
+   Legacy helpers such as ``config_from_yaml`` were removed.
+
 This page contains practical examples for common use cases with wave_view.
 
 Basic Voltage Plot
@@ -11,6 +20,9 @@ Plot input and output voltages from an amplifier simulation:
 .. code-block:: python
 
    import wave_view as wv
+
+   # Load simulation data
+   data, _ = wv.load_spice_raw("amplifier.raw")
 
    # Simple voltage plot using YAML configuration
    spec = wv.PlotSpec.from_yaml("""
@@ -23,7 +35,7 @@ Plot input and output voltages from an amplifier simulation:
          Output: "v(out)"
    """)
 
-   fig = wv.plot("amplifier.raw", spec)
+   fig = wv.plot(data, spec)
    fig.show()
 
 Current Analysis
@@ -33,21 +45,21 @@ Analyze transistor currents with logarithmic scale:
 
 .. code-block:: python
 
-   config = wv.config_from_yaml("""
+   data, _ = wv.load_spice_raw("transistor_analysis.raw")
+
+   spec = wv.PlotSpec.from_yaml("""
    title: "Transistor Current Analysis"
-   X:
-     signal_key: "time"
-     label: "Time (s)"
-   Y:
+   x: "time"
+   y:
      - label: "Current (A)"
-       scale: "log"
+       log_scale: true
        signals:
          M1: "i(m1)"
          M2: "i(m2)"
          M3: "i(m3)"
    """)
 
-   fig = wv.plot("transistor_analysis.raw", config)
+   fig = wv.plot(data, spec)
 
 Multi-Plot Analysis
 -------------------
@@ -56,18 +68,18 @@ Create multiple subplots for comprehensive analysis:
 
 .. code-block:: python
 
-   config = wv.config_from_yaml("""
+   data, _ = wv.load_spice_raw("complete_analysis.raw")
+
+   spec = wv.PlotSpec.from_yaml("""
    title: "Complete Circuit Analysis"
-   X:
-     signal_key: "time"
-     label: "Time (s)"
-   Y:
+   x: "time"
+   y:
      - label: "Voltage (V)"
        signals:
          Input: "v(in)"
          Output: "v(out)"
      - label: "Current (A)"
-       scale: "log"
+       log_scale: true
        signals:
          M1: "i(m1)"
          M2: "i(m2)"
@@ -77,7 +89,7 @@ Create multiple subplots for comprehensive analysis:
          VSS: "v(vss)"
    """)
 
-   fig = wv.plot("complete_analysis.raw", config)
+   fig = wv.plot(data, spec)
 
 Power Analysis with Processed Data
 -----------------------------------
@@ -103,6 +115,9 @@ Combine SPICE signals with computed power calculations:
        "power_avg": np.ones_like(power) * np.mean(power)
    }
 
+   # Merge derived signals into the main data dictionary
+   data.update(processed_signals)
+
    spec = wv.PlotSpec.from_yaml("""
    title: "Power Analysis"
    x: "time"
@@ -112,11 +127,11 @@ Combine SPICE signals with computed power calculations:
          Output: "v(out)"
      - label: "Power (W)"
        signals:
-         Output_Power: "data.power_output"
-         Average_Power: "data.power_avg"
+         Output_Power: "power_output"
+         Average_Power: "power_avg"
    """)
 
-   fig = wv.plot("power_analysis.raw", spec, processed_data=processed_signals)
+   fig = wv.plot(data, spec)
 
 AC Analysis with Complex Signal Processing
 --------------------------------------------
@@ -130,11 +145,12 @@ magnitude and phase analysis for transfer functions and Bode plots:
    import numpy as np
 
    # Load AC analysis data (contains complex numbers)
-   data, _ = wv.load_spice_raw("ac_analysis.raw")
+   data_ac, _ = wv.load_spice_raw("ac_analysis.raw")
    
    # AC signals are automatically returned as complex numbers
-   v_out = data["v(out)"]  # complex128 array
-   v_in = data["v(in)"]    # complex128 array
+   frequency = data_ac["frequency"]  # Real (even though stored as complex)
+   v_out = data_ac["v(out)"]         # Complex
+   v_in = data_ac["v(in)"]    # complex128 array
    
    print(f"v_out dtype: {v_out.dtype}")  # complex128
    print(f"Is complex: {np.iscomplexobj(v_out)}")  # True
@@ -153,7 +169,7 @@ magnitude and phase analysis for transfer functions and Bode plots:
          Output: "v(out)"  # Automatically uses real part
    """)
 
-   fig = wv.plot("ac_analysis.raw", spec)
+   fig = wv.plot(data_ac, spec)
 
 **Complete Bode Plot (Magnitude and Phase):**
 
@@ -173,16 +189,19 @@ magnitude and phase analysis for transfer functions and Bode plots:
    y:
      - label: "Magnitude (dB)"
        signals:
-         H(jω): "data.magnitude_db"
+         H(jω): "magnitude_db"
      - label: "Phase (degrees)"
        signals:
-         φ(jω): "data.phase_deg"
-   plot_height: 800
-   show_zoom_buttons: true
+         φ(jω): "phase_deg"
+   height: 800
+   zoom_buttons: true
    show_rangeslider: true
    """)
 
-   fig = wv.plot("ac_analysis.raw", spec, processed_data=processed_data)
+   data_ac2, _ = wv.load_spice_raw("ac_analysis.raw")
+   # Merge processed values into data dictionary before plotting
+   data_ac2.update(processed_data)
+   fig = wv.plot(data_ac2, spec)
 
 **Transfer Function Analysis:**
 
@@ -199,35 +218,34 @@ magnitude and phase analysis for transfer functions and Bode plots:
        "output_magnitude_db": 20 * np.log10(np.abs(v_out))
    }
 
-   config = wv.config_from_yaml("""
+   spec = wv.PlotSpec.from_yaml("""
    title: "Complete Transfer Function Analysis"
-   X:
-     signal_key: "frequency"
-     label: "Frequency (Hz)"
-     scale: "log"
-   Y:
+   x: "frequency"
+   y:
      - label: "Transfer Function Magnitude (dB)"
        signals:
-         "|H(jω)|": "data.tf_magnitude_db"
+         "|H(jω)|": "tf_magnitude_db"
      - label: "Transfer Function Phase (°)"
        signals:
-         "∠H(jω)": "data.tf_phase_deg"
+         "∠H(jω)": "tf_phase_deg"
      - label: "Input/Output Magnitude (dB)"
        signals:
-         Input: "data.input_magnitude_db"
-         Output: "data.output_magnitude_db"
-   plot_height: 900
+         Input: "input_magnitude_db"
+         Output: "output_magnitude_db"
+   height: 900
    """)
 
-   fig = wv.plot("ac_analysis.raw", config, processed_data=processed_data)
+   data_ac3, _ = wv.load_spice_raw("ac_analysis.raw")
+   data_ac3.update(processed_data)
+   fig = wv.plot(data_ac3, spec)
 
 **Working with Complex Numbers:**
 
 .. code-block:: python
 
    # AC analysis preserves complex numbers for calculations
-   frequency = data.get_signal("frequency")  # Real (even though stored as complex)
-   v_out = data.get_signal("v(out)")         # Complex
+   frequency = data_ac["frequency"]  # Real (even though stored as complex)
+   v_out = data_ac["v(out)"]         # Complex
    
    # Extract components
    real_part = np.real(v_out)
@@ -243,26 +261,23 @@ magnitude and phase analysis for transfer functions and Bode plots:
        "phase_unwrapped": np.unwrap(phase_rad) * 180 / np.pi  # Unwrap phase
    }
 
-   config = wv.config_from_yaml("""
+   spec = wv.PlotSpec.from_yaml("""
    title: "Complex Signal Components"
-   X:
-     signal_key: "frequency"
-     label: "Frequency (Hz)"
-     scale: "log"
-   Y:
+   x: "frequency"
+   y:
      - label: "Real/Imaginary Parts"
        signals:
-         Real: "data.real_component"
-         Imaginary: "data.imaginary_component"
+         Real: "real_component"
+         Imaginary: "imaginary_component"
      - label: "Magnitude"
        signals:
-         "|V|": "data.magnitude"
+         "|V|": "magnitude"
      - label: "Unwrapped Phase (°)"
        signals:
-         "φ": "data.phase_unwrapped"
+         "φ": "phase_unwrapped"
    """)
 
-   fig = wv.plot("ac_analysis.raw", config, processed_data=processed_data)
+   fig = wv.plot(data_ac, spec)
 
 .. note::
    
@@ -272,7 +287,7 @@ magnitude and phase analysis for transfer functions and Bode plots:
    - Use ``np.abs()`` for magnitude and ``np.angle()`` for phase
    - Frequency and time signals are automatically converted to real numbers
    - Raw signals in plots automatically use the real part for display
-   - Use ``processed_data`` parameter for magnitude/phase calculations
+   - Add magnitude/phase arrays to the *data* dictionary before plotting
 
 YAML Configuration File
 -----------------------
@@ -283,10 +298,8 @@ For complex configurations, use YAML files:
 
    # analysis_config.yaml
    title: "Operational Amplifier Analysis"
-   X:
-     signal_key: "time"
-     label: "Time (s)"
-   Y:
+   x: "time"
+   y:
      - label: "Voltage (V)"
        signals:
          Input_P: "v(inp)"
@@ -309,8 +322,9 @@ For complex configurations, use YAML files:
    import wave_view as wv
 
    # Load configuration from file
-   spec = wv.PlotSpec.from_yaml("analysis_config.yaml")
-   fig = wv.plot("opamp.raw", spec)
+   spec = wv.PlotSpec.from_file("analysis_config.yaml")
+   data, _ = wv.load_spice_raw("opamp.raw")
+   fig = wv.plot(data, spec)
 
 Batch Processing
 ----------------
@@ -323,12 +337,10 @@ Process multiple simulation files with the same configuration:
    from pathlib import Path
 
    # Common configuration for all simulations
-   config = wv.config_from_yaml("""
+   spec = wv.PlotSpec.from_yaml("""
    title: "Output Voltage Analysis"
-   X:
-     signal_key: "time"
-     label: "Time (s)"
-   Y:
+   x: "time"
+   y:
      - label: "Voltage (V)"
        signals:
          Output: "v(out)"
@@ -338,7 +350,8 @@ Process multiple simulation files with the same configuration:
    raw_files = Path("simulations").glob("*.raw")
    
    for raw_file in raw_files:
-       fig = wv.plot(raw_file, config)
+       data_i, _ = wv.load_spice_raw(raw_file)
+       fig = wv.plot(data_i, spec)
        
        # Save with descriptive name
        output_name = f"{raw_file.stem}_plot.html"
@@ -366,11 +379,12 @@ Robust error handling for production use:
 
    import wave_view as wv
 
-   def safe_plot(raw_file, config):
+   def safe_plot(raw_file, spec):
        """Safely plot with error handling."""
        try:
            # Try to create plot
-           fig = wv.plot(raw_file, config)
+           data_i, _ = wv.load_spice_raw(raw_file)
+           fig = wv.plot(data_i, spec)
            return fig
            
        except FileNotFoundError:
@@ -381,14 +395,13 @@ Robust error handling for production use:
        return None
 
    # Usage
-   config = wv.config_from_yaml("""
-   X:
-     signal_key: "time"
-   Y:
+   spec = wv.PlotSpec.from_yaml("""
+   x: "time"
+   y:
      - signals:
          OUT: "v(out)"
    """)
-   fig = safe_plot("simulation.raw", config)
+   fig = safe_plot("simulation.raw", spec)
    
    if fig:
        fig.show()
@@ -406,21 +419,21 @@ Compare results from different simulation runs:
 
    # Create comparison signals
    processed_signals = {
-       "v_out_before": data1.get_signal_data("v(out)"),
-       "v_out_after": data2.get_signal_data("v(out)")
+       "v_out_before": data1["v(out)"],
+       "v_out_after": data2["v(out)"]
    }
 
-   config = wv.config_from_yaml("""
+   # Merge into base dictionary (time base from first simulation)
+   data1.update(processed_signals)
+
+   spec = wv.PlotSpec.from_yaml("""
    title: "Optimization Comparison"
-   X:
-     signal_key: "time"
-     label: "Time (s)"
-   Y:
+   x: "time"
+   y:
      - label: "Voltage (V)"
        signals:
-         Before: "data.v_out_before"
-         After: "data.v_out_after"
+         Before: "v_out_before"
+         After: "v_out_after"
    """)
 
-   # Use time base from first simulation
-   fig = wv.plot("before_optimization.raw", config, processed_data=processed_signals) 
+   fig = wv.plot(data1, spec) 

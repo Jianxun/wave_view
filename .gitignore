@@ -68,4 +68,4 @@ Thumbs.db
 .pre-commit-config.yaml
 
 # Git workflow
-.git_commit_message 
+git_commit_message*

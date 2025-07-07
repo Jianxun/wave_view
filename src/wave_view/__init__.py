@@ -6,8 +6,8 @@ for Jupyter notebook integration with both simple plotting functions and advance
 signal processing capabilities.
 """
 
-__version__ = "0.1.0"
-__author__ = "Wave View Development Team"
+__version__ = "1.0.0"
+__author__ = "Jianxun Zhu"
 
 # Core classes
 from .core.plotspec import PlotSpec

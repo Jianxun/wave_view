@@ -17,7 +17,8 @@ class TestPreloadWorkflow(unittest.TestCase):
         spec = wv.PlotSpec.from_yaml(
             """
             title: "Preload – VDD"
-            x: "time"
+            x:
+              signal: "time"
             y:
               - label: "VDD"
                 signals:
@@ -31,7 +32,8 @@ class TestPreloadWorkflow(unittest.TestCase):
         spec = wv.PlotSpec.from_yaml(
             """
             title: "Preload – BUS"
-            x: "time"
+            x:
+              signal: "time"
             y:
               - label: "BUS01"
                 signals:

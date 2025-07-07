@@ -9,8 +9,17 @@ from typing import List, Optional, Dict, Any, Union
 from pathlib import Path
 import yaml
 import numpy as np
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 import plotly.graph_objects as go
+
+
+class XAxisSpec(BaseModel):
+    """X-axis configuration specification."""
+    signal: str = Field(..., description="X-axis signal key")
+    label: Optional[str] = Field(None, description="X-axis label")
+    log_scale: bool = Field(False, description="Use logarithmic scale")
+    unit: Optional[str] = Field(None, description="Unit for display")
+    range: Optional[List[float]] = Field(None, description="[min, max] range")
 
 
 class YAxisSpec(BaseModel):
@@ -30,8 +39,9 @@ class PlotSpec(BaseModel):
     Replaces PlotConfig with structured validation and composable workflow.
     """
     # Core configuration
-    x: str = Field(..., description="X-axis signal key (e.g., 'time', 'raw.frequency')")
-    y: List[YAxisSpec] = Field(..., description="Y-axis specifications")
+    # Accept both lowercase (preferred) and uppercase aliases for backward compatibility
+    x: XAxisSpec = Field(..., description="X-axis configuration", alias="X")
+    y: List[YAxisSpec] = Field(..., description="Y-axis specifications", alias="Y")
     title: Optional[str] = Field(None, description="Plot title")
     
     # Styling options
@@ -50,6 +60,9 @@ class PlotSpec(BaseModel):
     zoom_buttons_x: float = Field(0.05, description="Zoom buttons X position (0=left, 1=right)")
     zoom_buttons_y: float = Field(1.05, description="Zoom buttons Y position (1=top of plot)")
     show_rangeslider: bool = Field(True, description="Show range slider below X-axis")
+    
+    # Pydantic model configuration
+    model_config = ConfigDict(populate_by_name=True, extra="allow")
     
     # Factory methods
     @classmethod
@@ -98,7 +111,13 @@ class PlotSpec(BaseModel):
         """
         return {
             "title": self.title,
-            "x": self.x,
+            "x": {
+                "signal": self.x.signal,
+                "label": self.x.label,
+                "log_scale": self.x.log_scale,
+                "unit": self.x.unit,
+                "range": self.x.range
+            },
             "y": [
                 {
                     "label": y_spec.label,

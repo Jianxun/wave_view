@@ -17,7 +17,8 @@ class TestPathPlotWorkflow(unittest.TestCase):
         spec = wv.PlotSpec.from_yaml(
             """
             title: "Ring Oscillator – Path Workflow"
-            x: "time"
+            x:
+              signal: "time"
             y:
               - label: "VDD"
                 signals:

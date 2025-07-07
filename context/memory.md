@@ -60,7 +60,10 @@ print(f"Available signals: {list(data.keys())}")  # Direct signal examination
 
 spec = wv.PlotSpec.from_yaml("""
 title: "My Analysis"
-x: "time"
+x:
+  signal: "time"
+  label: "Time (s)"
+  log_scale: false
 y:
   - label: "Voltage (V)"
     signals:
@@ -80,9 +83,11 @@ fig.show()  # Explicit display control
 - **✅ Clean Import Structure**: Single `import wave_view as wv`
 - **✅ Ultra-Minimalist Namespace**: **ONLY** `wv.PlotSpec`, `wv.plot()`, `wv.load_spice_raw()`, `wv.WaveDataset` 
 - **✅ Direct Core Exposure**: `plot()` function is the actual core function, no wrapper layers
-- **✅ Modern Configuration**: Pure PlotSpec with Pydantic validation
+- **✅ Modern Configuration**: Pure PlotSpec with Pydantic validation and XAxisSpec support
 - **✅ Explicit Data Flow**: Users see exactly what happens: load → configure → plot → show
 - **✅ Zero Redundancy**: No duplicate functions, no wrappers, no hidden complexity
+- **✅ Complex Number Handling**: Automatic conversion of AC analysis complex signals for Plotly compatibility
+- **✅ X-Axis Configuration**: Full XAxisSpec support with labels, log scale, and range limits
 
 ### **Previous Milestones**
 - **Phase 1.6: Legacy Reader Removal** - Complete elimination of SpiceData class and reader.py
@@ -129,20 +134,26 @@ fig.show()  # Explicit display control
 
 ## Current API (v1.0.0) - FINAL
 ```python
-# Clean v1.0.0 API Pattern
+# Clean v1.0.0 API Pattern – single explicit workflow
 import wave_view as wv
 
-# Method 1: Direct plotting with file path
-spec = wv.PlotSpec.from_yaml("config.yaml")
-fig = wv.plot("simulation.raw", spec)
-
-# Method 2: With data pre-loading
+# 1. Load data
 data, metadata = wv.load_spice_raw("simulation.raw")
-fig = wv.plot(data, spec)  # Alternative: pass data directly
 
-# Method 3: Dictionary configuration
-config = {"title": "Analysis", "x": "time", "y": [{"label": "V", "signals": {"Out": "v(out)"}}]}
-fig = wv.plot("simulation.raw", config)
+# 2. Create PlotSpec (YAML string / file / dict)
+spec = wv.PlotSpec.from_yaml("""
+title: "My Analysis"
+x:
+  signal: "time"
+  label: "Time (s)"
+y:
+  - label: "Voltage (V)"
+    signals: {Out: "v(out)"}
+""")
+
+# 3. Plot using the pre-loaded dictionary
+fig = wv.plot(data, spec)
+fig.show()
 ```
 
 ## Release Status
@@ -178,6 +189,10 @@ fig = wv.plot("simulation.raw", config)
   * CLI tests added (`tests/unit/cli/test_cli_basic.py`) – overall coverage at 91 %, cli.py 81 %
   * Removed outdated integration test (`tests/test_integration_v1_0_0.py`) – suite count 59 tests, no coverage impact
 
-## Recent Documentation Work
-- Full Sphinx documentation updated for v1.0.0: api.rst, quickstart.rst, configuration.rst, examples.rst, index.rst, contributing.rst, changelog.rst, README.md. Obsolete core.rst removed.
-- Build succeeds; pending minor warning cleanup.
+## Recent Documentation Work (2025-07-06)
+- Full Sphinx documentation **fully aligned** with final v1.0.0 API.
+  * Removed all direct `wv.plot("file.raw", ...)` examples – now always load data first.
+  * Eliminated `processed_data` parameter; examples append derived signals to the data dict.
+  * Lower-case `x:` / `y:` keys and current option names (`height`, `zoom_buttons`, …) used everywhere.
+  * Quickstart, Configuration, Examples, and Index pages updated; build is warning-free.
+  * Remaining tasks: bump package/version strings to 1.0.0.

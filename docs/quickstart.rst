@@ -3,7 +3,7 @@ Quick Start Guide
 
 This guide shows how to create interactive SPICE plots with *wave_view* 1.0.0 in just a few lines of code.  The API follows a clear three-step workflow:
 
-1. **Data Loading** *(optional)* – Load the raw ``.raw`` file with :func:`wave_view.load_spice_raw` **or** simply pass the file path straight to :func:`wave_view.plot` for lazy loading.
+1. **Data Loading** – Load the raw ``.raw`` file with :func:`wave_view.load_spice_raw` (returns a plain ``dict`` of NumPy arrays).
 2. **Configuration** – Describe what you want to see using :class:`wave_view.PlotSpec`.  You can build a spec from a YAML file, a YAML string, or a Python dictionary.
 3. **Plotting** – Call :func:`wave_view.plot` to obtain an interactive Plotly figure that you can show, save, or embed.
 
@@ -23,7 +23,7 @@ If you want immediate access to the data – e.g. for inspection or custom post-
    data, metadata = wv.load_spice_raw("simulation.raw")
    print(f"Found {len(data)} signals → {list(data)[:5]} …")
 
-``load_spice_raw`` returns a dictionary mapping signal names to NumPy arrays and a small metadata dictionary.  Skip this step entirely if you just want a plot; ``plot()`` will load the file for you on demand.
+``load_spice_raw`` returns a dictionary mapping signal names to NumPy arrays and a small metadata dictionary.  *All* plotting examples in v1.0.0 assume a pre-loaded ``data`` dictionary.
 
 Step 2  Configuration with PlotSpec
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -45,7 +45,7 @@ Create a plot description with :class:`~wave_view.PlotSpec`.  Two common pattern
 
 .. code-block:: python
 
-   spec = wv.PlotSpec.from_yaml("config.yaml")
+   spec = wv.PlotSpec.from_file("config.yaml")
 
 **(b) Inline YAML string**
 
@@ -80,10 +80,7 @@ Generate your figure with a single call:
 
 .. code-block:: python
 
-   # (1) Let plot() load the file lazily
-   fig = wv.plot("simulation.raw", spec)
-
-   # (2) Or pass pre-loaded data
+   # Plot using the pre-loaded dictionary
    fig = wv.plot(data, spec)
 
    # Display inside Jupyter
@@ -131,6 +128,9 @@ Because ``load_spice_raw`` returns ordinary NumPy arrays, you can derive new sig
 
    data, _ = wv.load_spice_raw("simulation.raw")
    power = data["v(out)"] * data["i(out)"]  # custom calculation
+
+   # Add derived signal to the dictionary
+   data["power"] = power
 
    spec = wv.PlotSpec.from_yaml("""
    x: "time"
