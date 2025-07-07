@@ -10,14 +10,10 @@ A Python package for visualizing SPICE simulation waveforms with interactive Plo
 ## Features
 
 - **Interactive Plotly Visualization**: Modern, web-based plots with zoom, pan, and hover
+- **YAML Configuration**: Flexible, reusable plotting configurations
 - **Simple API**: Plot waveforms with a single function call
 - **Command Line Interface**: Quick plotting from terminal with `wave_view plot`
-- **YAML Configuration**: Flexible, reusable plotting configurations
-- **Case-Insensitive Signal Access**: Access signals regardless of case (`V(VDD)` = `v(vdd)`)
-- **Processed Signals**: Generate derived signals with lambda functions
 - **Jupyter-First Design**: Auto-detection and inline plotting
-- **Advanced Plotting**: Full control with `SpicePlotter` class
-- **Template Generation**: Auto-create configurations from SPICE files
 
 ## Quick Start
 
