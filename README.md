@@ -1,11 +1,12 @@
-# Wave View
+# Wave View: A Python Toolkit for SPICE Simulation Waveform Visualization
+
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 
 Wave View is a lightweight yet powerful Python toolkit that transforms raw SPICE ``.raw`` files into beautiful, interactive Plotly figures with minimal code.  It reads simulation traces straight into a plain ``{signal_name: np.ndarray}`` dictionary, lets you define multi-axis plots declaratively via YAML (or override them on the command line), and automatically selects the best renderer whether you are in a Jupyter notebook, VS Code, or a headless CI job.  Case-insensitive signal lookup, engineering-notation tick labels, and first-class multi-strip support help you focus on circuit analysis rather than plotting boilerplate.
 
-![Demo](examples/screenshots/wave_view_demo.png)
+![Demo](https://raw.githubusercontent.com/Jianxun/wave_view/main/examples/screenshots/wave_view_demo.png)
 
 ## Features
 
@@ -27,17 +28,17 @@ pip install wave_view
 #### Option 2: Install from GitHub (Latest)
 ```bash
 # Install latest version directly from GitHub
-pip install git+https://github.com/jianxun/wave_view.git
+pip install git+https://github.com/Jianxun/wave_view.git
 
 # Or install a specific branch/tag
-pip install git+https://github.com/jianxun/wave_view.git@main
-pip install git+https://github.com/jianxun/wave_view.git@v0.1.0
+pip install git+https://github.com/Jianxun/wave_view.git@main
+pip install git+https://github.com/Jianxun/wave_view.git@v1.0.0
 ```
 
 #### Option 3: Development Installation
 ```bash
 # Clone the repository
-git clone https://github.com/jianxun/wave_view.git
+git clone https://github.com/Jianxun/wave_view.git
 cd wave_view
 
 # Create and activate virtual environment (recommended)
@@ -154,7 +155,7 @@ PlotSpec uses Pydantic, so validation happens automatically when you call ``Plot
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/wave_view.git
+git clone https://github.com/Jianxun/wave_view.git
 cd wave_view
 
 # Create and activate virtual environment
@@ -179,24 +180,9 @@ pytest
 pytest --cov=wave_view --cov-report=html
 
 # Run specific test file
-pytest tests/test_basic.py -v
+pytest tests/workflows/test_cli_plot.py -v
 ```
 
-### Code Quality
-
-```bash
-# Format code
-black src/ tests/
-
-# Sort imports
-isort src/ tests/
-
-# Lint code
-flake8 src/ tests/
-
-# Type checking
-mypy src/
-```
 
 ## Project Structure
 
@@ -269,7 +255,7 @@ make docs-serve  # Opens at http://localhost:8000
 
 - **Documentation**: [Local Build Available]
 - **PyPI Package**: [Coming Soon]  
-- **Issue Tracker**: [GitHub Issues](https://github.com/your-username/wave_view/issues)
+- **Issue Tracker**: [GitHub Issues](https://github.com/Jianxun/wave_view/issues)
 - **Changelog**: [CHANGELOG.md](CHANGELOG.md)
 
 ## Version

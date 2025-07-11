@@ -195,4 +195,5 @@ fig.show()
   * Eliminated `processed_data` parameter; examples append derived signals to the data dict.
   * Lower-case `x:` / `y:` keys and current option names (`height`, `zoom_buttons`, …) used everywhere.
   * Quickstart, Configuration, Examples, and Index pages updated; build is warning-free.
+  * **Documentation Compilation COMPLETED** (2025-07-11): Sphinx docs successfully recompiled with all v1.0.0 changes
   * Remaining tasks: bump package/version strings to 1.0.0.

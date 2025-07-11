@@ -191,6 +191,7 @@ fig = wv.plot("simulation.raw", config)
 - [X] **API Documentation** – All Sphinx pages updated for v1.0.0; obsolete pages removed
 - [X] **Examples and Demos** – Examples updated, README refreshed with new API; migration content captured in docs
 - [X] **CHANGELOG.rst** – Detailed 1.0.0 entry with breaking changes and features
+- [X] **Documentation Compilation** ✅ **COMPLETED** – Sphinx docs successfully recompiled with v1.0.0 changes
 
 #### **Version Management**
 - [ ] **Version Bump**
@@ -243,6 +244,19 @@ fig = wv.plot("simulation.raw", config)
 - [ ] **Signals Command Improvements**
   - Add `--grep / --regex` filtering, `--json` output, and colour highlighting
   - *Status*: Discussion required before implementation
+
+#### **Interactive Widget Support** (v1.1.0)
+- [ ] **WaveViewWidget Prototype** – ipywidgets + Plotly `FigureWidget`
+  - [ ] Build factory `wv.make_widget(raw_path)` returning assembled VBox
+  - [ ] Live redraw on spec / signal selection changes
+- [ ] **Marker Functionality (Must-Have)**
+  - [ ] Single-click places Marker A (vertical + horizontal lines + label)
+  - [ ] Second click places Marker B and computes ΔX / ΔY (delta marker)
+  - [ ] Display delta values in a dedicated read-out panel
+  - [ ] Support removing/clearing markers
+- [ ] **Testing & Demo**
+  - [ ] `tests/workflows/test_widget_smoke.py` – widget builds in CI without error
+  - [ ] `examples/demo_widget.ipynb` – showcases marker and delta marker usage
 
 ## Current Branch Status - v1.0.0 READY 🎯
 

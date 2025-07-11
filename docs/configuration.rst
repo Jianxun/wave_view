@@ -22,7 +22,9 @@ Creating a PlotSpec
    # from an inline YAML string
    spec = wv.PlotSpec.from_yaml("""
    title: "Transient Analysis"
-   x: "time"
+   x: 
+    signal: "time"
+    label: "Time (s)"
    y:
      - label: "Voltage (V)"
        signals: {OUT: "v(out)"}
@@ -31,7 +33,7 @@ Creating a PlotSpec
    # from a Python dict (raises ValidationError on mistakes)
    dict_spec = {
        "title": "Dict Example",
-       "x": "time",
+       "x": {"signal": "time", "label": "Time (s)"},
        "y": [{"label": "Current", "signals": {"M1": "i(m1)"}}],
    }
    spec = wv.PlotSpec.model_validate(dict_spec)
@@ -67,7 +69,9 @@ Example PlotSpec
 .. code-block:: yaml
 
    title: "Amplifier Analysis"
-   x: "time"
+   x: 
+    signal: "time"
+    label: "Time (s)"
    y:
      - label: "Input / Output Voltage (V)"
        signals:
@@ -94,7 +98,9 @@ To plot *derived* signals just insert them into the same ``data`` dictionary –
    data["power"] = power
 
    spec = wv.PlotSpec.from_yaml("""
-   x: "time"
+   x: 
+    signal: "time"
+    label: "Time (s)"
    y:
      - label: "Voltage & Power"
        signals:

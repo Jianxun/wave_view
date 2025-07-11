@@ -36,7 +36,9 @@ Create a plot description with :class:`~wave_view.PlotSpec`.  Two common pattern
    :caption: config.yaml
 
    title: "My SPICE Results"
-   x: "time"
+   x: 
+    signal: "time"
+    label: "Time (s)"
    y:
      - label: "Voltage (V)"
        signals:
@@ -53,7 +55,9 @@ Create a plot description with :class:`~wave_view.PlotSpec`.  Two common pattern
 
    spec = wv.PlotSpec.from_yaml("""
    title: "Quick Demo"
-   x: "time"
+   x: 
+    signal: "time"
+    label: "Time (s)"
    y:
      - label: "Output Voltage"
        signals:
@@ -66,7 +70,7 @@ Create a plot description with :class:`~wave_view.PlotSpec`.  Two common pattern
 
    dict_config = {
        "title": "Dict Config Example",
-       "x": "time",
+       "x": {"signal": "time", "label": "Time (s)"},
        "y": [
            {"label": "Voltage", "signals": {"OUT": "v(out)"}}
        ],
@@ -90,7 +94,7 @@ Generate your figure with a single call:
    fig.write_html("my_plot.html")
    fig.write_image("my_plot.png")
 
-Complete Minimal Example
+Minimal Example
 ------------------------
 
 .. code-block:: python
@@ -103,10 +107,13 @@ Complete Minimal Example
 
    # Build configuration
    spec = wv.PlotSpec.from_yaml("""
-   x: "time"
+   x: 
+    signal: "time"
+    label: "Time (s)"
    y:
-     - label: "Output"
-       signals: {OUT: "v(out)"}
+     - label: "Voltage (V)"
+       signals: 
+         OUT: "v(out)"
    """)
 
    # Plot
@@ -127,48 +134,20 @@ Because ``load_spice_raw`` returns ordinary NumPy arrays, you can derive new sig
    import wave_view as wv
 
    data, _ = wv.load_spice_raw("simulation.raw")
-   power = data["v(out)"] * data["i(out)"]  # custom calculation
+   v_diff = data["v(node2)"] - data["v(node1)"]  # custom calculation
 
    # Add derived signal to the dictionary
-   data["power"] = power
+   data["v_diff"] = v_diff
 
    spec = wv.PlotSpec.from_yaml("""
-   x: "time"
+   x: 
+    signal: "time"
+    label: "Time (s)"
    y:
-     - label: "Voltage & Power"
+     - label: "Voltage"
        signals:
          OUT:   "v(out)"
-         Power: "power"
-   """)
-
-   fig = wv.plot(data, spec)
-
-Complex Numbers (AC Analysis)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-AC analyses often contain complex numbers.  Handle them as normal NumPy ``complex`` arrays:
-
-.. code-block:: python
-
-   import numpy as np
-   import wave_view as wv
-
-   data, _ = wv.load_spice_raw("ac_analysis.raw")
-   v_out = data["v(out)"]
-
-   processed = {
-       "magnitude_db": 20 * np.log10(np.abs(v_out)),
-       "phase_deg":    np.angle(v_out, deg=True),
-   }
-
-   spec = wv.PlotSpec.from_yaml("""
-   title: "Bode Plot"
-   x: "frequency"
-   y:
-     - label: "Magnitude (dB)"
-       signals: {Mag: "magnitude_db"}
-     - label: "Phase (°)"
-       signals: {Phase: "phase_deg"}
+         V_diff: "v_diff"
    """)
 
    fig = wv.plot(data, spec)

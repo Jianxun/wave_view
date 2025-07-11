@@ -3,10 +3,10 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-wave_view: SPICE Simulation Visualization
+wave_view: A Python Toolkit for SPICE Simulation Waveform Visualization
 ========================================
 
-*wave_view* is a modern Python toolkit for turning raw SPICE ``.raw`` files into beautiful, interactive Plotly graphs.  Version 1.0.0 introduces an ultra-simple **three-step workflow**:
+*wave_view* is a modern Python toolkit for turning raw SPICE ``.raw`` files into beautiful, interactive Plotly graphs.  Version 1.0.0 introduces a simple **three-step workflow**:
 
 1. **Data Loading** – load with :func:`wave_view.load_spice_raw`.  
 2. **Configuration** – describe your plot in YAML, JSON, or a Python dict using :class:`wave_view.PlotSpec`.  
@@ -34,7 +34,9 @@ Quick Start
    # Build a plot description (YAML, dict, or inline YAML as below)
    spec = wv.PlotSpec.from_yaml("""
    title: "My Simulation Results"
-   x: "time"
+   x: 
+    signal: "time"
+    label: "Time (s)"
    y:
      - label: "Voltage (V)"
        signals:

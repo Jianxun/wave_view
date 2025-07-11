@@ -5,15 +5,45 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.0.0] - 2025-07-11
 
-### Planned
-- Signal exploration UI (Sprint 2)
-- Additional visualization options
-- Performance optimizations
-- Enhanced documentation site
+### Added
+- **Modern API Architecture**
+  - Complete v1.0.0 API redesign with ultra-minimalist namespace
+  - `PlotSpec` class for modern configuration management with Pydantic validation
+  - `WaveDataset` for structured data loading with metadata support
+  - `plot()` function for unified plotting (replaced legacy SpicePlotter)
+  - `load_spice_raw()` for direct SPICE data loading as Dict[str, np.ndarray]
+  - Automatic renderer detection for Jupyter vs. standalone execution
 
-## [0.1.0] - 2024-12-19
+- **Command Line Interface**
+  - Updated CLI to use v1.0.0 API exclusively
+  - Both `plot` and `signals` commands use modern WaveDataset interface
+  - Clean integration with v1.0.0 plotting functions
+
+- **Configuration System**
+  - PlotSpec configuration with YAML support
+  - Factory methods: `from_yaml()`, `from_file()`, `from_dict()`
+  - Clean `to_dict()` export method for programmatic configuration
+  - Pydantic validation with proper error messages
+
+### Changed
+- **API Simplification** (Breaking Changes)
+  - Unified API reduced to 4 core components: `PlotSpec`, `plot()`, `load_spice_raw()`, `WaveDataset`
+  - Single import pattern: `import wave_view as wv`
+  - Explicit data flow: load → configure → plot → show
+  - Clean separation between configuration (PlotSpec) and visualization (plotting functions)
+  - Direct signal lookup without complex resolution layers
+
+- **Data Loading Interface** (Breaking Changes)
+  - `load_spice_raw()` returns Dict[str, np.ndarray] format instead of custom classes
+  - Simple dictionary interface for signal access
+  - WaveDataset as the only data loading mechanism
+  - Metadata support for simulation information (future features)
+
+See documentation for detailed examples with the new API.
+
+## [0.1.0] - 2025-06-10
 
 ### Added
 - **Core Package Implementation**
