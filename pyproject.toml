@@ -16,7 +16,7 @@ maintainers = [
     {name = "Jianxun Zhu", email = "jianxun.zhu@example.com"}
 ]
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
     "Intended Audience :: Science/Research",
     "Topic :: Scientific/Engineering :: Electronic Design Automation (EDA)",
@@ -65,10 +65,10 @@ jupyter = [
 ]
 
 [project.urls]
-"Homepage" = "https://github.com/jianxun/wave_view"
-"Bug Reports" = "https://github.com/jianxun/wave_view/issues"
-"Source" = "https://github.com/jianxun/wave_view"
-"Documentation" = "https://github.com/jianxun/wave_view/tree/main/docs"
+"Homepage" = "https://github.com/Jianxun/wave_view"
+"Bug Reports" = "https://github.com/Jianxun/wave_view/issues"
+"Source" = "https://github.com/Jianxun/wave_view"
+"Documentation" = "https://github.com/Jianxun/wave_view/tree/main/docs"
 
 [tool.setuptools.packages.find]
 where = ["src"]
