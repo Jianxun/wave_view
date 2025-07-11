@@ -1,205 +1,160 @@
 Quick Start Guide
 =================
 
-This guide will get you up and running with wave_view in just a few minutes. We'll walk through the 3-step workflow that makes wave_view easy to use.
+This guide shows how to create interactive SPICE plots with *wave_view* 1.0.0 in just a few lines of code.  The API follows a clear three-step workflow:
 
-The 3-Step Workflow
--------------------
+1. **Data Loading** – Load the raw ``.raw`` file with :func:`wave_view.load_spice_raw` (returns a plain ``dict`` of NumPy arrays).
+2. **Configuration** – Describe what you want to see using :class:`wave_view.PlotSpec`.  You can build a spec from a YAML file, a YAML string, or a Python dictionary.
+3. **Plotting** – Call :func:`wave_view.plot` to obtain an interactive Plotly figure that you can show, save, or embed.
 
-wave_view follows a simple, explicit workflow:
 
-1. **Discovery**: Explore what signals are available in your SPICE file
-2. **Configuration**: Define what you want to plot
-3. **Plotting**: Generate the visualization
+The Three-Step Workflow
+-----------------------
 
-Step 1: Discovery
------------------
+Step 1  Data Loading *(optional)*
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-First, let's see what signals are available in your SPICE simulation file:
+If you want immediate access to the data – e.g. for inspection or custom post-processing – load the file first:
 
 .. code-block:: python
 
    import wave_view as wv
 
-   # Explore available signals
-   signals = wv.explore_signals("path/to/your/simulation.raw")
-   print(signals)
+   data, metadata = wv.load_spice_raw("simulation.raw")
+   print(f"Found {len(data)} signals → {list(data)[:5]} …")
 
-This returns a dictionary with categorized signals:
+``load_spice_raw`` returns a dictionary mapping signal names to NumPy arrays and a small metadata dictionary.  *All* plotting examples in v1.0.0 assume a pre-loaded ``data`` dictionary.
 
-.. code-block:: python
+Step 2  Configuration with PlotSpec
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-   {
-       'voltage_signals': ['v(out)', 'v(in)', 'v(vdd)'],
-       'current_signals': ['i(m1)', 'i(r1)'],
-       'other_signals': ['time']
-   }
+Create a plot description with :class:`~wave_view.PlotSpec`.  Two common patterns are shown below.
 
-Step 2: Configuration
----------------------
-
-Next, create a configuration that defines what you want to plot using YAML format:
+**(a) YAML file**
 
 .. code-block:: yaml
+   :caption: config.yaml
 
-   # config.yaml
    title: "My SPICE Results"
-   X:
-     signal_key: "time"
-     label: "Time (s)"
-   Y:
+   x: 
+    signal: "time"
+    label: "Time (s)"
+   y:
      - label: "Voltage (V)"
        signals:
          OUT: "v(out)"
-         IN: "v(in)"
-     - label: "Current (A)"
-       scale: "log"
+         IN:  "v(in)"
+
+.. code-block:: python
+
+   spec = wv.PlotSpec.from_file("config.yaml")
+
+**(b) Inline YAML string**
+
+.. code-block:: python
+
+   spec = wv.PlotSpec.from_yaml("""
+   title: "Quick Demo"
+   x: 
+    signal: "time"
+    label: "Time (s)"
+   y:
+     - label: "Output Voltage"
        signals:
-         M1: "i(m1)"
+         OUT: "v(out)"
+   """)
+
+**(c) Pure Python dictionary**
 
 .. code-block:: python
 
-   config = wv.config_from_file("config.yaml")
+   dict_config = {
+       "title": "Dict Config Example",
+       "x": {"signal": "time", "label": "Time (s)"},
+       "y": [
+           {"label": "Voltage", "signals": {"OUT": "v(out)"}}
+       ],
+   }
+   spec = wv.PlotSpec.model_validate(dict_config)  # validation happens here
 
-Step 3: Plotting
-----------------
+Step 3  Plotting
+~~~~~~~~~~~~~~~~
 
-Finally, generate your plot:
+Generate your figure with a single call:
 
 .. code-block:: python
 
-   # Create the plot
-   fig = wv.plot("path/to/your/simulation.raw", config)
-   
-   # Display in Jupyter notebook
+   # Plot using the pre-loaded dictionary
+   fig = wv.plot(data, spec)
+
+   # Display inside Jupyter
    fig.show()
-   
-   # Or save to file
+
+   # Or export
    fig.write_html("my_plot.html")
    fig.write_image("my_plot.png")
 
-Complete Example
-----------------
-
-Here's a complete working example:
+Minimal Example
+------------------------
 
 .. code-block:: python
 
    import wave_view as wv
 
-   # Step 1: Discover available signals
-   signals = wv.explore_signals("simulation.raw")
-   print(f"Found {len(signals['voltage_signals'])} voltage signals")
+   # Optional data inspection
+   data, _ = wv.load_spice_raw("simulation.raw")
+   print(list(data)[:10])
 
-   # Step 2: Configure what to plot (using YAML)
-   config = wv.config_from_yaml("""
-   title: "SPICE Simulation Results"
-   X:
-     signal_key: "time"
-     label: "Time (s)"
-   Y:
+   # Build configuration
+   spec = wv.PlotSpec.from_yaml("""
+   x: 
+    signal: "time"
+    label: "Time (s)"
+   y:
      - label: "Voltage (V)"
-       signals:
+       signals: 
          OUT: "v(out)"
-         IN: "v(in)"
    """)
 
-   # Step 3: Generate the plot
-   fig = wv.plot("simulation.raw", config)
+   # Plot
+   fig = wv.plot(data, spec)
    fig.show()
 
-Advanced Features
------------------
+Advanced Topics
+---------------
 
-Processed Data
-~~~~~~~~~~~~~~
+Processed / Derived Signals
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-You can include computed signals alongside SPICE data:
-
-.. code-block:: python
-
-   import numpy as np
-
-   # Load SPICE data
-   spice_data = wv.load_spice("simulation.raw")
-   time = spice_data.get_signal_data("time")
-   
-   # Compute processed signal
-   processed_signals = {
-       "power": spice_data.get_signal_data("v(out)") * spice_data.get_signal_data("i(out)")
-   }
-
-   config = wv.config_from_yaml("""
-   X:
-     signal_key: "time"
-     label: "Time (s)"
-   Y:
-     - label: "Voltage and Power"
-       signals:
-         OUT: "v(out)"
-         Power: "data.power"
-   """)
-
-   fig = wv.plot("simulation.raw", config, processed_data=processed_signals)
-
-AC Analysis with Complex Numbers
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-wave_view automatically handles complex numbers from AC analysis for transfer function analysis:
+Because ``load_spice_raw`` returns ordinary NumPy arrays, you can derive new signals and plot them alongside raw traces:
 
 .. code-block:: python
 
    import numpy as np
+   import wave_view as wv
 
-   # Load AC analysis data (contains complex numbers)
-   spice_data = wv.load_spice("ac_analysis.raw")
-   v_out = spice_data.get_signal("v(out)")  # Complex numbers preserved
-   
-   # Process for Bode plot
-   processed_signals = {
-       "magnitude_db": 20 * np.log10(np.abs(v_out)),
-       "phase_deg": np.angle(v_out) * 180 / np.pi
-   }
+   data, _ = wv.load_spice_raw("simulation.raw")
+   v_diff = data["v(node2)"] - data["v(node1)"]  # custom calculation
 
-   config = wv.config_from_yaml("""
-   title: "Bode Plot"
-   X:
-     signal_key: "frequency"
-     label: "Frequency (Hz)"
-     scale: "log"
-   Y:
-     - label: "Magnitude (dB)"
+   # Add derived signal to the dictionary
+   data["v_diff"] = v_diff
+
+   spec = wv.PlotSpec.from_yaml("""
+   x: 
+    signal: "time"
+    label: "Time (s)"
+   y:
+     - label: "Voltage"
        signals:
-         Output: "data.magnitude_db"
-     - label: "Phase (°)"
-       signals:
-         Phase: "data.phase_deg"
+         OUT:   "v(out)"
+         V_diff: "v_diff"
    """)
 
-   fig = wv.plot("ac_analysis.raw", config, processed_data=processed_signals)
-
-Configuration Validation
-~~~~~~~~~~~~~~~~~~~~~~~~
-
-Validate your configuration before plotting:
-
-.. code-block:: python
-
-   config = wv.config_from_file("config.yaml")  # Your YAML configuration
-   
-   # Check if configuration is valid
-   errors = wv.validate_config(config)
-   if errors:
-       print("Configuration errors:")
-       for error in errors:
-           print(f"  - {error}")
-   else:
-       print("Configuration is valid!")
-       fig = wv.plot("simulation.raw", config)
+   fig = wv.plot(data, spec)
 
 Next Steps
 ----------
 
-* Learn more about :doc:`configuration` options
-* Explore :doc:`examples` for common use cases
-* Check the :doc:`api` reference for detailed documentation 
+* Dive into the :doc:`configuration` guide for every available option.  
+* Browse :doc:`examples` for real-world use cases.  
+* Consult the :doc:`api` reference for full symbol documentation. 

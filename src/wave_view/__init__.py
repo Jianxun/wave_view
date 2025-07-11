@@ -6,26 +6,19 @@ for Jupyter notebook integration with both simple plotting functions and advance
 signal processing capabilities.
 """
 
-__version__ = "0.1.0"
-__author__ = "Wave View Development Team"
+__version__ = "1.0.0"
+__author__ = "Jianxun Zhu"
 
 # Core classes
-from .core.reader import SpiceData
-from .core.plotter import SpicePlotter
-from .core.config import PlotConfig
+from .core.plotspec import PlotSpec
+from .core.wavedataset import WaveDataset
 
 # Main API functions
-from .api import (
-    plot,
-    load_spice,
-    explore_signals,
-    validate_config,
-    config_from_file,
-    config_from_yaml
-)
+from .core.plotting import plot
+from .loader import load_spice_raw, load_spice_raw_batch
 
-# Convenience imports for power users
-from .core.plotter import SpicePlotter
+# Renderer helpers
+from .utils.env import configure_plotly_renderer
 
 # Plotly imports for user access
 import plotly.io as pio
@@ -45,8 +38,7 @@ def set_renderer(renderer: str = "auto"):
         >>> wv.set_renderer("auto")      # Auto-detect (default)
     """
     if renderer == "auto":
-        from .api import _configure_plotly_renderer
-        _configure_plotly_renderer()
+        configure_plotly_renderer()
     else:
         pio.renderers.default = renderer
     
@@ -55,20 +47,22 @@ def set_renderer(renderer: str = "auto"):
 __all__ = [
     # Main API
     'plot',
-    'load_spice',
-    'explore_signals', 
-    'validate_config',
-    
-    # Configuration factories
-    'config_from_file',
-    'config_from_yaml',
+    'load_spice_raw',
+    'load_spice_raw_batch',
     
     # Core classes
-    'SpiceData',
-    'SpicePlotter', 
-    'PlotConfig',
+    'PlotSpec',
+    'WaveDataset',
     
     # Utilities
     'set_renderer',
     'pio',  # Give users access to plotly.io
-] 
+]
+
+# Configure Plotly renderer automatically on import
+# This eliminates the need for manual renderer configuration in user code
+try:
+    configure_plotly_renderer()
+except Exception:
+    # If auto-detection fails, default to browser (safe fallback)
+    pio.renderers.default = "browser" 

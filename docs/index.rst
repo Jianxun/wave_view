@@ -3,21 +3,22 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-wave_view: SPICE Simulation Visualization
-=========================================
+wave_view: A Python Toolkit for SPICE Simulation Waveform Visualization
+========================================
 
-**wave_view** is a Python package for visualizing SPICE simulation waveforms with a modern, user-friendly API. It provides a clean 3-step workflow for discovering, configuring, and plotting simulation data in Jupyter notebooks.
+*wave_view* is a modern Python toolkit for turning raw SPICE ``.raw`` files into beautiful, interactive Plotly graphs.  Version 1.0.0 introduces a simple **three-step workflow**:
+
+1. **Data Loading** – load with :func:`wave_view.load_spice_raw`.  
+2. **Configuration** – describe your plot in YAML, JSON, or a Python dict using :class:`wave_view.PlotSpec`.  
+3. **Plotting** – call :func:`wave_view.plot` and get an interactive figure you can display, embed, or export.
 
 Features
 --------
 
-* **Modern API Design**: Clean 3-step workflow (Discovery → Configuration → Plotting)
-* **YAML Configuration**: Flexible configuration system with file, string, or dict input
-* **Complex Signal Processing**: Full support for AC analysis with complex numbers for transfer functions
-* **Advanced Plotting**: Log scale support, Bode plots, processed data integration, customizable themes
-* **Case-insensitive**: All signal names normalized for easy access
-* **Path Object Support**: Modern pathlib integration throughout
-* **Comprehensive Validation**: Clear error messages guide users to solutions
+* **Clean API** – only four public symbols: ``load_spice_raw``, ``PlotSpec``, ``plot``, and ``WaveDataset``.  
+* **YAML-first configuration** – version-controlled plot specs that live next to your simulations.  
+* **Processed-data integration** – mix NumPy-derived signals with raw traces in a single call.  
+* **Automatic renderer detection** – works seamlessly in Jupyter, VS Code, or standalone scripts.
 
 Quick Start
 -----------
@@ -26,25 +27,25 @@ Quick Start
 
    import wave_view as wv
 
-   # Step 1: Discovery - "What's available?"
-   signals = wv.explore_signals("simulation.raw")
-   print(f"Available signals: {signals}")
+   # Optional: inspect the data first
+   data, _ = wv.load_spice_raw("simulation.raw")
+   print(f"Signals → {list(data)[:5]} …")
 
-   # Step 2: Configuration - "What do I want?"
-   config = wv.config_from_yaml("""
+   # Build a plot description (YAML, dict, or inline YAML as below)
+   spec = wv.PlotSpec.from_yaml("""
    title: "My Simulation Results"
-   X:
-     signal_key: "time"
-     label: "Time (s)"
-   Y:
+   x: 
+    signal: "time"
+    label: "Time (s)"
+   y:
      - label: "Voltage (V)"
        signals:
          OUT: "v(out)"
-         IN: "v(in)"
+         IN:  "v(in)"
    """)
 
-   # Step 3: Plotting - "Show me the results"
-   fig = wv.plot("simulation.raw", config)
+   # Create the plot (pass the file path *or* pre-loaded data)
+   fig = wv.plot(data, spec)
    fig.show()
 
 Installation
@@ -77,7 +78,6 @@ Contents
    :caption: API Reference:
 
    api
-   core
 
 .. toctree::
    :maxdepth: 1

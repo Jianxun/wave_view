@@ -1,14 +1,16 @@
 API Reference
 =============
 
-This section documents the public API of the wave_view package. The API follows a clean 3-step workflow:
+wave_view 1.0.0 exposes a streamlined, function-oriented public API built around three explicit steps:
 
-1. **Discovery**: Use :func:`~wave_view.explore_signals` to discover available signals
-2. **Configuration**: Create configuration using :func:`~wave_view.config_from_file` or :func:`~wave_view.config_from_yaml`
-3. **Plotting**: Generate plots with :func:`~wave_view.plot`
+1. **Data Loading** – Load raw SPICE data into Python with :func:`wave_view.load_spice_raw` *or* let :func:`wave_view.plot` load it lazily from a file path.
+2. **Configuration** – Describe what you want to plot using :class:`wave_view.PlotSpec` (YAML, file, or dictionary input).
+3. **Plotting** – Call :func:`wave_view.plot` to generate an interactive Plotly figure.
 
-Main API Functions
-------------------
+This page documents each public symbol in the order you will use them.
+
+Main API Symbols
+----------------
 
 .. currentmodule:: wave_view
 
@@ -16,41 +18,30 @@ Main API Functions
    :toctree: _autosummary
 
    plot
-   explore_signals
-   load_spice
-   validate_config
-   config_from_file
-   config_from_yaml
+   load_spice_raw
+   PlotSpec
+   WaveDataset
 
-Core Functions
---------------
+Data Loading
+------------
+
+.. autofunction:: load_spice_raw
+
+Configuration – PlotSpec
+------------------------
+
+.. autoclass:: wave_view.PlotSpec
+   :members:
+   :show-inheritance:
+
+Plotting
+--------
 
 .. autofunction:: plot
 
-.. autofunction:: explore_signals
+Data Container – WaveDataset
+----------------------------
 
-.. autofunction:: load_spice
-
-Configuration Functions
------------------------
-
-.. autofunction:: validate_config
-
-.. autofunction:: config_from_file
-
-.. autofunction:: config_from_yaml
-
-Core Classes
-------------
-
-.. autoclass:: wave_view.SpiceData
-   :members:
-   :show-inheritance:
-
-.. autoclass:: wave_view.PlotConfig
-   :members:
-   :show-inheritance:
-
-.. autoclass:: wave_view.SpicePlotter
+.. autoclass:: wave_view.WaveDataset
    :members:
    :show-inheritance: 
