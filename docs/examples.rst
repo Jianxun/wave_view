@@ -11,7 +11,7 @@ Examples
 This page contains practical examples for common use cases with wave_view.
 
 Basic Waveform Plot
-------------------
+-------------------
 
 Plot input and output voltages from an amplifier simulation:
 
@@ -39,7 +39,7 @@ Plot input and output voltages from an amplifier simulation:
    fig.show()
 
 Multi-Y-Axis Plot
-----------------
+-----------------
 
 Create multiple strips with shared x-axis and rangeslider:
 

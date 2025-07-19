@@ -57,6 +57,7 @@
       ~PlotSpec.x
       ~PlotSpec.y
       ~PlotSpec.title
+      ~PlotSpec.raw
       ~PlotSpec.width
       ~PlotSpec.height
       ~PlotSpec.theme

@@ -1,3 +1,4 @@
+#! /usr/bin/env python
 """
 Wave View CLI interface.
 
@@ -295,10 +296,10 @@ def signals(raw_file: Path, limit: int, show_all: bool, grep: Optional[str]):
         sys.exit(1)
 
 signals.epilog = """
-Examples:
-  waveview signals sim.raw
-  waveview signals sim.raw --limit 20
-  waveview signals sim.raw -a
+Examples:\n
+  waveview signals sim.raw\n
+  waveview signals sim.raw --limit 20\n
+  waveview signals sim.raw -a\n
   waveview signals sim.raw --grep "v("
 """
 

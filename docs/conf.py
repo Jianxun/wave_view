@@ -30,6 +30,8 @@ extensions = [
     'sphinx.ext.intersphinx',
     'sphinx.ext.coverage',
     'myst_parser',
+    'sphinx_autodoc_typehints',
+    'sphinx_click',
 ]
 
 templates_path = ['_templates']

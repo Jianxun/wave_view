@@ -1,160 +1,129 @@
 Quick Start Guide
 =================
 
-This guide shows how to create interactive SPICE plots with *wave_view* 1.0.0 in just a few lines of code.  The API follows a clear three-step workflow:
+This guide provides two common workflows for using ``waveview`` to visualize your SPICE simulations.
 
-1. **Data Loading** – Load the raw ``.raw`` file with :func:`wave_view.load_spice_raw` (returns a plain ``dict`` of NumPy arrays).
-2. **Configuration** – Describe what you want to see using :class:`wave_view.PlotSpec`.  You can build a spec from a YAML file, a YAML string, or a Python dictionary.
-3. **Plotting** – Call :func:`wave_view.plot` to obtain an interactive Plotly figure that you can show, save, or embed.
+* **Option A: CLI-First** – The fastest way to get from a ``.raw`` file to an interactive plot. Perfect for quick, one-off visualizations.
+* **Option B: Python API** – The most flexible approach. Ideal for scripting, custom data processing, and embedding plots in notebooks or reports.
 
+Choose the workflow that best fits your needs.
 
-The Three-Step Workflow
------------------------
+Option A: CLI-First Workflow
+----------------------------
 
-Step 1  Data Loading *(optional)*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Get from a raw file to a plot in three steps using the ``waveview`` command-line tool.
 
-If you want immediate access to the data – e.g. for inspection or custom post-processing – load the file first:
+**Step 1: Generate a Plot Specification**
 
-.. code-block:: python
+Use ``waveview init`` to create a template ``spec.yaml`` file from your simulation output. It automatically populates the file with the independent variable (like "time") and a few available signals.
 
-   import wave_view as wv
+.. code-block:: bash
 
-   data, metadata = wv.load_spice_raw("simulation.raw")
-   print(f"Found {len(data)} signals → {list(data)[:5]} …")
+   waveview init your_simulation.raw > spec.yaml
 
-``load_spice_raw`` returns a dictionary mapping signal names to NumPy arrays and a small metadata dictionary.  *All* plotting examples in v1.0.0 assume a pre-loaded ``data`` dictionary.
+**Step 2: Discover Signals**
 
-Step 2  Configuration with PlotSpec
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Find the exact names of the signals you want to plot with ``waveview signals``.
 
-Create a plot description with :class:`~wave_view.PlotSpec`.  Two common patterns are shown below.
+.. code-block:: bash
 
-**(a) YAML file**
+   # List the first 10 signals
+   waveview signals your_simulation.raw
 
-.. code-block:: yaml
-   :caption: config.yaml
+   # List all signals
+   waveview signals your_simulation.raw --all
 
-   title: "My SPICE Results"
-   x: 
-    signal: "time"
-    label: "Time (s)"
-   y:
-     - label: "Voltage (V)"
-       signals:
-         OUT: "v(out)"
-         IN:  "v(in)"
+   # Filter signals using a regular expression
+   waveview signals your_simulation.raw --grep "v(out)"
 
-.. code-block:: python
+**Step 3: Plot**
 
-   spec = wv.PlotSpec.from_file("config.yaml")
+Edit your ``spec.yaml`` to include the signals you discovered, then use ``waveview plot`` to generate an interactive HTML file or display the plot directly.
 
-**(b) Inline YAML string**
+.. code-block:: bash
 
-.. code-block:: python
+   # This command will open a browser window with your plot
+   waveview plot spec.yaml
 
-   spec = wv.PlotSpec.from_yaml("""
-   title: "Quick Demo"
-   x: 
-    signal: "time"
-    label: "Time (s)"
-   y:
-     - label: "Output Voltage"
-       signals:
-         OUT: "v(out)"
-   """)
+   # To save the plot to a file instead
+   waveview plot spec.yaml --output my_plot.html
 
-**(c) Pure Python dictionary**
+This approach is fast, requires no Python code, and keeps your plot configuration version-controlled alongside your simulation files.
 
-.. code-block:: python
+Option B: Python API Workflow
+-----------------------------
 
-   dict_config = {
-       "title": "Dict Config Example",
-       "x": {"signal": "time", "label": "Time (s)"},
-       "y": [
-           {"label": "Voltage", "signals": {"OUT": "v(out)"}}
-       ],
-   }
-   spec = wv.PlotSpec.model_validate(dict_config)  # validation happens here
+For more advanced use cases, the Python API provides full control over data loading, processing, and plotting. This is ideal for Jupyter notebooks, custom analysis scripts, and automated report generation.
 
-Step 3  Plotting
-~~~~~~~~~~~~~~~~
+The API follows a clear three-step workflow:
 
-Generate your figure with a single call:
+1.  **Data Loading** – Load the raw ``.raw`` file with :func:`wave_view.load_spice_raw`.
+2.  **Configuration** – Describe what you want to see using :class:`wave_view.PlotSpec`.
+3.  **Plotting** – Call :func:`wave_view.plot` to get a Plotly figure.
 
-.. code-block:: python
-
-   # Plot using the pre-loaded dictionary
-   fig = wv.plot(data, spec)
-
-   # Display inside Jupyter
-   fig.show()
-
-   # Or export
-   fig.write_html("my_plot.html")
-   fig.write_image("my_plot.png")
-
-Minimal Example
-------------------------
+**Minimal Example**
 
 .. code-block:: python
 
    import wave_view as wv
 
-   # Optional data inspection
-   data, _ = wv.load_spice_raw("simulation.raw")
-   print(list(data)[:10])
+   # 1. Load data from a .raw file
+   data, _ = wv.load_spice_raw("your_simulation.raw")
+   print(f"Signals available: {list(data.keys())[:5]}...")
 
-   # Build configuration
+   # 2. Configure the plot using a YAML string
    spec = wv.PlotSpec.from_yaml("""
-   x: 
-    signal: "time"
-    label: "Time (s)"
+   title: "My Simulation Results"
+   x:
+     signal: "time"
+     label: "Time (s)"
    y:
      - label: "Voltage (V)"
-       signals: 
-         OUT: "v(out)"
+       signals:
+         Output: "v(out)"
+         Input:  "v(in)"
    """)
 
-   # Plot
+   # 3. Create and display the plot
    fig = wv.plot(data, spec)
    fig.show()
 
-Advanced Topics
----------------
+**Advanced Example: Plotting Derived Signals**
 
-Processed / Derived Signals
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Because ``load_spice_raw`` returns ordinary NumPy arrays, you can derive new signals and plot them alongside raw traces:
+Because the API gives you direct access to the data as NumPy arrays, you can easily perform calculations and plot the results.
 
 .. code-block:: python
 
    import numpy as np
    import wave_view as wv
 
-   data, _ = wv.load_spice_raw("simulation.raw")
-   v_diff = data["v(node2)"] - data["v(node1)"]  # custom calculation
+   # Load the data
+   data, _ = wv.load_spice_raw("your_simulation.raw")
 
-   # Add derived signal to the dictionary
-   data["v_diff"] = v_diff
+   # Calculate a new, derived signal
+   data["diff_voltage"] = data["v(out_p)"] - data["v(out_n)"]
 
+   # Create a spec that plots both raw and derived signals
    spec = wv.PlotSpec.from_yaml("""
-   x: 
-    signal: "time"
-    label: "Time (s)"
+   title: "Differential Output Voltage"
+   x:
+     signal: "time"
+     label: "Time (s)"
    y:
-     - label: "Voltage"
+     - label: "Voltage (V)"
        signals:
-         OUT:   "v(out)"
-         V_diff: "v_diff"
+         VOUT_P: "v(out_p)"
+         VOUT_N: "v(out_n)"
+         VOUT_DIFF: "diff_voltage"
    """)
 
+   # Create and display the plot
    fig = wv.plot(data, spec)
+   fig.show()
 
 Next Steps
 ----------
 
-* Dive into the :doc:`configuration` guide for every available option.  
-* Browse :doc:`examples` for real-world use cases.  
-* Consult the :doc:`api` reference for full symbol documentation. 
+*   Dive into the :doc:`configuration` guide for all available YAML options.
+*   Browse the :doc:`cli` reference for more command-line features.
+*   Consult the :doc:`api` reference for full details on each function. 
