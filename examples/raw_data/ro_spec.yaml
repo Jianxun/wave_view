@@ -1,0 +1,21 @@
+raw: "Ring_Oscillator_7stage.raw"
+# Plot title (customize as needed)
+title: "Analysis of Ring_Oscillator_7stage.raw"
+# X-axis configuration
+# Independent variable of the simulation, default to the first signal in the raw file
+x:
+  signal: "time"
+  label: "time (s)"
+# Y-axis configuration (add or remove axes as needed)
+# The Y-axis is specified as a list of sub-axes with a synchronized X-axis.
+# Even if you have only one Y-axis, you still need to specify it as a list.
+# Signal format: <Legend Name>: <Signal Name from Raw File>
+y:
+  - label: "Voltage (V)"
+    signals:
+      v(bus06): "v(bus06)"
+      v(bus05): "v(bus05)"
+# Plot height and width in pixels. Remove to use the default (full page width).
+height: 600
+width: 800
+show_rangeslider: true

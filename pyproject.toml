@@ -39,10 +39,11 @@ dependencies = [
     "spicelib>=1.0.0",
     "click>=8.0.0",
     "pydantic>=2.0.0",
+    "ruamel.yaml>=0.17.0",
 ]
 
 [project.scripts]
-wave_view = "wave_view.cli:cli"
+waveview = "wave_view.cli:cli"
 
 [project.optional-dependencies]
 dev = [

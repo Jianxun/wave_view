@@ -234,16 +234,32 @@ fig = wv.plot("simulation.raw", config)
   - Support for parametric analysis results
   - Advanced multi-dimensional plotting
 
-#### **CLI Enhancements** (Backlog)
+#### **CLI Enhancements - Recent Completions** ✅ **MAJOR IMPROVEMENTS**
+- [X] **Self-Contained YAML Specifications** ✅ **COMPLETED**
+  - Added optional `raw:` field to PlotSpec for self-contained specs
+  - CLI now supports `waveview plot spec.yaml` without separate raw file argument
+  - 3-way precedence system: --raw option > positional argument > YAML raw: field
+  - Smart warning system when CLI overrides YAML configuration
+  - Comprehensive error handling with helpful guidance messages
+  - 5 comprehensive tests covering all scenarios
+
+- [X] **Enhanced Scale Syntax** ✅ **COMPLETED**
+  - Added intuitive `scale: "log"` syntax alongside legacy `log_scale: true`
+  - Backward compatibility maintained - all existing YAML files work unchanged
+  - Consistent implementation for both X and Y axes
+  - Fixed root cause of original log scale configuration issue
+  - 3 new tests covering all scale syntax combinations
+
+#### **CLI Enhancements - Next Sprint** (Future Refinement)
 - [ ] **Batch Plotting Mode**
-  - Command: `wave_view batch-plot *.raw --spec spec.yml --output-dir plots/`
-  - *Status*: **Deferred** until batch loader (`wv.load_spice_raw_batch`) design is finalized
+  - Command: `waveview batch-plot *.raw --spec spec.yml --output-dir plots/`
+  - *Status*: **Priority** for next CLI refinement session
 - [ ] **Auto-generate Blank Spec**
-  - Command: `wave_view scaffold-spec sim.raw > spec.yml`
-  - *Status*: Added to backlog for future discussion
+  - Command: `waveview scaffold-spec sim.raw > spec.yml`
+  - *Status*: High-value feature for user onboarding
 - [ ] **Signals Command Improvements**
   - Add `--grep / --regex` filtering, `--json` output, and colour highlighting
-  - *Status*: Discussion required before implementation
+  - *Status*: Quality of life improvements for signal discovery
 
 #### **Interactive Widget Support** (v1.1.0)
 - [ ] **WaveViewWidget Prototype** – ipywidgets + Plotly `FigureWidget`
@@ -258,58 +274,66 @@ fig = wv.plot("simulation.raw", config)
   - [ ] `tests/workflows/test_widget_smoke.py` – widget builds in CI without error
   - [ ] `examples/demo_widget.ipynb` – showcases marker and delta marker usage
 
-## Current Branch Status - v1.0.0 READY 🎯
+## Current Branch Status - CLI Enhanced & v1.0.0 Ready 🎯 **LATEST ACHIEVEMENTS**
 
-- **Branch**: `test_suite_refactor`
-- **Architecture Status**: ✅ **COMPLETE** - All v1.0.0 phases implemented
+- **Branch**: `main` (latest commit: a39a73d)
+- **Architecture Status**: ✅ **COMPLETE** - All v1.0.0 phases implemented + CLI enhancements
 - **API Status**: ✅ **UNIFIED** - Single plot() function with clean interface
+- **Scale Syntax**: ✅ **ENHANCED** - Both `scale: "log"` and `log_scale: true` supported
+- **CLI Status**: ✅ **SIGNIFICANTLY ENHANCED** - Self-contained YAML specs with raw: field
 - **Legacy Code**: ✅ **COMPLETELY REMOVED** - Zero legacy components remain
-- **Test Status**: Needs refactoring for removed SpiceData components
-- **Demo Status**: ✅ **UPDATED** - Uses clean v1.0.0 API
-- **CLI Status**: ✅ **UPDATED** - Uses modern v1.0.0 API exclusively
+- **Test Status**: ✅ **EXPANDED** - 8 new tests added, comprehensive CLI coverage
+- **Demo Status**: ✅ **UPDATED** - Uses clean v1.0.0 API with enhanced syntax
 
 ### **Ready for Release**
 - **Code Quality**: Excellent with single-responsibility functions
 - **Test Coverage**: 96% on plotting functions, 88% on PlotSpec
 - **API Design**: Clean, elegant, and production-ready
+- **CLI Experience**: Professional with self-contained specs and intuitive syntax
 - **Documentation**: Needs updating for v1.0.0 API changes
 - **Package Structure**: Pure v1.0.0 architecture with zero legacy code
 
-### **Recent Accomplishments**
-- **Legacy Reader Removal**: Successfully removed reader.py and SpiceData completely
-- **CLI Migration**: Updated CLI to use WaveDataset and v1.0.0 plotting functions
-- **Import Cleanup**: Removed all SpiceData references from package
-- **Test Cleanup**: Removed legacy reader tests and fixed import issues
-- **API Purification**: Package now contains only modern v1.0.0 components
+### **Recent Accomplishments (This Session)**
+- **CLI Self-Contained Specs**: Added optional `raw:` field to PlotSpec with 3-way precedence system
+- **Enhanced Scale Syntax**: Support for both `scale: "log"` (intuitive) and `log_scale: true` (legacy)
+- **Comprehensive Testing**: Added 8 new tests (5 CLI + 3 scale syntax) with zero regressions
+- **Warning System**: Smart CLI override warnings with helpful guidance messages
+- **Backward Compatibility**: All existing YAML files and CLI usage patterns preserved
 
-## Notes
-- **Current State**: v1.0.0 architecture fully implemented with zero legacy code
-- **Next Focus**: Test suite refactoring and documentation updates for release
-- **Major Achievement**: Complete elimination of all legacy components - pure v1.0.0 architecture
-- **Breaking Changes**: Ready for v1.0.0 major version release with clean migration path
+## Notes for Next Session
+- **Current State**: v1.0.0 architecture + enhanced CLI with self-contained YAML specs
+- **Next Focus**: Continue CLI refinement - batch processing, signal filtering, spec scaffolding
+- **Major Achievement**: Production-ready CLI with professional user experience
+- **Breaking Changes**: None - full backward compatibility maintained
 
-### **Stage D – Coverage & CI**
-  - [X] **Overall coverage ≥ 85 %** – Added loader tests; project coverage now 86 %
-  - [ ] **Add coverage gate to CI** – Update GitHub Actions workflow / pytest ini
-  - [X] **CLI tests** – Added `tests/unit/cli/test_cli_basic.py`; cli.py coverage now 81 %, overall 91 %
-  - [X] **Legacy integration test removed** – Deleted redundant `tests/test_integration_v1_0_0.py`; suite now 59 tests
-  - [ ] **env helper tests** – Bring `utils/env.py` coverage ≥ 90 %
+## Next Session Priorities
+1. **Batch Plotting Command**: `waveview batch-plot *.raw --spec spec.yml --output-dir plots/`
+2. **Spec Scaffolding**: `waveview scaffold-spec sim.raw > spec.yml` 
+3. **Signals Command Enhancement**: Add `--grep`, `--json`, and `--color` options
+4. **CLI Polish**: Additional convenience features and error handling improvements
 
-### 📋 **Engineering Notation Enhancement - COMPLETED** ✅ **FREQUENCY DOMAIN IMPROVEMENT**
+### **Test Suite Status** (In Progress)
+- **Current Coverage**: 91% overall (86% project, 96% plotting, 88% PlotSpec)
+- **CLI Tests**: 12 comprehensive tests covering all functionality
+- **Scale Syntax Tests**: 3 tests covering both syntaxes and PlotSpec integration
+- **Remaining**: Complete legacy test cleanup and add coverage gates to CI
 
-#### **Automatic SI Prefix Detection** ✅ **COMPLETED**
-- [X] **Enhanced frequency domain plotting** ✅ **COMPLETED**
-  - Added automatic detection of frequency signals in X-axis configuration
-  - Implemented SI engineering notation (1G, 1M, 1k) instead of American notation (1B, 1M, 1K)
-  - Fixed Plotly exponentformat to "SI" for signals containing "frequency" in the name
-  - Improves readability for AC analysis and frequency response plots
-  
-- [X] **Comprehensive test coverage** ✅ **COMPLETED**
-  - Added tests for frequency signal detection with and without log scale
-  - Added tests to ensure non-frequency signals use default formatting
-  - All tests passing with 100% coverage of new functionality
-  
-- [X] **User experience improvement** ✅ **COMPLETED**
-  - Automatic activation - no configuration required from users
-  - Works with existing YAML specifications and PlotSpec configurations
-  - Maintains backward compatibility for all existing plots
+### **Completed Enhancements Archive**
+
+#### **Engineering Notation Enhancement** ✅ **COMPLETED**
+- Enhanced frequency domain plotting with SI prefixes (1G, 1M, 1k)
+- Automatic detection of frequency signals and applies exponentformat="SI"
+- Improved readability for AC analysis and frequency response plots
+- 100% test coverage with backward compatibility
+
+#### **Scale Syntax Enhancement** ✅ **COMPLETED** 
+- Both `scale: "log"` (intuitive) and `log_scale: true` (legacy) supported
+- Consistent implementation for X and Y axes
+- Fixed root cause of original log scale configuration issue
+- 3 comprehensive tests with PlotSpec validation
+
+#### **CLI Self-Contained Specs** ✅ **COMPLETED**
+- Optional `raw:` field in PlotSpec for self-contained YAML specifications  
+- 3-way precedence: --raw option > positional argument > YAML raw: field
+- Smart warning system with helpful override messages
+- 5 comprehensive tests covering all scenarios

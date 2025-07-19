@@ -172,8 +172,35 @@ fig.show()
 - **Documentation**: Complete Sphinx documentation system (needs update for v1.0.0)
 - **Legacy Code**: ✅ **COMPLETELY REMOVED** - No more reader.py, plotter.py, SpicePlotter, SpiceData, or config.py dependencies
 
+## Recent Achievements (Latest Session)
+
+### **CLI Enhancement - Self-Contained YAML Specifications** ✅ **COMPLETED**
+- **Optional raw: field**: Added to PlotSpec class for self-contained YAML specifications
+- **Flexible CLI usage**: 3 ways to specify raw file with clear precedence order:
+  1. `--raw` option (highest priority)
+  2. Positional argument: `waveview plot spec.yaml sim.raw`
+  3. `raw:` field in YAML specification (lowest priority)
+- **Smart warning system**: CLI overrides emit helpful warnings when conflicting with YAML
+- **Comprehensive error handling**: Clear error messages when no raw file is specified
+- **Updated CLI help**: Complete documentation of new usage patterns
+- **5 new CLI tests**: Comprehensive coverage of all raw file specification scenarios
+
+### **Scale Syntax Enhancement** ✅ **COMPLETED**
+- **Intuitive syntax support**: Both `scale: "log"` and legacy `log_scale: true` now supported
+- **Backward compatibility**: All existing YAML files continue to work unchanged
+- **Consistent implementation**: Works for both X and Y axes with same syntax
+- **3 new tests**: Complete coverage of scale syntax combinations and PlotSpec integration
+- **Root cause resolution**: Fixed original log scale configuration issue
+
+### **Quality Improvements**
+- **Test coverage expansion**: Added 8 new tests (5 CLI + 3 scale syntax)
+- **CLI test suite**: Now 12 comprehensive tests covering all CLI functionality
+- **Zero regressions**: All existing functionality maintained
+- **Production ready**: Enhanced CLI with professional user experience
+
 ## Open Questions
-- **Test Suite Refactoring**: Update all legacy tests that reference SpiceData or other removed components
+- **CLI Refinement**: Continue CLI enhancements (batch processing, signal filtering, spec scaffolding)
+- **Test Suite Refactoring**: Complete remaining legacy test cleanup
 - **Documentation Updates**: Update all examples and documentation for v1.0.0
 - **Migration Guide**: Create guide for users upgrading from v0.x.x to v1.0.0
 

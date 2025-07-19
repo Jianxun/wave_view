@@ -13,7 +13,7 @@ Wave View is a lightweight yet powerful Python toolkit that transforms raw SPICE
 - **Interactive Plotly Visualization**: Modern, web-based plots with zoom, pan, and hover
 - **YAML Configuration**: Flexible, reusable plotting configurations
 - **Simple API**: Plot waveforms with a single function call
-- **Command Line Interface**: Quick plotting from terminal with `wave_view plot`
+- **Command Line Interface**: Quick plotting from terminal with `waveview plot`
 - **Automatic Environment Detection**: Auto-detection and inline plotting for Jupyter Notebooks, render in browser when running in standalone Python scripts.
 
 ## Quick Start
@@ -86,28 +86,33 @@ Wave View ships with a convenient `wave_view` executable that mirrors the high-l
 
 Key subcommands:
 
-- `wave_view plot` – Render a figure from a SPICE `.raw` file plus a YAML spec.  Supports on-the-fly overrides such as `--title`, `--theme`, `--width`, `--height`, and can save to HTML/PNG/PDF/SVG via `--output`.
-- `wave_view signals` – List the available signal names inside a raw file with an optional `--limit` for quick inspection.
+- `waveview plot` – Render a figure from a SPICE `.raw` file plus a YAML spec.  Supports on-the-fly overrides such as `--title`, `--theme`, `--width`, `--height`, and can save to HTML/PNG/PDF/SVG via `--output`.
+- `waveview signals` – List the available signal names inside a raw file with an optional `--limit` for quick inspection.
+- `waveview init` – Generate a starter `spec.yaml` file from a raw file, which can be redirected to a file (e.g., `waveview init sim.raw > my_spec.yaml`).
 
-Each subcommand accepts `--help` to show all options, and the root command (`wave_view --help`) prints version information and global flags.
+Each subcommand accepts `--help` to show all options, and the root command (`waveview --help`) prints version information and global flags.
 
 ```bash
 # Plot with specification file
-wave_view plot simulation.raw --spec config.yaml
+waveview plot simulation.raw --spec config.yaml
 
 # Plot with custom options
-wave_view plot simulation.raw --spec config.yaml --title "My Analysis" --theme plotly_dark
+waveview plot simulation.raw --spec config.yaml --title "My Analysis" --theme plotly_dark
 
 # Save to file
-wave_view plot simulation.raw --spec config.yaml --output plot.html
+waveview plot simulation.raw --spec config.yaml --output plot.html
 
 # List available signals
-wave_view signals simulation.raw
-wave_view signals simulation.raw --limit 20
+waveview signals simulation.raw
+waveview signals simulation.raw --limit 20
+
+# Initialize a new spec file
+waveview init simulation.raw > my_spec.yaml
 
 # Get help
-wave_view --help
-wave_view plot --help
+waveview --help
+waveview plot --help
+waveview init --help
 ```
 
 ### Advanced Usage
