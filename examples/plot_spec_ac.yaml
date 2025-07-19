@@ -1,0 +1,18 @@
+raw: "./raw_data/Ring_Oscillator_7stage.raw"
+
+title: "SPICE Simulation - Key Signals"
+
+X:
+  signal: "time"
+  label: "Time (s)"
+
+Y:
+  - label: "Key Voltages (V)"
+    signals:
+      VDD: "v(vdd)"
+      Bus01: "v(bus01)"
+      Bus02: "v(bus02)"
+      Bus03: "v(bus03)"
+
+height: 600
+show_rangeslider: true

@@ -17,7 +17,8 @@ class XAxisSpec(BaseModel):
     """X-axis configuration specification."""
     signal: str = Field(..., description="X-axis signal key")
     label: Optional[str] = Field(None, description="X-axis label")
-    log_scale: bool = Field(False, description="Use logarithmic scale")
+    scale: Optional[str] = Field(None, description="Scale type: 'log' or 'linear' (intuitive syntax)")
+    log_scale: bool = Field(False, description="Use logarithmic scale (legacy syntax)")
     unit: Optional[str] = Field(None, description="Unit for display")
     range: Optional[List[float]] = Field(None, description="[min, max] range")
 
@@ -26,7 +27,8 @@ class YAxisSpec(BaseModel):
     """Y-axis configuration specification."""
     label: str = Field(..., description="Y-axis label")
     signals: Dict[str, str] = Field(..., description="Legend name -> signal key mapping")
-    log_scale: bool = Field(False, description="Use logarithmic scale")
+    scale: Optional[str] = Field(None, description="Scale type: 'log' or 'linear' (intuitive syntax)")
+    log_scale: bool = Field(False, description="Use logarithmic scale (legacy syntax)")
     unit: Optional[str] = Field(None, description="Unit for display")
     range: Optional[List[float]] = Field(None, description="[min, max] range")
     color: Optional[str] = Field(None, description="Axis color")
@@ -43,6 +45,7 @@ class PlotSpec(BaseModel):
     x: XAxisSpec = Field(..., description="X-axis configuration", alias="X")
     y: List[YAxisSpec] = Field(..., description="Y-axis specifications", alias="Y")
     title: Optional[str] = Field(None, description="Plot title")
+    raw: Optional[str] = Field(None, description="Path to SPICE raw file for self-contained specs")
     
     # Styling options
     width: Optional[int] = Field(None, description="Plot width in pixels")
@@ -111,9 +114,11 @@ class PlotSpec(BaseModel):
         """
         return {
             "title": self.title,
+            "raw": self.raw,
             "x": {
                 "signal": self.x.signal,
                 "label": self.x.label,
+                "scale": self.x.scale,
                 "log_scale": self.x.log_scale,
                 "unit": self.x.unit,
                 "range": self.x.range
@@ -122,6 +127,7 @@ class PlotSpec(BaseModel):
                 {
                     "label": y_spec.label,
                     "signals": y_spec.signals,
+                    "scale": y_spec.scale,
                     "log_scale": y_spec.log_scale,
                     "unit": y_spec.unit,
                     "range": y_spec.range,

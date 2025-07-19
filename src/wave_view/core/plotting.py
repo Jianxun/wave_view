@@ -201,8 +201,8 @@ def _configure_x_axis(config: Dict[str, Any]) -> Dict[str, Any]:
         }
     }
     
-    # Add log scale support
-    if x_spec.get("log_scale", False):
+    # Add log scale support - support both intuitive and legacy syntax
+    if x_spec.get("scale") == "log" or x_spec.get("log_scale", False):
         x_axis_config["xaxis"]["type"] = "log"
     
     # Add range support
@@ -279,8 +279,8 @@ def _create_single_y_axis_config(
         "exponentformat": "SI"  # Use SI engineering notation for all Y-axes
     }
     
-    # Log scale support
-    if y_spec.get("log_scale", False):
+    # Log scale support - support both intuitive and legacy syntax
+    if y_spec.get("scale") == "log" or y_spec.get("log_scale", False):
         axis_config["type"] = "log"
     
     # Range support
