@@ -16,143 +16,131 @@ Wave View is a lightweight yet powerful Python toolkit that transforms raw SPICE
 - **Command Line Interface**: Quick plotting from terminal with `waveview plot`
 - **Automatic Environment Detection**: Auto-detection and inline plotting for Jupyter Notebooks, render in browser when running in standalone Python scripts.
 
+
+
 ## Quick Start
 
 ### Installation
-
-#### Option 1: Install from PyPI
 ```bash
 pip install wave_view
 ```
 
-#### Option 2: Install from GitHub (Latest)
-```bash
-# Install latest version directly from GitHub
-pip install git+https://github.com/Jianxun/wave_view.git
+Wave View provides two common workflows for visualizing your SPICE simulations:
 
-# Or install a specific branch/tag
-pip install git+https://github.com/Jianxun/wave_view.git@main
-pip install git+https://github.com/Jianxun/wave_view.git@v1.0.0
+* **Option A: CLI-First** – The fastest way to get from a ``.raw`` file to an interactive plot. Perfect for quick, one-off visualizations.
+* **Option B: Python API** – The most flexible approach. Ideal for scripting, custom data processing, and embedding plots in notebooks or reports.
+
+
+### Option A: CLI-First Workflow
+
+Get from a raw file to a plot in three steps using the ``waveview`` command-line tool.
+
+**Step 1: Generate a Plot Specification**
+
+Use ``waveview init`` to create a template ``spec.yaml`` file from your simulation output. It automatically populates the file with the independent variable (like "time") and a few available signals.
+
+```bash
+waveview init your_simulation.raw > spec.yaml
 ```
 
-#### Option 3: Development Installation
+**Step 2: Discover Signals**
+
+Find the exact names of the signals you want to plot with ``waveview signals``.
+
 ```bash
-# Clone the repository
-git clone https://github.com/Jianxun/wave_view.git
-cd wave_view
+# List the first 10 signals
+waveview signals your_simulation.raw
 
-# Create and activate virtual environment (recommended)
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+# List all signals
+waveview signals your_simulation.raw --all
 
-# Install in development mode (editable install)
-pip install -e .
-
-# Install development dependencies (optional)
-pip install -r requirements-dev.txt
+# Filter signals using a regular expression
+waveview signals your_simulation.raw --grep "clk"
 ```
 
-### Basic Usage
-This quick example demonstrates the three-step workflow:
-- Load the simulation data.
-- Build a declarative `PlotSpec`.
-- Call `wave_view.plot` to render the figure.  
+**Step 3: Plot**
 
-Note that the `y` section is always provided as a list ("-"); even if you only have a single Y-axis group you must wrap it in a list so the same schema works seamlessly for multi-strip plots.
+Edit your ``spec.yaml`` to include the signals you discovered, then use ``waveview plot`` to generate an interactive HTML file or display the plot directly.
+
+```bash
+# This command will open a browser window with your plot
+waveview plot spec.yaml
+
+# To save the plot to a file instead
+waveview plot spec.yaml --output my_plot.html
+```
+
+This approach is fast, requires no Python code, and keeps your plot configuration version-controlled alongside your simulation files.
+
+### Option B: Python API Workflow
+
+For more advanced use cases, the Python API provides full control over data loading, processing, and plotting. This is ideal for Jupyter notebooks, custom analysis scripts, and automated report generation.
+
+The API follows a clear three-step workflow:
+
+1. **Data Loading** – Load the raw ``.raw`` file with ``wave_view.load_spice_raw``.
+2. **Configuration** – Describe what you want to see using ``wave_view.PlotSpec``.
+3. **Plotting** – Call ``wave_view.plot`` to get a Plotly figure.
+
+**Minimal Example**
 
 ```python
 import wave_view as wv
 
-data, metadata = wv.load_spice_raw('')
+# 1. Load data from a .raw file
+data, _ = wv.load_spice_raw("your_simulation.raw")
+print(f"Signals available: {list(data.keys())[:5]}...")
+
+# 2. Configure the plot using a YAML string
 spec = wv.PlotSpec.from_yaml("""
-title: "Transient Analysis"
-x: 
-  label: "Time (s)"
+title: "My Simulation Results"
+x:
   signal: "time"
+  label: "Time (s)"
 y:
   - label: "Voltage (V)"
     signals:
-      OUT: "v(out)"
-      IN:  "v(in)"
+      Output: "v(out)"
+      Input:  "v(in)"
 """)
 
+# 3. Create and display the plot
 fig = wv.plot(data, spec)
 fig.show()
 ```
 
-### Command Line Interface
+**Advanced Example: Plotting Derived Signals**
 
-Wave View ships with a convenient `wave_view` executable that mirrors the high-level Python API so you can explore data and generate plots straight from the terminal—perfect for quick checks in CI pipelines or when you don't want to open a notebook.
-
-Key subcommands:
-
-- `waveview plot` – Render a figure from a SPICE `.raw` file plus a YAML spec.  Supports on-the-fly overrides such as `--title`, `--theme`, `--width`, `--height`, and can save to HTML/PNG/PDF/SVG via `--output`.
-- `waveview signals` – List the available signal names inside a raw file with an optional `--limit` for quick inspection.
-- `waveview init` – Generate a starter `spec.yaml` file from a raw file, which can be redirected to a file (e.g., `waveview init sim.raw > my_spec.yaml`).
-
-Each subcommand accepts `--help` to show all options, and the root command (`waveview --help`) prints version information and global flags.
-
-```bash
-# Plot with specification file
-waveview plot simulation.raw --spec config.yaml
-
-# Plot with custom options
-waveview plot simulation.raw --spec config.yaml --title "My Analysis" --theme plotly_dark
-
-# Save to file
-waveview plot simulation.raw --spec config.yaml --output plot.html
-
-# List available signals
-waveview signals simulation.raw
-waveview signals simulation.raw --limit 20
-
-# Initialize a new spec file
-waveview init simulation.raw > my_spec.yaml
-
-# Get help
-waveview --help
-waveview plot --help
-waveview init --help
-```
-
-### Advanced Usage
-
-For heavier workflows you can work directly with the returned **dictionary of NumPy arrays**: slice signals, run vectorised math, or attach completely new keys generated by any Python code.
-
-Because the dictionary preserves insertion order (Python ≥ 3.7) and Wave View ignores letter-case when looking up keys, your additions flow straight into the plotting pipeline with zero friction.
-
-> **Heads-up**: if you intend to plot against an independent variable that *isn't* the default one stored in the raw file (e.g. sweep index instead of time, or a custom frequency array), you must inject that array into `data` *and* reference it in `x.signal` so Wave View knows what to use on the X-axis.
+Because the API gives you direct access to the data as NumPy arrays, you can easily perform calculations and plot the results.
 
 ```python
-import numpy as np, wave_view as wv
+import numpy as np
+import wave_view as wv
 
-# Pre-load data for inspection or heavy processing
-data, _ = wv.load_spice_raw("simulation.raw")
-print(f"Signals → {list(data)[:10]}")
+# Load the data
+data, _ = wv.load_spice_raw("your_simulation.raw")
 
-# Create a derived signal
-data["power"] = data["v(out)"] * data["i(out)"]
+# Calculate a new, derived signal
+data["diff_voltage"] = data["v(out_p)"] - data["v(out_n)"]
 
+# Create a spec that plots both raw and derived signals
 spec = wv.PlotSpec.from_yaml("""
+title: "Differential Output Voltage"
 x:
-  label: "Time (s)"
   signal: "time"
+  label: "Time (s)"
 y:
   - label: "Voltage (V)"
     signals:
-      OUT:   "v(out)"
-  - label: "Power (W)"
-    signals:
-      Power: "power"
+      VOUT_P: "v(out_p)"
+      VOUT_N: "v(out_n)"
+      VOUT_DIFF: "diff_voltage"
 """)
 
+# Create and display the plot
 fig = wv.plot(data, spec)
 fig.show()
 ```
-
-### Configuration Validation
-
-PlotSpec uses Pydantic, so validation happens automatically when you call ``PlotSpec.from_yaml`` or ``PlotSpec.model_validate``.  Invalid specs raise ``ValidationError`` with helpful messages.
 
 ## Development
 
@@ -187,7 +175,6 @@ pytest --cov=wave_view --cov-report=html
 # Run specific test file
 pytest tests/workflows/test_cli_plot.py -v
 ```
-
 
 ## Project Structure
 
