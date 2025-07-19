@@ -201,9 +201,9 @@ def _configure_x_axis(config: Dict[str, Any]) -> Dict[str, Any]:
         }
     }
     
-    # Add log scale support - support both intuitive and legacy syntax
-    if x_spec.get("scale") == "log" or x_spec.get("log_scale", False):
-        x_axis_config["xaxis"]["type"] = "log"
+    # Configure axis type
+    axis_type = "log" if x_spec.get("scale") == "log" else "linear"
+    x_axis_config["xaxis"]["type"] = axis_type
     
     # Add range support
     if x_spec.get("range"):
@@ -271,17 +271,18 @@ def _create_single_y_axis_config(
     Returns:
         Single Y-axis configuration dictionary
     """
+    # Use custom label if provided, otherwise fall back to "Y-axis"
+    title = y_spec.get("label") or f"Y-axis {axis_index}"
+    
     axis_config = {
-        "title": y_spec.get("label", f"Y-axis {axis_index + 1}"),
-        "showgrid": global_config.get("grid", True),
+        "title": title,
         "domain": domain,
-        "anchor": "x",
-        "exponentformat": "SI"  # Use SI engineering notation for all Y-axes
+        "showgrid": global_config.get("grid", True),
     }
     
-    # Log scale support - support both intuitive and legacy syntax
-    if y_spec.get("scale") == "log" or y_spec.get("log_scale", False):
-        axis_config["type"] = "log"
+    # Configure axis type
+    axis_type = "log" if y_spec.get("scale") == "log" else "linear"
+    axis_config["type"] = axis_type
     
     # Range support
     if y_spec.get("range"):

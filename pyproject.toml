@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=64", "wheel"]
+requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -59,6 +59,10 @@ docs = [
     "sphinx>=5.0.0",
     "sphinx-rtd-theme>=1.0.0",
     "myst-parser>=0.18.0",
+    "sphinx-autodoc-typehints>=1.0.0",
+    "sphinx-click>=1.0.0",
+    "autodoc_pydantic>=2.0.0",
+    "sphinxcontrib-autodoc_pydantic"
 ]
 jupyter = [
     "ipywidgets>=8.0.0",

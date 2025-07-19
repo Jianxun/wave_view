@@ -294,11 +294,13 @@ fig = wv.plot("simulation.raw", config)
 - **Package Structure**: Pure v1.0.0 architecture with zero legacy code
 
 ### **Recent Accomplishments (This Session)**
-- **CLI Self-Contained Specs**: Added optional `raw:` field to PlotSpec with 3-way precedence system
-- **Enhanced Scale Syntax**: Support for both `scale: "log"` (intuitive) and `log_scale: true` (legacy)
-- **Comprehensive Testing**: Added 8 new tests (5 CLI + 3 scale syntax) with zero regressions
-- **Warning System**: Smart CLI override warnings with helpful guidance messages
-- **Backward Compatibility**: All existing YAML files and CLI usage patterns preserved
+- [X] **Fix log scale syntax**: The `scale: "log"` syntax was not working correctly. This has been fixed and is now the standard way to specify a logarithmic scale.
+- [X] **Enhance `create_layout`**: Refactored to improve clarity and maintainability.
+- [X] **Update tests**: All tests have been updated to use the `scale: "log"` syntax.
+- [X] **Improve SI notation**: Engineering notation is now used for all axes.
+- [X] **Add `raw` field to `PlotSpec`**: `PlotSpec` can now be self-contained.
+- [X] **Update CLI**: The CLI now supports the `raw` field in `PlotSpec`.
+- [X] **Update documentation**: All documentation has been updated to reflect the latest changes.
 
 ## Notes for Next Session
 - **Current State**: v1.0.0 architecture + enhanced CLI with self-contained YAML specs

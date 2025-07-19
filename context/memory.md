@@ -63,7 +63,6 @@ title: "My Analysis"
 x:
   signal: "time"
   label: "Time (s)"
-  log_scale: false
 y:
   - label: "Voltage (V)"
     signals:
@@ -186,11 +185,12 @@ fig.show()
 - **5 new CLI tests**: Comprehensive coverage of all raw file specification scenarios
 
 ### **Scale Syntax Enhancement** ✅ **COMPLETED**
-- **Intuitive syntax support**: Both `scale: "log"` and legacy `log_scale: true` now supported
+- **Intuitive syntax support**: `scale: "log"` is now the standard.
 - **Backward compatibility**: All existing YAML files continue to work unchanged
 - **Consistent implementation**: Works for both X and Y axes with same syntax
 - **3 new tests**: Complete coverage of scale syntax combinations and PlotSpec integration
-- **Root cause resolution**: Fixed original log scale configuration issue
+- **Root cause resolution**: Fixed original log scale configuration issue - correct YAML syntax is `scale: "log"`.
+- **NEW FEATURE**: CLI now supports optional `raw:` field in PlotSpec for self-contained YAML specifications - can call `wave_view plot spec.yaml` without separate raw file argument. CLI precedence: --raw option > positional argument > YAML raw: field, with appropriate warning messages. Ready for v1.0.0 release preparation - next focus is test suite refactoring and documentation updates.
 
 ### **Quality Improvements**
 - **Test coverage expansion**: Added 8 new tests (5 CLI + 3 scale syntax)
@@ -221,7 +221,7 @@ fig.show()
 - Full Sphinx documentation **fully aligned** with final v1.0.0 API.
   * Removed all direct `wv.plot("file.raw", ...)` examples – now always load data first.
   * Eliminated `processed_data` parameter; examples append derived signals to the data dict.
-  * Lower-case `x:` / `y:` keys and current option names (`height`, `zoom_buttons`, …) used everywhere.
+  * Lower-case `x:` / `y:` keys and current option names (`height`, …) used everywhere.
   * Quickstart, Configuration, Examples, and Index pages updated; build is warning-free.
   * **Documentation Compilation COMPLETED** (2025-07-11): Sphinx docs successfully recompiled with all v1.0.0 changes
   * Remaining tasks: bump package/version strings to 1.0.0.

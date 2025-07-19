@@ -5,6 +5,52 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2025-07-XX
+
+### Added
+- **Enhanced CLI Documentation**
+  - Dedicated CLI reference page with automatic generation from Click commands
+  - Complete command-line interface documentation using `sphinx-click`
+  - Comprehensive examples for all CLI commands and options
+
+- **Improved Documentation Structure**
+  - Dedicated schema reference page with automatic Pydantic model documentation
+  - Restructured quickstart guide with two distinct workflows:
+    - **Option A: CLI-First** - Fast workflow for quick visualizations
+    - **Option B: Python API** - Flexible workflow for scripting and notebooks
+  - Enhanced configuration guide with better organization and examples
+  - Cross-references between documentation sections for better navigation
+
+- **Schema Documentation**
+  - Automatic generation of PlotSpec schema documentation from Pydantic models
+  - Complete field-by-field reference for `PlotSpec`, `XAxisSpec`, and `YAxisSpec`
+  - Always up-to-date schema documentation that reflects code changes
+  - Professional formatting with type information and validation rules
+
+### Improved
+- **CLI User Experience**
+  - Clear separation between CLI and API workflows in documentation
+  - Better examples showing CLI command usage patterns
+  - Improved help text and command descriptions
+  - Enhanced workflow guidance for different use cases
+
+- **Documentation Quality**
+  - Better organization with dedicated pages for different topics
+  - Improved cross-referencing between related sections
+  - More comprehensive examples and use cases
+  - Professional formatting and consistency
+
+### Technical
+- **Documentation Infrastructure**
+  - Added `autodoc_pydantic` extension for automatic schema generation
+  - Enhanced Sphinx configuration for better documentation building
+  - Improved development dependencies for documentation tooling
+
+## [1.0.1] - 2025-07-11
+
+### Fixed
+- Minor bug fixes and improvements
+
 ## [1.0.0] - 2025-07-11
 
 ### Added
@@ -112,7 +158,7 @@ See documentation for detailed examples with the new API.
 - Coverage reporting setup
 - Pytest configuration with modern tooling
 
-## [0.0.1] - 2024-01-XX (Initial Prototype)
+## [0.0.1] - 2025-06-05 (Initial Prototype)
 
 ### Added
 - Initial project structure
