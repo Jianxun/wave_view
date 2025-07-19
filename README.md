@@ -4,7 +4,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 
-Wave View is a lightweight yet powerful Python toolkit that transforms raw SPICE ``.raw`` files into beautiful, interactive Plotly figures with minimal code.  It reads simulation traces straight into a plain ``{signal_name: np.ndarray}`` dictionary, lets you define multi-axis plots declaratively via YAML (or override them on the command line), and automatically selects the best renderer whether you are in a Jupyter notebook, VS Code, or a headless CI job.  Case-insensitive signal lookup, engineering-notation tick labels, and first-class multi-strip support help you focus on circuit analysis rather than plotting boilerplate.
+Wave View is a powerful yet lightweight Python toolkit for visualizing SPICE .raw files as interactive Plotly figures with minimal code. It loads simulation data directly into a simple {signal_name: np.ndarray} dictionary, supports declarative multi-axis plots via YAML or CLI overrides, and automatically selects the best renderer for Jupyter, VS Code, or headless environments. With case-insensitive signal lookup and robust multi-strip support, Wave View lets you focus on circuit analysis—not plotting boilerplate.
 
 ![Demo](https://raw.githubusercontent.com/Jianxun/wave_view/main/examples/screenshots/wave_view_demo.png)
 
@@ -224,14 +224,14 @@ Contributions are welcome! Please:
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## Documentation
+## Documentation (https://Jianxun.github.io/wave_view/)
 
 Comprehensive documentation is available with:
-
 - **User Guides**: Installation, quickstart, and configuration
 - **API Reference**: Complete function documentation
 - **Examples**: Practical use cases and tutorials
 - **Development**: Contributing guidelines and setup
+
 
 ### Build Documentation Locally
 
@@ -248,7 +248,7 @@ make docs-serve  # Opens at http://localhost:8000
 
 ## Links
 
-- **Documentation**: [Read the Docs](https://wave-view.readthedocs.io/)
+- **Documentation**: [GitHub Pages](https://Jianxun.github.io/wave_view/)
 - **PyPI Package**: [PyPI](https://pypi.org/project/wave-view/)
 - **Issue Tracker**: [GitHub Issues](https://github.com/Jianxun/wave_view/issues)
 - **Changelog**: [CHANGELOG.md](CHANGELOG.md)

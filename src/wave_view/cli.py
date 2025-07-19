@@ -2,7 +2,7 @@
 """
 Wave View CLI interface.
 
-Provides command-line interface for plotting SPICE waveforms using the v1.0.0 API.
+Provides command-line interface for plotting SPICE waveforms using the v1.1.0 API.
 """
 
 import click
@@ -29,7 +29,16 @@ class CustomFormatter(click.HelpFormatter):
 @click.group(context_settings=dict(help_option_names=['-h', '--help']))
 @click.version_option()
 def cli():
-    """Wave View - SPICE Waveform Visualization CLI."""
+    """Wave View - a CLI tool for visualizing SPICE simulation waveforms and managing plot specifications with ease.
+    
+    Examples:\n
+        `waveview init sim.raw > spec.yaml` # Generate a boilerplate spec.yaml file from a raw file\n
+        `waveview signals sim.raw` # List available signals in a raw file, edit the spec.yaml file to plot the signals you want\n
+        `waveview plot spec.yaml` # Plot the signals in the spec.yaml file\n
+    
+    Run subcommands with `waveview <subcommand> --help` for more information.
+    See the latest Documentation at: [https://Jianxun.github.io/wave_view/]
+    """
     pass
 
 
