@@ -6,7 +6,7 @@ for Jupyter notebook integration with both simple plotting functions and advance
 signal processing capabilities.
 """
 
-__version__ = "1.0.1"
+__version__ = "1.1.0"
 __author__ = "Jianxun Zhu"
 
 # Core classes

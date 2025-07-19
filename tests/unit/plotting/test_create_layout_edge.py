@@ -118,7 +118,7 @@ class TestCreateLayoutEdgeCases(unittest.TestCase):
         self.assertFalse(layout["xaxis"]["rangeslider"]["visible"])
 
 
-class TestSIEngineeringNotationEdgeCases:
+class TestSIEngineeringNotationEdgeCases(unittest.TestCase):
     """Tests for SI engineering notation applied to all axes."""
 
     def test_x_axis_always_uses_si_notation(self):
@@ -128,7 +128,7 @@ class TestSIEngineeringNotationEdgeCases:
             "x": {
                 "signal": "frequency",
                 "label": "Frequency (Hz)",
-                "log_scale": True
+                "scale": "log"
             },
             "y": [
                 {
@@ -152,7 +152,7 @@ class TestSIEngineeringNotationEdgeCases:
             "x": {
                 "signal": "time",
                 "label": "Time (s)",
-                "log_scale": False
+                "scale": "linear"
             },
             "y": [
                 {
@@ -172,10 +172,10 @@ class TestSIEngineeringNotationEdgeCases:
         """All Y-axes should use SI engineering notation."""
         config = {
             "title": "Multi-Axis Analysis",
-            "x": {
-                "signal": "time", 
+                        "x": {
+                "signal": "time",
                 "label": "Time (s)",
-                "log_scale": False
+                "scale": "linear"
             },
             "y": [
                 {

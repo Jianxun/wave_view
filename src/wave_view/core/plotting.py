@@ -288,6 +288,10 @@ def _create_single_y_axis_config(
     if y_spec.get("range"):
         axis_config["range"] = y_spec["range"]
     
+    # Add engineering notation for consistent SI prefix display
+    # Use SI prefixes (1G, 1M, 1k) instead of American notation (1B, 1M, 1K)
+    axis_config["exponentformat"] = "SI"
+    
     return axis_config
 
 

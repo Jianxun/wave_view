@@ -37,9 +37,8 @@ class TestCLIPlotWorkflow(unittest.TestCase):
                 cli,
                 [
                     "plot",
-                    str(raw_file),
-                    "--spec",
                     str(spec_path),
+                    str(raw_file),
                     "--output",
                     str(output_path),
                     "--renderer",
