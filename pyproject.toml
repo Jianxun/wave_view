@@ -62,7 +62,7 @@ docs = [
     "sphinx-autodoc-typehints>=1.0.0",
     "sphinx-click>=1.0.0",
     "autodoc_pydantic>=2.0.0",
-    "sphinxcontrib-autodoc_pydantic"
+    "sphinxcontrib.autodoc_pydantic"
 ]
 jupyter = [
     "ipywidgets>=8.0.0",
