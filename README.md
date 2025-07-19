@@ -60,11 +60,14 @@ waveview signals your_simulation.raw --grep "clk"
 
 **Step 3: Plot**
 
-Edit your ``spec.yaml`` to include the signals you discovered, then use ``waveview plot`` to generate an interactive HTML file or display the plot directly.
+Edit your ``spec.yaml`` to include the signals you discovered, then use ``waveview plot`` to generate an interactive HTML file or display the plot directly. The command now supports a self-contained workflow where the raw file is specified directly in the YAML.
 
 ```bash
 # This command will open a browser window with your plot
 waveview plot spec.yaml
+
+# You can also override the raw file specified in the YAML
+waveview plot spec.yaml your_simulation.raw
 
 # To save the plot to a file instead
 waveview plot spec.yaml --output my_plot.html
@@ -245,14 +248,14 @@ make docs-serve  # Opens at http://localhost:8000
 
 ## Links
 
-- **Documentation**: [Local Build Available]
-- **PyPI Package**: [Coming Soon]  
+- **Documentation**: [Read the Docs](https://wave-view.readthedocs.io/)
+- **PyPI Package**: [PyPI](https://pypi.org/project/wave-view/)
 - **Issue Tracker**: [GitHub Issues](https://github.com/Jianxun/wave_view/issues)
 - **Changelog**: [CHANGELOG.md](CHANGELOG.md)
 
 ## Version
 
-Current version: **0.1.0** (Alpha)
+Current version: **1.1.0**
 
 ---
 
