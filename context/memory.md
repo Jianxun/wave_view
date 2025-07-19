@@ -157,11 +157,12 @@ fig.show()
 ```
 
 ## Release Status
-- **Current Version**: 0.1.0 (Published to PyPI)
-- **Next Version**: 1.0.0 (Major version with breaking changes)
-- **Migration Status**: ✅ **COMPLETE** - Ready for v1.0.0 release
+- **Current Version**: 1.0.1 (Published to PyPI) ✅ **SUCCESSFUL HOTFIX RELEASE**
+- **Previous Versions**: 0.1.0, 1.0.0 (Published to PyPI)
+- **Migration Status**: ✅ **COMPLETE** - v1.0.1 verified working in fresh environment
 - **API Stability**: Production-ready with clean, unified interface
 - **Legacy Code**: ✅ **COMPLETELY ELIMINATED** - Zero legacy components remain
+- **Critical Fix**: v1.0.1 adds missing pydantic dependency (v1.0.0 had import error)
 
 ## Architecture Status
 - **Clean 3-Step Workflow**: Discovery → Configuration → Plotting

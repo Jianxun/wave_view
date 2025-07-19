@@ -25,11 +25,11 @@ def cli():
 
 
 @cli.command()
-@click.argument('raw_file', type=click.Path(exists=True, path_type=Path))
-@click.option('--spec', '-s', 'spec_file',
+@click.argument('spec_file', type=click.Path(exists=True, path_type=Path))
+@click.argument('raw_file', type=click.Path(exists=True, path_type=Path), required=False)
+@click.option('--raw', 'raw_override',
               type=click.Path(exists=True, path_type=Path),
-              required=True,
-              help='YAML specification file for plot configuration')
+              help='Override raw file path (takes precedence over spec file raw: field)')
 @click.option('--output', '-o', 'output_file',
               type=click.Path(path_type=Path),
               help='Output file path (HTML, PNG, PDF, etc.). If not specified, plot will be displayed.')
@@ -44,30 +44,74 @@ def cli():
 @click.option('--renderer', type=click.Choice(['auto', 'browser', 'notebook', 'plotly_mimetype', 'json']), default='auto',
               show_default=True,
               help='Plotly renderer to use when displaying plot')
-def plot(raw_file: Path, spec_file: Path, output_file: Optional[Path] = None,
+def plot(spec_file: Path, raw_file: Optional[Path] = None, raw_override: Optional[Path] = None,
+         output_file: Optional[Path] = None,
          width: Optional[int] = None, height: Optional[int] = None,
          title: Optional[str] = None, theme: Optional[str] = None,
          renderer: str = 'auto'):
     """
     Plot SPICE waveforms using a specification file.
     
+    The raw file can be specified in three ways (in order of precedence):
+    1. --raw option (highest priority)
+    2. Second positional argument: wave_view plot spec.yaml sim.raw  
+    3. 'raw:' field in the YAML specification file (lowest priority)
+    
     Examples:
-        wave_view plot sim.raw --spec spec.yaml
-        wave_view plot sim.raw --spec spec.yaml --output plot.html
-        wave_view plot sim.raw --spec spec.yaml --width 1200 --height 800
-        wave_view plot sim.raw --spec spec.yaml --title "My Analysis" --theme plotly_dark
+        wave_view plot spec.yaml                           # Uses raw: field from YAML
+        wave_view plot spec.yaml sim.raw                   # Uses positional argument
+        wave_view plot spec.yaml --raw sim.raw             # Uses --raw option
+        wave_view plot spec.yaml --output plot.html        # Save to file
+        wave_view plot spec.yaml --width 1200 --height 800 # Override dimensions
+        wave_view plot spec.yaml --title "My Analysis"     # Override title
     """
     try:
         # Load the specification file
         click.echo(f"Loading plot specification from: {spec_file}")
         spec = PlotSpec.from_file(spec_file)
         
+        # Determine which raw file to use (precedence: --raw > positional > yaml raw: field)
+        final_raw_file = None
+        warning_msg = None
+        
+        if raw_override:
+            # --raw option takes highest precedence
+            final_raw_file = raw_override
+            if raw_file or spec.raw:
+                warning_msg = f"CLI --raw option overrides "
+                if raw_file:
+                    warning_msg += f"positional argument '{raw_file}'"
+                if raw_file and spec.raw:
+                    warning_msg += f" and YAML raw: field '{spec.raw}'"
+                elif spec.raw:
+                    warning_msg += f"YAML raw: field '{spec.raw}'"
+        elif raw_file:
+            # Positional argument takes second precedence
+            final_raw_file = raw_file
+            if spec.raw:
+                warning_msg = f"CLI positional argument '{raw_file}' overrides YAML raw: field '{spec.raw}'"
+        elif spec.raw:
+            # YAML raw: field takes lowest precedence
+            final_raw_file = Path(spec.raw)
+        else:
+            # No raw file specified anywhere
+            raise click.ClickException(
+                "No raw file specified. Use one of:\n"
+                "  1. --raw option: wave_view plot spec.yaml --raw sim.raw\n"
+                "  2. Positional argument: wave_view plot spec.yaml sim.raw\n"
+                "  3. Add 'raw: sim.raw' to your YAML specification file"
+            )
+        
+        # Emit warning if CLI overrides YAML
+        if warning_msg:
+            click.echo(f"Warning: {warning_msg}", err=True)
+        
         # Apply CLI overrides via helper
         _apply_overrides(spec, width=width, height=height, title=title, theme=theme)
         
         # Load SPICE data using helper
-        click.echo(f"Loading SPICE data from: {raw_file}")
-        data, _ = load_spice_raw(raw_file)
+        click.echo(f"Loading SPICE data from: {final_raw_file}")
+        data, _ = load_spice_raw(final_raw_file)
         
         # Create the plot using v1.0.0 API
         click.echo("Creating plot...")
