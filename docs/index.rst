@@ -4,7 +4,7 @@
    contain the root `toctree` directive.
 
 wave_view: A Python Toolkit for SPICE Simulation Waveform Visualization
-========================================
+========================================================================
 
 *wave_view* is a modern Python toolkit for turning raw SPICE ``.raw`` files into beautiful, interactive Plotly graphs.  Version 1.0.0 introduces a simple **three-step workflow**:
 
@@ -71,6 +71,8 @@ Contents
    installation
    quickstart
    configuration
+   schema
+   cli
    examples
 
 .. toctree::

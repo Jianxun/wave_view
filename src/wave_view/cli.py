@@ -1,3 +1,4 @@
+#! /usr/bin/env python
 """
 Wave View CLI interface.
 
@@ -10,6 +11,9 @@ from pathlib import Path
 from typing import Optional
 
 import plotly.io as pio
+from ruamel.yaml import YAML
+from ruamel.yaml.scalarstring import DoubleQuotedScalarString
+from ruamel.yaml.comments import CommentedMap
 
 from .core.plotspec import PlotSpec
 from .core.plotting import plot as create_plot
@@ -17,7 +21,12 @@ from .loader import load_spice_raw
 from .utils.env import configure_plotly_renderer
 
 
-@click.group()
+class CustomFormatter(click.HelpFormatter):
+    def write_epilog(self, epilog):
+        self.write_paragraph()
+        self.write_text(epilog)
+
+@click.group(context_settings=dict(help_option_names=['-h', '--help']))
 @click.version_option()
 def cli():
     """Wave View - SPICE Waveform Visualization CLI."""
@@ -54,17 +63,18 @@ def plot(spec_file: Path, raw_file: Optional[Path] = None, raw_override: Optiona
     
     The raw file can be specified in three ways (in order of precedence):
     1. --raw option (highest priority)
-    2. Second positional argument: wave_view plot spec.yaml sim.raw  
+    2. Second positional argument: waveview plot spec.yaml sim.raw  
     3. 'raw:' field in the YAML specification file (lowest priority)
     
     Examples:
-        wave_view plot spec.yaml                           # Uses raw: field from YAML
-        wave_view plot spec.yaml sim.raw                   # Uses positional argument
-        wave_view plot spec.yaml --raw sim.raw             # Uses --raw option
-        wave_view plot spec.yaml --output plot.html        # Save to file
-        wave_view plot spec.yaml --width 1200 --height 800 # Override dimensions
-        wave_view plot spec.yaml --title "My Analysis"     # Override title
+        waveview plot spec.yaml                           # Uses raw: field from YAML
+        waveview plot spec.yaml sim.raw                   # Uses positional argument
+        waveview plot spec.yaml --raw sim.raw             # Uses --raw option
+        waveview plot spec.yaml --output plot.html        # Save to file
+        waveview plot spec.yaml --width 1200 --height 800 # Override dimensions
+        waveview plot spec.yaml --title "My Analysis"     # Override title
     """
+    plot.formatter_class = CustomFormatter
     try:
         # Load the specification file
         click.echo(f"Loading plot specification from: {spec_file}")
@@ -97,8 +107,8 @@ def plot(spec_file: Path, raw_file: Optional[Path] = None, raw_override: Optiona
             # No raw file specified anywhere
             raise click.ClickException(
                 "No raw file specified. Use one of:\n"
-                "  1. --raw option: wave_view plot spec.yaml --raw sim.raw\n"
-                "  2. Positional argument: wave_view plot spec.yaml sim.raw\n"
+                "  1. --raw option: waveview plot spec.yaml --raw sim.raw\n"
+                "  2. Positional argument: waveview plot spec.yaml sim.raw\n"
                 "  3. Add 'raw: sim.raw' to your YAML specification file"
             )
         
@@ -143,6 +153,74 @@ def plot(spec_file: Path, raw_file: Optional[Path] = None, raw_override: Optiona
         sys.exit(1)
 
 
+@cli.command()
+@click.argument('raw_file', type=click.Path(exists=True, path_type=Path))
+def init(raw_file: Path):
+    """
+    Generate a sample plot_spec.yaml file from a raw file. \n 
+    Use the default independent variable as the X axis.\n
+    Use `waveview init sim.raw > spec.yaml` to save the spec.yaml file.
+    """
+    init.formatter_class = CustomFormatter
+    try:
+        data, _ = load_spice_raw(raw_file)
+        signals = list(data.keys())
+
+        if not signals:
+            click.echo("Error: No signals found in the raw file.", err=True)
+            sys.exit(1)
+
+        spec = CommentedMap()
+        spec.yaml_set_comment_before_after_key('title', before='Plot title (customize as needed)')
+        
+        spec['raw'] = DoubleQuotedScalarString(raw_file.name)
+        spec['title'] = DoubleQuotedScalarString(f"Analysis of {raw_file.name}")
+
+        x_comment = """X-axis configuration
+Independent variable of the simulation, default to the first signal in the raw file
+"""
+        spec.yaml_set_comment_before_after_key('x', before=x_comment)
+        x_axis = CommentedMap()
+        x_axis['signal'] = DoubleQuotedScalarString(signals[0])
+        x_axis['label'] = DoubleQuotedScalarString(f"{signals[0]} (s)")
+        spec['x'] = x_axis
+
+        y_comment = """Y-axis configuration (add or remove axes as needed)
+The Y-axis is specified as a list of sub-axes with a synchronized X-axis.
+Even if you have only one Y-axis, you still need to specify it as a list.
+Signal format: <Legend Name>: <Signal Name from Raw File>
+"""
+        spec.yaml_set_comment_before_after_key('y', before=y_comment)
+        y_axes = []
+        y_axis = CommentedMap()
+        y_axis['label'] = DoubleQuotedScalarString("Voltage (V)")
+        
+        y_signals = CommentedMap()
+        if len(signals) > 1:
+            for sig in signals[1:3]:
+                y_signals[sig] = DoubleQuotedScalarString(sig)
+        y_axis['signals'] = y_signals
+        y_axes.append(y_axis)
+        spec['y'] = y_axes
+
+        dimensions_comment = "Plot height and width in pixels. Remove to use the default (full page width)."
+        spec.yaml_set_comment_before_after_key('height', before=dimensions_comment)
+        spec['height'] = 600
+        spec['width'] = 800
+        spec['show_rangeslider'] = True
+
+        yaml = YAML()
+        yaml.indent(mapping=2, sequence=4, offset=2)
+        yaml.dump(spec, sys.stdout)
+
+    except FileNotFoundError as e:
+        click.echo(f"Error: {e}", err=True)
+        sys.exit(1)
+    except Exception as e:
+        click.echo(f"An unexpected error occurred: {e}", err=True)
+        sys.exit(1)
+
+
 def _save_figure(fig, output_file: Path):
     """Save figure to various formats based on file extension using a writer map."""
     writers = {
@@ -178,33 +256,52 @@ def _apply_overrides(spec: PlotSpec, **overrides):
 @click.argument('raw_file', type=click.Path(exists=True, path_type=Path))
 @click.option('--limit', '-l', type=int, default=10,
               help='Limit number of signals to display (default: 10)')
-def signals(raw_file: Path, limit: int):
+@click.option('--all', '-a', 'show_all', is_flag=True,
+              help='Show all signals, ignoring the limit')
+@click.option('--grep', help='Filter signals by regular expression')
+def signals(raw_file: Path, limit: int, show_all: bool, grep: Optional[str]):
     """
     List available signals in a SPICE raw file.
-    
-    Examples:
-        wave_view signals sim.raw
-        wave_view signals sim.raw --limit 20
+
     """
     try:
         click.echo(f"Loading SPICE data from: {raw_file}")
         data, _ = load_spice_raw(raw_file)
         
         signals = list(data.keys())
-        click.echo(f"\nFound {len(signals)} signals:")
+        
+        if grep:
+            import re
+            try:
+                original_signals = len(signals)
+                signals = [s for s in signals if re.search(grep, s)]
+                click.echo(f"\nFound {len(signals)} signals (out of {original_signals} total):")
+            except re.error as e:
+                raise click.ClickException(f"Invalid regular expression: {e}")
+        else:
+            click.echo(f"\nFound {len(signals)} signals:")
+            
+        display_limit = len(signals) if show_all else limit
         
         # Display signals with numbering
-        for i, signal in enumerate(signals[:limit], 1):
+        for i, signal in enumerate(signals[:display_limit], 1):
             click.echo(f"  {i:2d}. {signal}")
         
-        if len(signals) > limit:
-            click.echo(f"  ... and {len(signals) - limit} more signals")
-            click.echo(f"  (Use --limit {len(signals)} to show all)")
+        if len(signals) > display_limit:
+            click.echo(f"  ... and {len(signals) - display_limit} more signals")
+            click.echo(f"  (Use --limit {len(signals)} or -a to show all)")
         
     except Exception as e:
         click.echo(f"Error: {e}", err=True)
         sys.exit(1)
 
+signals.epilog = """
+Examples:\n
+  waveview signals sim.raw\n
+  waveview signals sim.raw --limit 20\n
+  waveview signals sim.raw -a\n
+  waveview signals sim.raw --grep "v("
+"""
 
 if __name__ == '__main__':
     cli() 

@@ -3,7 +3,7 @@ title: "AC Analysis - Frequency Response (Bode Plot)"
 x:
     signal: "frequency"
     label: "Frequency (Hz)"
-    log_scale: true
+    scale: log
 y:
   - label: "Magnitude (dB)"
     signals:

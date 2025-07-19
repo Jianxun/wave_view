@@ -276,10 +276,7 @@ title_x: 0.5
 title_xanchor: "center"
 show_legend: true
 grid: true
-zoom_buttons: true
-zoom_buttons_x: 0.05
-zoom_buttons_y: 1.05
-show_rangeslider: false
+show_rangeslider: true
 """)
 
 fig = wv.plot(data, spec)

@@ -1,9 +1,10 @@
 import pytest
+import unittest
 
 from wave_view.core.plotting import create_layout
 
 
-class TestCreateLayoutEdgeCases:
+class TestCreateLayoutEdgeCases(unittest.TestCase):
     """Edge-case verification for create_layout()."""
 
     def test_single_axis_defaults(self):
@@ -16,12 +17,12 @@ class TestCreateLayoutEdgeCases:
         layout = create_layout(cfg)
 
         # X-axis basic checks
-        assert layout["xaxis"]["title"] == "time"
-        assert layout["xaxis"]["rangeslider"]["visible"] is True
+        self.assertEqual(layout["xaxis"]["title"], "time")
+        self.assertTrue(layout["xaxis"]["rangeslider"]["visible"])
 
         # Y-axis occupies full domain
-        assert layout["yaxis"]["domain"] == [0, 1]
-        assert layout["yaxis"]["title"] == "Voltage"
+        self.assertEqual(layout["yaxis"]["domain"], [0, 1])
+        self.assertEqual(layout["yaxis"]["title"], "Voltage")
 
     def test_multi_axis_domain_order_and_gap(self):
         cfg = {
@@ -38,29 +39,72 @@ class TestCreateLayoutEdgeCases:
         top_dom = layout["yaxis"]["domain"]
         bottom_dom = layout["yaxis2"]["domain"]
 
-        assert top_dom[1] == pytest.approx(1.0)
+        self.assertAlmostEqual(top_dom[1], 1.0)
         # bottom axis upper bound must be below top axis lower bound (gap)
-        assert bottom_dom[1] < top_dom[0]
+        self.assertLess(bottom_dom[1], top_dom[0])
         # grid flag propagated
-        assert layout["yaxis"]["showgrid"] is False
-        assert layout["yaxis2"]["showgrid"] is False
+        self.assertFalse(layout["yaxis"]["showgrid"])
+        self.assertFalse(layout["yaxis2"]["showgrid"])
 
     def test_log_scale_and_range_propagation(self):
-        cfg = {
-            "x": {"signal": "time"},
+        """Test that log scale and range are correctly propagated to layout."""
+        # Test case 1: Log scale and range on X-axis and one Y-axis
+        config = {
+            "x": {
+                "signal": "time",
+                "scale": "log",
+                "range": [1e-9, 1e-6]
+            },
             "y": [
                 {
+                    "label": "Voltage",
+                    "signals": {"V(out)": "v(out)"},
+                    "scale": "log",
+                    "range": [0.1, 1.2]
+                },
+                {
                     "label": "Current",
-                    "signals": {"I": "i"},
-                    "log_scale": True,
-                    "range": [1e-3, 1e-1],
+                    "signals": {"I(Vdd)": "i(vdd)"}
                 }
-            ],
+            ]
         }
-        layout = create_layout(cfg)
-        yaxis_cfg = layout["yaxis"]
-        assert yaxis_cfg["type"] == "log"
-        assert yaxis_cfg["range"] == [1e-3, 1e-1]
+        
+        layout = create_layout(config)
+        
+        # Verify X-axis
+        self.assertEqual(layout["xaxis"]["type"], "log")
+        self.assertEqual(layout["xaxis"]["range"], [1e-9, 1e-6])
+        
+        # Verify Y-axis 1
+        self.assertEqual(layout["yaxis"]["type"], "log")
+        self.assertEqual(layout["yaxis"]["range"], [0.1, 1.2])
+        
+        # Verify Y-axis 2 (no specific settings)
+        self.assertEqual(layout["yaxis2"]["type"], "linear")
+        self.assertNotIn("range", layout["yaxis2"])
+
+    def test_linear_scale_and_no_range(self):
+        """Test that linear scale and no range are default."""
+        # Test case 2: Linear scale (default) and no range
+        config = {
+            "x": {"signal": "time"},
+            "y": [
+                {"label": "Voltage", "signals": {"V(out)": "v(out)"}},
+                {"label": "Current", "signals": {"I(Vdd)": "i(vdd)"}}
+            ]
+        }
+        
+        layout = create_layout(config)
+        
+        # Verify X-axis
+        self.assertEqual(layout["xaxis"]["type"], "linear")
+        self.assertNotIn("range", layout["xaxis"])
+        
+        # Verify Y-axes
+        self.assertEqual(layout["yaxis"]["type"], "linear")
+        self.assertNotIn("range", layout["yaxis"])
+        self.assertEqual(layout["yaxis2"]["type"], "linear")
+        self.assertNotIn("range", layout["yaxis2"])
 
     def test_disable_rangeslider(self):
         cfg = {
@@ -71,7 +115,7 @@ class TestCreateLayoutEdgeCases:
             "show_rangeslider": False,
         }
         layout = create_layout(cfg)
-        assert layout["xaxis"]["rangeslider"]["visible"] is False
+        self.assertFalse(layout["xaxis"]["rangeslider"]["visible"])
 
 
 class TestSIEngineeringNotationEdgeCases:
@@ -97,9 +141,9 @@ class TestSIEngineeringNotationEdgeCases:
         layout = create_layout(config)
         
         # SI engineering notation should be enabled for all X-axes
-        assert layout["xaxis"]["exponentformat"] == "SI"
-        assert layout["xaxis"]["type"] == "log"
-        assert layout["xaxis"]["title"] == "Frequency (Hz)"
+        self.assertEqual(layout["xaxis"]["exponentformat"], "SI")
+        self.assertEqual(layout["xaxis"]["type"], "log")
+        self.assertEqual(layout["xaxis"]["title"], "Frequency (Hz)")
     
     def test_time_domain_x_axis_uses_si_notation(self):
         """Time domain X-axis should also use SI engineering notation."""
@@ -121,8 +165,8 @@ class TestSIEngineeringNotationEdgeCases:
         layout = create_layout(config)
         
         # SI engineering notation should be enabled for all signals
-        assert layout["xaxis"]["exponentformat"] == "SI"
-        assert layout["xaxis"]["title"] == "Time (s)"
+        self.assertEqual(layout["xaxis"]["exponentformat"], "SI")
+        self.assertEqual(layout["xaxis"]["title"], "Time (s)")
 
     def test_y_axes_use_si_notation(self):
         """All Y-axes should use SI engineering notation."""
@@ -148,7 +192,7 @@ class TestSIEngineeringNotationEdgeCases:
         layout = create_layout(config)
         
         # SI engineering notation should be enabled for all Y-axes
-        assert layout["yaxis"]["exponentformat"] == "SI"
-        assert layout["yaxis2"]["exponentformat"] == "SI"
-        assert layout["yaxis"]["title"] == "Voltage (V)"
-        assert layout["yaxis2"]["title"] == "Current (A)" 
+        self.assertEqual(layout["yaxis"]["exponentformat"], "SI")
+        self.assertEqual(layout["yaxis2"]["exponentformat"], "SI")
+        self.assertEqual(layout["yaxis"]["title"], "Voltage (V)")
+        self.assertEqual(layout["yaxis2"]["title"], "Current (A)") 

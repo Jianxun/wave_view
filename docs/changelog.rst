@@ -22,7 +22,7 @@ Version 1.0.0 (2025-07-XX)
 * **Package Namespace Trimmed** – Public API now exposes exactly four symbols: ``load_spice_raw``, ``PlotSpec``, ``plot``, and ``WaveDataset``.
 
 🎉 **New Features & Improvements**
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 * **PlotSpec 1.0** – Pydantic-validated model with helpers ``PlotSpec.from_yaml`` and ``PlotSpec.model_validate``.
 * **Standalone Plotting Module** – Refactored ``core.plotting`` with cleaner helpers, automatic zoom config, correct Y-axis ordering, and ~75 % complexity reduction.

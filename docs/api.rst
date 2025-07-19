@@ -20,28 +20,4 @@ Main API Symbols
    plot
    load_spice_raw
    PlotSpec
-   WaveDataset
-
-Data Loading
-------------
-
-.. autofunction:: load_spice_raw
-
-Configuration – PlotSpec
-------------------------
-
-.. autoclass:: wave_view.PlotSpec
-   :members:
-   :show-inheritance:
-
-Plotting
---------
-
-.. autofunction:: plot
-
-Data Container – WaveDataset
-----------------------------
-
-.. autoclass:: wave_view.WaveDataset
-   :members:
-   :show-inheritance: 
+   WaveDataset 

@@ -19,8 +19,11 @@ build>=0.8.0  # For building packages
 sphinx>=5.0.0
 sphinx-rtd-theme>=1.0.0
 myst-parser>=0.18.0
+sphinx-autodoc-typehints>=1.0.0
+sphinx-click>=1.0.0
+ruamel.yaml>=0.17.0
 
 # Jupyter development
 ipywidgets>=8.0.0
 jupyter>=1.0.0
-jupyterlab>=3.0.0 
+jupyterlab>=3.0.0
