@@ -69,3 +69,6 @@ Thumbs.db
 
 # Git workflow
 git_commit_message*
+
+context/
+.cursor/
