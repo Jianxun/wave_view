@@ -40,31 +40,15 @@ Creating a PlotSpec
 
 Once you have a PlotSpec, pass it to :func:`wave_view.plot` together with the *data* dictionary returned by :func:`wave_view.load_spice_raw`.
 
-YAML / Dict Schema
-------------------
+Schema Reference
+----------------
 
-Top-level keys
-~~~~~~~~~~~~~~
-
-``title`` *(optional)* – Overall figure title.  
-``x`` *(required)* – Name of the signal used for the x-axis.  
-``y`` *(required)* – A list of **y-axis groups** (each group shares axis formatting).
-
-Y-axis group keys
-~~~~~~~~~~~~~~~~~
-
-``label`` *(optional)* – Text shown next to the axis.  
-``scale`` *(optional)* – ``linear`` *(default)* or ``log``.  
-``signals`` *(required)* – Mapping of legend names to **signal references**.
-
-Signal reference syntax
-~~~~~~~~~~~~~~~~~~~~~~~
-
-1. **SPICE trace** – e.g. ``v(out)``, ``i(m1)``  
-2. **Processed data** – prefix the key with ``data.`` *or* pass the NumPy array directly and reference it by name.
+For the complete field-by-field documentation of all configuration options, see the :doc:`schema` reference page, which is automatically generated from the Pydantic model definitions.
 
 Example PlotSpec
 ----------------
+
+Here's a comprehensive example showing common configuration options:
 
 .. code-block:: yaml
 
@@ -81,7 +65,7 @@ Example PlotSpec
        scale: "log"
        signals:
          IM1: "i(m1)"
-
+   
 Processed / Derived Signals
 ---------------------------
 

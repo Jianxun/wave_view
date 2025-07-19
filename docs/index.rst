@@ -71,6 +71,7 @@ Contents
    installation
    quickstart
    configuration
+   schema
    cli
    examples
 
