@@ -20,7 +20,12 @@ from .loader import load_spice_raw
 from .utils.env import configure_plotly_renderer
 
 
-@click.group()
+class CustomFormatter(click.HelpFormatter):
+    def write_epilog(self, epilog):
+        self.write_paragraph()
+        self.write_text(epilog)
+
+@click.group(context_settings=dict(help_option_names=['-h', '--help']))
 @click.version_option()
 def cli():
     """Wave View - SPICE Waveform Visualization CLI."""
@@ -68,6 +73,7 @@ def plot(spec_file: Path, raw_file: Optional[Path] = None, raw_override: Optiona
         waveview plot spec.yaml --width 1200 --height 800 # Override dimensions
         waveview plot spec.yaml --title "My Analysis"     # Override title
     """
+    plot.formatter_class = CustomFormatter
     try:
         # Load the specification file
         click.echo(f"Loading plot specification from: {spec_file}")
@@ -154,6 +160,7 @@ def init(raw_file: Path):
     Use the default independent variable as the X axis.\n
     Use `waveview init sim.raw > spec.yaml` to save the spec.yaml file.
     """
+    init.formatter_class = CustomFormatter
     try:
         data, _ = load_spice_raw(raw_file)
         signals = list(data.keys())
@@ -248,33 +255,52 @@ def _apply_overrides(spec: PlotSpec, **overrides):
 @click.argument('raw_file', type=click.Path(exists=True, path_type=Path))
 @click.option('--limit', '-l', type=int, default=10,
               help='Limit number of signals to display (default: 10)')
-def signals(raw_file: Path, limit: int):
+@click.option('--all', '-a', 'show_all', is_flag=True,
+              help='Show all signals, ignoring the limit')
+@click.option('--grep', help='Filter signals by regular expression')
+def signals(raw_file: Path, limit: int, show_all: bool, grep: Optional[str]):
     """
     List available signals in a SPICE raw file.
-    
-    Examples:
-        waveview signals sim.raw
-        waveview signals sim.raw --limit 20
+
     """
     try:
         click.echo(f"Loading SPICE data from: {raw_file}")
         data, _ = load_spice_raw(raw_file)
         
         signals = list(data.keys())
-        click.echo(f"\nFound {len(signals)} signals:")
+        
+        if grep:
+            import re
+            try:
+                original_signals = len(signals)
+                signals = [s for s in signals if re.search(grep, s)]
+                click.echo(f"\nFound {len(signals)} signals (out of {original_signals} total):")
+            except re.error as e:
+                raise click.ClickException(f"Invalid regular expression: {e}")
+        else:
+            click.echo(f"\nFound {len(signals)} signals:")
+            
+        display_limit = len(signals) if show_all else limit
         
         # Display signals with numbering
-        for i, signal in enumerate(signals[:limit], 1):
+        for i, signal in enumerate(signals[:display_limit], 1):
             click.echo(f"  {i:2d}. {signal}")
         
-        if len(signals) > limit:
-            click.echo(f"  ... and {len(signals) - limit} more signals")
-            click.echo(f"  (Use --limit {len(signals)} to show all)")
+        if len(signals) > display_limit:
+            click.echo(f"  ... and {len(signals) - display_limit} more signals")
+            click.echo(f"  (Use --limit {len(signals)} or -a to show all)")
         
     except Exception as e:
         click.echo(f"Error: {e}", err=True)
         sys.exit(1)
 
+signals.epilog = """
+Examples:
+  waveview signals sim.raw
+  waveview signals sim.raw --limit 20
+  waveview signals sim.raw -a
+  waveview signals sim.raw --grep "v("
+"""
 
 if __name__ == '__main__':
     cli() 
