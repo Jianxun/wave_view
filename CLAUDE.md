@@ -119,7 +119,6 @@ src/wave_view/
 ### Configuration Files
 
 - **pyproject.toml**: Primary configuration with dependencies, development tools, and build settings
-- **pytest.ini**: Legacy pytest configuration (mainly ignores old test files)
 - **Makefile**: Development convenience commands
 - **.cursor/rules/**: Development guidelines and workflow documentation
 
@@ -132,3 +131,102 @@ Tests are organized by component type:
 - Test data stored in `tests/raw_files/`
 
 The project follows test-driven development with incremental testing of individual features.
+
+## Cross-Session Context Management
+
+This project implements a comprehensive system for maintaining continuity across multiple Claude Code sessions.
+
+### Context Files (Always Read First!)
+
+**Essential files to read when starting a new session:**
+
+1. **`context/memory.md`** - Project state and history
+   - Current architecture status and version information
+   - Recent achievements and milestones
+   - Key decisions and breaking changes
+   - Development branch status
+
+2. **`context/todo.md`** - Task tracking and planning
+   - Current sprint priorities
+   - Backlog items with clear descriptions
+   - Completed tasks for reference
+
+3. **`CLAUDE.md`** (this file) - Development commands and architecture
+
+### Session Workflow
+
+#### Starting a New Session
+```bash
+# 1. Understand current state
+cat context/memory.md context/todo.md
+
+# 2. Check git status
+git branch && git status && git log --oneline -5
+
+# 3. Review development environment
+cat CLAUDE.md  # Commands and architecture overview
+
+# 4. Plan session focus based on current todos
+```
+
+#### During Development
+- Use the TodoWrite tool to track progress within the session
+- Follow test-driven development practices
+- Make frequent, atomic commits with descriptive messages
+- Focus on one feature/task type per branch
+
+#### Ending a Session
+```bash
+# 1. Update context with progress
+# Edit context/memory.md to add recent work
+# Edit context/todo.md to mark completed tasks
+
+# 2. Commit all changes
+git add . && git commit -m "descriptive message"
+
+# 3. Leave clean state for next session
+git status  # Should be clean
+```
+
+### Development Guidelines
+
+Based on `.cursor/rules/development-guidelines.mdc`:
+
+#### Branch Management
+- **Single Purpose**: Each branch has one clear focus (features OR tests OR docs)
+- **Descriptive Names**: `feature_name`, `test_suite_development`, `docs_update_description`
+- **Clean History**: Keep commits focused and organized
+
+#### Task Management
+- **Context Files**: Update `context/memory.md` and `context/todo.md` at session end
+- **Progressive Development**: Build features incrementally
+- **Test-First**: Create tests before implementing features when possible
+
+#### Quality Standards
+- All tests must pass before committing
+- Run `make test` to verify full test suite
+- Use code quality tools: `black`, `mypy`, `flake8`, `isort`
+
+### Current Project Status
+
+**Version**: 1.1.1  
+**Architecture**: v1.0.0 modern API (fully implemented)  
+**Test Coverage**: 61 tests passing with good coverage  
+**Recent Branch**: `housekeeping-cleanup` (consolidated configurations and refactored PlotSpec.to_dict())
+
+**Next Priorities** (check `context/todo.md` for current sprint):
+- Documentation updates for v1.1.0
+- Final testing and release preparation
+- Advanced features in backlog
+
+### Key Commands for Quick Start
+```bash
+# Set up development environment
+make dev
+
+# Run tests to verify everything works
+make test
+
+# Check current priorities
+cat context/todo.md
+```
