@@ -152,7 +152,11 @@ def plot(
 
         # Load SPICE data using helper
         click.echo(f"Loading SPICE data from: {final_raw_file}")
-        data, _ = load_spice_raw(final_raw_file)
+        dataset = load_spice_raw(final_raw_file)
+        # Convert to dict for backward compatibility with existing logic
+        data = {var: dataset[var].values for var in dataset.data_vars}
+        for coord in dataset.coords:
+            data[coord] = dataset.coords[coord].values
 
         # Create the plot using v1.0.0 API
         click.echo("Creating plot...")
@@ -194,8 +198,9 @@ def init(raw_file: Path):
     """
     init.formatter_class = CustomFormatter
     try:
-        data, _ = load_spice_raw(raw_file)
-        signals = list(data.keys())
+        dataset = load_spice_raw(raw_file)
+        # Get signals from both coordinates and data variables (coordinates first for x-axis)
+        signals = list(dataset.coords.keys()) + list(dataset.data_vars.keys())
 
         if not signals:
             click.echo("Error: No signals found in the raw file.", err=True)
@@ -305,9 +310,9 @@ def signals(raw_file: Path, limit: int, show_all: bool, grep: Optional[str]):
     """
     try:
         click.echo(f"Loading SPICE data from: {raw_file}")
-        data, _ = load_spice_raw(raw_file)
+        dataset = load_spice_raw(raw_file)
 
-        signals = list(data.keys())
+        signals = list(dataset.coords.keys()) + list(dataset.data_vars.keys())
 
         if grep:
             import re
