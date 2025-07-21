@@ -46,13 +46,19 @@ class TestLoadSpiceRaw:
         with patch.object(
             wv_loader.WaveDataset, "from_raw", return_value=self._mock_dataset()
         ) as m_from:
-            data, meta = wv_loader.load_spice_raw(f)
+            result = wv_loader.load_spice_raw(f)
 
-        # Verify mapping built correctly
-        assert set(data.keys()) == {"time", "v(out)"}
-        for arr in data.values():
-            np.testing.assert_array_equal(arr, np.array([0, 1, 2]))
-        assert meta == {"corner": "tt"}
+        # Should return xarray Dataset (breaking change from v2.0.0)
+        assert isinstance(result, xr.Dataset)
+        
+        # Verify data structure - time should be coordinate, v(out) should be data variable
+        assert "time" in result.coords
+        assert "v(out)" in result.data_vars
+        np.testing.assert_array_equal(result.coords["time"].values, np.array([0, 1, 2]))
+        np.testing.assert_array_equal(result["v(out)"].values, np.array([0, 1, 2]))
+        
+        # Verify metadata is in attributes
+        assert result.attrs == {"corner": "tt"}
         m_from.assert_called_once_with(str(f))
 
     def test_file_not_found_bubbles_up(self):
@@ -67,12 +73,20 @@ class TestLoadSpiceRawBatch:
         for p in (p1, p2):
             p.write_text("D")
 
+        # Mock an xarray Dataset return value
+        mock_dataset = xr.Dataset(
+            data_vars={"sig": (["time"], np.array([1]))},
+            coords={"time": np.array([0])},
+            attrs={}
+        )
+        
         with patch.object(
-            wv_loader, "load_spice_raw", return_value=({"sig": np.array([1])}, {})
+            wv_loader, "load_spice_raw", return_value=mock_dataset
         ) as m_load:
             results = wv_loader.load_spice_raw_batch([p1, p2])
 
         assert len(results) == 2
+        assert all(isinstance(r, xr.Dataset) for r in results)
         assert m_load.call_count == 2
         m_load.assert_any_call(p1)
         m_load.assert_any_call(p2)
