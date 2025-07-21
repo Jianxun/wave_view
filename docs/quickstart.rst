@@ -57,22 +57,22 @@ For more advanced use cases, the Python API provides full control over data load
 
 The API follows a clear three-step workflow:
 
-1.  **Data Loading** – Load the raw ``.raw`` file with :func:`wave_view.load_spice_raw`.
-2.  **Configuration** – Describe what you want to see using :class:`wave_view.PlotSpec`.
-3.  **Plotting** – Call :func:`wave_view.plot` to get a Plotly figure.
+1.  **Data Loading** – Load the raw ``.raw`` file with :func:`yaml2plot.load_spice_raw`.
+2.  **Configuration** – Describe what you want to see using :class:`yaml2plot.PlotSpec`.
+3.  **Plotting** – Call :func:`yaml2plot.plot` to get a Plotly figure.
 
 **Minimal Example**
 
 .. code-block:: python
 
-   import wave_view as wv
+   import yaml2plot as y2p
 
    # 1. Load data from a .raw file
-   data, _ = wv.load_spice_raw("your_simulation.raw")
+   data, _ = y2p.load_spice_raw("your_simulation.raw")
    print(f"Signals available: {list(data.keys())[:5]}...")
 
    # 2. Configure the plot using a YAML string
-   spec = wv.PlotSpec.from_yaml("""
+   spec = y2p.PlotSpec.from_yaml("""
    title: "My Simulation Results"
    x:
      signal: "time"
@@ -85,7 +85,7 @@ The API follows a clear three-step workflow:
    """)
 
    # 3. Create and display the plot
-   fig = wv.plot(data, spec)
+   fig = y2p.plot(data, spec)
    fig.show()
 
 **Advanced Example: Plotting Derived Signals**
@@ -95,16 +95,16 @@ Because the API gives you direct access to the data as NumPy arrays, you can eas
 .. code-block:: python
 
    import numpy as np
-   import wave_view as wv
+   import yaml2plot as y2p
 
    # Load the data
-   data, _ = wv.load_spice_raw("your_simulation.raw")
+   data, _ = y2p.load_spice_raw("your_simulation.raw")
 
    # Calculate a new, derived signal
    data["diff_voltage"] = data["v(out_p)"] - data["v(out_n)"]
 
    # Create a spec that plots both raw and derived signals
-   spec = wv.PlotSpec.from_yaml("""
+   spec = y2p.PlotSpec.from_yaml("""
    title: "Differential Output Voltage"
    x:
      signal: "time"
@@ -118,7 +118,7 @@ Because the API gives you direct access to the data as NumPy arrays, you can eas
    """)
 
    # Create and display the plot
-   fig = wv.plot(data, spec)
+   fig = y2p.plot(data, spec)
    fig.show()
 
 Next Steps

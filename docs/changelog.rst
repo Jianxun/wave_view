@@ -1,7 +1,7 @@
 Changelog
 =========
 
-All notable changes to wave_view will be documented in this file.
+All notable changes to yaml2plot will be documented in this file.
 
 Version 1.0.0 (2025-07-XX)
 --------------------------

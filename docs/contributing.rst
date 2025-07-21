@@ -1,7 +1,7 @@
 Contributing
 ============
 
-We welcome contributions to wave_view! This guide will help you get started.
+We welcome contributions to yaml2plot! This guide will help you get started.
 
 Development Setup
 -----------------
@@ -10,8 +10,8 @@ Development Setup
 
 .. code-block:: bash
 
-   git clone https://github.com/Jianxun/wave_view.git
-   cd wave_view
+   git clone https://github.com/Jianxun/yaml2plot.git
+   cd yaml2plot
 
 2. **Create Virtual Environment**:
 
@@ -51,7 +51,7 @@ Running Tests
    pytest
    
    # Run with coverage
-   pytest --cov=wave_view
+   pytest --cov=yaml2plot
    
    # Run specific test file
    pytest tests/test_api.py
@@ -170,14 +170,14 @@ Core Principles
 Module Organization
 ~~~~~~~~~~~~~~~~~~~
 
-* ``src/wave_view/`` – Public package root
+* ``src/yaml2plot/`` – Public package root
   * ``__init__.py`` – Exposes **only** ``load_spice_raw``, ``PlotSpec``, ``plot``, and ``WaveDataset``
   * ``core/`` – Core implementation modules
     * ``plotspec.py`` – Pydantic model that defines the PlotSpec schema
     * ``plotting.py`` – Pure function-based plotting helpers and ``plot``
     * ``wavedataset.py`` – Thin wrapper around ``spicelib`` for fast raw-file loading
   * ``loader.py`` – Convenience wrapper that powers ``load_spice_raw``
-  * ``cli.py`` – Command-line interface built on the v1.0.0 API
+  * ``cli.py`` – Command-line interface built on the v2.0.0 API
   * ``utils/`` – Small internal utilities (e.g. ``env.py`` for renderer selection)
 
 Legacy files (``reader.py``, ``config.py``, ``plotter.py``) were removed in 1.0.0 – do **not** add code to those names.
@@ -207,7 +207,7 @@ Bug Report Template
 .. code-block:: text
 
    **Environment**:
-   - wave_view version: 
+   - yaml2plot version: 
    - Python version:
    - Operating System:
    
@@ -256,4 +256,4 @@ Contributors will be recognized in:
 * Release notes
 * Package metadata
 
-Thank you for contributing to wave_view! 
+Thank you for contributing to yaml2plot! 

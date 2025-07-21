@@ -1,7 +1,7 @@
 Configuration Guide
 ===================
 
-*wave_view* 1.0.0 uses a single configuration model — :class:`wave_view.PlotSpec` — to describe everything you want to see in a plot.  A PlotSpec is simply structured data (YAML, JSON, or a Python dictionary) that defines:
+*yaml2plot* 2.0.0 uses a single configuration model — :class:`yaml2plot.PlotSpec` — to describe everything you want to see in a plot.  A PlotSpec is simply structured data (YAML, JSON, or a Python dictionary) that defines:
 
 * **x** – which signal provides the x-axis (usually ``time`` or ``frequency``)
 * **y** – one or more groups of y-axis traces
@@ -14,13 +14,13 @@ Creating a PlotSpec
 
 .. code-block:: python
 
-   import wave_view as wv
+   import yaml2plot as y2p
 
    # from a YAML file
-   spec = wv.PlotSpec.from_file("config.yaml")
+   spec = y2p.PlotSpec.from_file("config.yaml")
 
    # from an inline YAML string
-   spec = wv.PlotSpec.from_yaml("""
+   spec = y2p.PlotSpec.from_yaml("""
    title: "Transient Analysis"
    x: 
     signal: "time"
@@ -36,9 +36,9 @@ Creating a PlotSpec
        "x": {"signal": "time", "label": "Time (s)"},
        "y": [{"label": "Current", "signals": {"M1": "i(m1)"}}],
    }
-   spec = wv.PlotSpec.model_validate(dict_spec)
+   spec = y2p.PlotSpec.model_validate(dict_spec)
 
-Once you have a PlotSpec, pass it to :func:`wave_view.plot` together with the *data* dictionary returned by :func:`wave_view.load_spice_raw`.
+Once you have a PlotSpec, pass it to :func:`yaml2plot.plot` together with the *data* dictionary returned by :func:`yaml2plot.load_spice_raw`.
 
 Schema Reference
 ----------------
@@ -73,15 +73,15 @@ To plot *derived* signals just insert them into the same ``data`` dictionary –
 
 .. code-block:: python
 
-   import numpy as np, wave_view as wv
+   import numpy as np, yaml2plot as y2p
 
-   data, _ = wv.load_spice_raw("simulation.raw")
+   data, _ = y2p.load_spice_raw("simulation.raw")
    power = data["v(out)"] * data["i(out)"]
 
    # Append the derived signal to the data dict
    data["power"] = power
 
-   spec = wv.PlotSpec.from_yaml("""
+   spec = y2p.PlotSpec.from_yaml("""
    x: 
     signal: "time"
     label: "Time (s)"
@@ -92,21 +92,21 @@ To plot *derived* signals just insert them into the same ``data`` dictionary –
          Power: "power"   # shorthand for data key
    """)
 
-   fig = wv.plot(data, spec)
+   fig = y2p.plot(data, spec)
 
 Multiple Configurations
 -----------------------
 
-For complex analyses you can create multiple PlotSpecs and call :func:`wave_view.plot` multiple times:
+For complex analyses you can create multiple PlotSpecs and call :func:`yaml2plot.plot` multiple times:
 
 .. code-block:: python
 
-   voltage_spec = wv.PlotSpec.from_file("voltage.yaml")
-   current_spec = wv.PlotSpec.from_file("current.yaml")
+   voltage_spec = y2p.PlotSpec.from_file("voltage.yaml")
+   current_spec = y2p.PlotSpec.from_file("current.yaml")
 
-   data, _ = wv.load_spice_raw("simulation.raw")
-   fig_v = wv.plot(data, voltage_spec)
-   fig_i = wv.plot(data, current_spec)
+   data, _ = y2p.load_spice_raw("simulation.raw")
+   fig_v = y2p.plot(data, voltage_spec)
+   fig_i = y2p.plot(data, current_spec)
 
 Best Practices
 --------------
@@ -118,4 +118,4 @@ Best Practices
 
 ---
 
-That's all you need to describe plots with *wave_view* 1.0.0.  Explore the :doc:`quickstart` for an end-to-end example, or dive into :doc:`api` for full symbol documentation. 
+That's all you need to describe plots with *yaml2plot* 2.0.0.  Explore the :doc:`quickstart` for an end-to-end example, or dive into :doc:`api` for full symbol documentation. 

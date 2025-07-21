@@ -4,6 +4,19 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'docs/**'
+      - 'src/**'
+      - '.github/workflows/docs.yml'
+      - 'pyproject.toml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'docs/**'
+      - 'src/**'
+      - '.github/workflows/docs.yml'
+      - 'pyproject.toml'
 
 jobs:
   build-docs:
@@ -17,19 +30,39 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.x'
+          python-version: '3.11'
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -e ".[docs]"
+          pip install -e ".[dev,docs]"
 
+      - name: Create missing directories
+        run: |
+          mkdir -p docs/_static
+          
       - name: Build Sphinx documentation
         run: |
-          make -C docs html
+          make docs
+          
+      - name: Add .nojekyll file
+        run: |
+          touch docs/_build/html/.nojekyll
+          
+      - name: Verify documentation build
+        run: |
+          echo "Checking that index.html was created..."
+          ls -la docs/_build/html/index.html
+          echo "Checking that yaml2plot pages exist..."
+          ls -la docs/_build/html/_autosummary/yaml2plot.*.html || echo "Warning: yaml2plot autosummary pages not found"
 
       - name: Deploy to GitHub Pages
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./docs/_build/html 
+          publish_dir: ./docs/_build/html
+          force_orphan: true
+          user_name: 'github-actions[bot]'
+          user_email: 'github-actions[bot]@users.noreply.github.com'
+          commit_message: 'Deploy yaml2plot docs to GitHub Pages' 

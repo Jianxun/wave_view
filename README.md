@@ -151,8 +151,8 @@ fig.show()
 
 ```bash
 # Clone the repository
-git clone https://github.com/Jianxun/wave_view.git
-cd wave_view
+git clone https://github.com/Jianxun/yaml2plot.git
+cd yaml2plot
 
 # Create and activate virtual environment
 python -m venv venv
@@ -163,7 +163,7 @@ pip install -e .
 pip install -r requirements-dev.txt
 
 # Verify development setup
-python -c "import wave_view as wv; print('Development setup complete!')"
+python -c "import yaml2plot as y2p; print('Development setup complete!')"
 ```
 
 ### Run Tests
@@ -173,7 +173,7 @@ python -c "import wave_view as wv; print('Development setup complete!')"
 pytest
 
 # With coverage
-pytest --cov=wave_view --cov-report=html
+pytest --cov=yaml2plot --cov-report=html
 
 # Run specific test file
 pytest tests/workflows/test_cli_plot.py -v
@@ -182,8 +182,8 @@ pytest tests/workflows/test_cli_plot.py -v
 ## Project Structure
 
 ```
-wave_view/
-├── src/wave_view/
+yaml2plot/
+├── src/yaml2plot/
 │   ├── core/
 │   │   ├── plotspec.py      # PlotSpec model
 │   │   ├── plotting.py      # Plotting helpers + plot()
@@ -224,7 +224,7 @@ Contributions are welcome! Please:
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## Documentation (https://Jianxun.github.io/wave_view/)
+## Documentation (https://Jianxun.github.io/yaml2plot/)
 
 Comprehensive documentation is available with:
 - **User Guides**: Installation, quickstart, and configuration
@@ -248,15 +248,15 @@ make docs-serve  # Opens at http://localhost:8000
 
 ## Links
 
-- **Documentation**: [GitHub Pages](https://Jianxun.github.io/wave_view/)
-- **PyPI Package**: [PyPI](https://pypi.org/project/wave-view/)
-- **Issue Tracker**: [GitHub Issues](https://github.com/Jianxun/wave_view/issues)
+- **Documentation**: [GitHub Pages](https://Jianxun.github.io/yaml2plot/)
+- **PyPI Package**: [PyPI](https://pypi.org/project/yaml2plot/)
+- **Issue Tracker**: [GitHub Issues](https://github.com/Jianxun/yaml2plot/issues)
 - **Changelog**: [CHANGELOG.md](CHANGELOG.md)
 
 ## Version
 
-Current version: **1.1.0**
+Current version: **2.0.0**
 
 ---
 
-**Wave View** - Making SPICE waveform visualization simple and interactive! 🌊📈 
+**yaml2plot** - Making SPICE waveform visualization simple and interactive! 🌊📈 
