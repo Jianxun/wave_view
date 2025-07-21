@@ -2,13 +2,13 @@ Examples
 ========
 
 .. note::
-   All code below targets *wave_view* **1.0.0**.  The modern workflow is:
+   All code below targets *yaml2plot* **2.0.0**.  The modern workflow is:
 
-   1. ``data, metadata = wv.load_spice_raw("my.raw")`` – obtain a ``dict`` of NumPy arrays, and a ``dict`` of metadata (placeholders for future features)
-   2. ``spec = wv.PlotSpec.from_yaml(""" ... """)`` – build a PlotSpec (YAML string or file)
-   3. ``fig = wv.plot(data, spec)`` – create the Plotly figure
+   1. ``data, metadata = y2p.load_spice_raw("my.raw")`` – obtain a ``dict`` of NumPy arrays, and a ``dict`` of metadata (placeholders for future features)
+   2. ``spec = y2p.PlotSpec.from_yaml(""" ... """)`` – build a PlotSpec (YAML string or file)
+   3. ``fig = y2p.plot(data, spec)`` – create the Plotly figure
 
-This page contains practical examples for common use cases with wave_view.
+This page contains practical examples for common use cases with yaml2plot.
 
 Basic Waveform Plot
 -------------------
@@ -17,13 +17,13 @@ Plot input and output voltages from an amplifier simulation:
 
 .. code-block:: python
 
-   import wave_view as wv
+   import yaml2plot as y2p
 
    # Load simulation data
-   data, metadata = wv.load_spice_raw("amplifier.raw")
+   data, metadata = y2p.load_spice_raw("amplifier.raw")
 
    # Simple voltage plot using YAML configuration
-   spec = wv.PlotSpec.from_yaml("""
+   spec = y2p.PlotSpec.from_yaml("""
    title: "Amplifier Response"
    x:
     signal: "time"
@@ -35,7 +35,7 @@ Plot input and output voltages from an amplifier simulation:
          Output: "v(out)"
    """)
 
-   fig = wv.plot(data, spec)
+   fig = y2p.plot(data, spec)
    fig.show()
 
 Multi-Y-Axis Plot
@@ -45,9 +45,9 @@ Create multiple strips with shared x-axis and rangeslider:
 
 .. code-block:: python
 
-   data, metadata = wv.load_spice_raw("complete_analysis.raw")
+   data, metadata = y2p.load_spice_raw("complete_analysis.raw")
 
-   spec = wv.PlotSpec.from_yaml("""
+   spec = y2p.PlotSpec.from_yaml("""
    title: "Complete Circuit Analysis"
    x:
     signal: "time"
@@ -68,7 +68,7 @@ Create multiple strips with shared x-axis and rangeslider:
     show_rangeslider: true
    """)
 
-   fig = wv.plot(data, spec)
+   fig = y2p.plot(data, spec)
 
 AC Analysis with Complex Signal Processing
 --------------------------------------------
@@ -78,11 +78,11 @@ magnitude and phase analysis for transfer functions and Bode plots:
 
 .. code-block:: python
 
-   import wave_view as wv
+   import yaml2plot as y2p
    import numpy as np
 
    # Load AC analysis data (contains complex numbers)
-   data_ac, metadata = wv.load_spice_raw("ac_analysis.raw")
+   data_ac, metadata = y2p.load_spice_raw("ac_analysis.raw")
    
    # AC signals are automatically returned as complex numbers
    frequency = data_ac["frequency"]  # Real (even though stored as complex)
@@ -96,7 +96,7 @@ magnitude and phase analysis for transfer functions and Bode plots:
    data_ac["tf_db"] = 20*np.log10(np.abs(tf))
    data_ac["tf_phase"] = np.angle(tf)/np.pi*180
 
-   spec = wv.PlotSpec.from_yaml("""
+   spec = y2p.PlotSpec.from_yaml("""
    title: "Transfer Function Bode Plot"
    x:
     signal: "frequency"
@@ -113,7 +113,7 @@ magnitude and phase analysis for transfer functions and Bode plots:
    show_rangeslider: true
    """)
 
-   fig = wv.plot(data_ac, spec)
+   fig = y2p.plot(data_ac, spec)
 
 Comparison Plots
 ----------------
@@ -123,8 +123,8 @@ Compare results from different simulation runs:
 .. code-block:: python
 
    # Load multiple simulations
-   data1, _ = wv.load_spice_raw("before_optimization.raw")
-   data2, _ = wv.load_spice_raw("after_optimization.raw")
+   data1, _ = y2p.load_spice_raw("before_optimization.raw")
+   data2, _ = y2p.load_spice_raw("after_optimization.raw")
 
    # Create comparison signals
    data = {
@@ -132,7 +132,7 @@ Compare results from different simulation runs:
        "v_out_after": data2["v(out)"]
    }
 
-   spec = wv.PlotSpec.from_yaml("""
+   spec = y2p.PlotSpec.from_yaml("""
    title: "Optimization Comparison"
    x:
     signal: "time"
@@ -144,4 +144,4 @@ Compare results from different simulation runs:
          After: "v_out_after"
    """)
 
-   fig = wv.plot(data, spec) 
+   fig = y2p.plot(data, spec) 

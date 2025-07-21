@@ -4,7 +4,7 @@ Installation
 Requirements
 ------------
 
-wave_view requires Python 3.8 or later and the following dependencies:
+yaml2plot requires Python 3.8 or later and the following dependencies:
 
 * plotly >= 5.0.0
 * numpy >= 1.20.0
@@ -14,24 +14,24 @@ wave_view requires Python 3.8 or later and the following dependencies:
 Basic Installation
 ------------------
 
-Install wave_view from PyPI using pip:
+Install yaml2plot from PyPI using pip:
 
 .. code-block:: bash
 
-   pip install wave_view
+   pip install yaml2plot
 
 Development Installation
 ------------------------
 
-If you want to contribute to wave_view or need the latest development version:
+If you want to contribute to yaml2plot or need the latest development version:
 
 .. code-block:: bash
 
-   git clone https://github.com/yourusername/wave_view.git
-   cd wave_view
+   git clone https://github.com/Jianxun/yaml2plot.git
+   cd yaml2plot
    pip install -e ".[dev]"
 
-This installs wave_view in development mode with additional dependencies for testing and development.
+This installs yaml2plot in development mode with additional dependencies for testing and development.
 
 Optional Dependencies
 ---------------------
@@ -43,7 +43,7 @@ To build the documentation locally:
 
 .. code-block:: bash
 
-   pip install "wave_view[docs]"
+   pip install "yaml2plot[docs]"
 
 This includes:
 
@@ -58,7 +58,7 @@ For enhanced Jupyter notebook support:
 
 .. code-block:: bash
 
-   pip install "wave_view[jupyter]"
+   pip install "yaml2plot[jupyter]"
 
 This includes:
 
@@ -73,7 +73,7 @@ For development and testing:
 
 .. code-block:: bash
 
-   pip install "wave_view[dev]"
+   pip install "yaml2plot[dev]"
 
 This includes testing, linting, and formatting tools:
 
@@ -92,7 +92,7 @@ To verify your installation, run:
 
 .. code-block:: python
 
-   import wave_view as wv
-   print(wv.__version__)
+   import yaml2plot as y2p
+   print(y2p.__version__)
 
 This should print the version number without any errors. 

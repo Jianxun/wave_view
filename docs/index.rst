@@ -1,16 +1,16 @@
-.. wave_view documentation master file, created by
+.. yaml2plot documentation master file, created by
    sphinx-quickstart on Tue Jun 10 12:19:18 2025.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-wave_view: A Python Toolkit for SPICE Simulation Waveform Visualization
+yaml2plot: A Python Toolkit for SPICE Simulation Waveform Visualization
 ========================================================================
 
-*wave_view* is a modern Python toolkit for turning raw SPICE ``.raw`` files into beautiful, interactive Plotly graphs.  Version 1.0.0 introduces a simple **three-step workflow**:
+*yaml2plot* is a modern Python toolkit for turning raw SPICE ``.raw`` files into beautiful, interactive Plotly graphs.  Version 2.0.0 introduces a simple **three-step workflow**:
 
-1. **Data Loading** – load with :func:`wave_view.load_spice_raw`.  
-2. **Configuration** – describe your plot in YAML, JSON, or a Python dict using :class:`wave_view.PlotSpec`.  
-3. **Plotting** – call :func:`wave_view.plot` and get an interactive figure you can display, embed, or export.
+1. **Data Loading** – load with :func:`yaml2plot.load_spice_raw`.  
+2. **Configuration** – describe your plot in YAML, JSON, or a Python dict using :class:`yaml2plot.PlotSpec`.  
+3. **Plotting** – call :func:`yaml2plot.plot` and get an interactive figure you can display, embed, or export.
 
 Features
 --------
@@ -25,14 +25,14 @@ Quick Start
 
 .. code-block:: python
 
-   import wave_view as wv
+   import yaml2plot as y2p
 
    # Optional: inspect the data first
-   data, _ = wv.load_spice_raw("simulation.raw")
+   data, _ = y2p.load_spice_raw("simulation.raw")
    print(f"Signals → {list(data)[:5]} …")
 
    # Build a plot description (YAML, dict, or inline YAML as below)
-   spec = wv.PlotSpec.from_yaml("""
+   spec = y2p.PlotSpec.from_yaml("""
    title: "My Simulation Results"
    x: 
     signal: "time"
@@ -45,7 +45,7 @@ Quick Start
    """)
 
    # Create the plot (pass the file path *or* pre-loaded data)
-   fig = wv.plot(data, spec)
+   fig = y2p.plot(data, spec)
    fig.show()
 
 Installation
@@ -53,7 +53,7 @@ Installation
 
 .. code-block:: bash
 
-   pip install wave_view
+   pip install yaml2plot
 
 For development:
 

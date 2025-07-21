@@ -1,7 +1,7 @@
-﻿wave\_view.WaveDataset
-======================
+﻿yaml2plot.WaveDataset
+=====================
 
-.. currentmodule:: wave_view
+.. currentmodule:: yaml2plot
 
 .. autoclass:: WaveDataset
 

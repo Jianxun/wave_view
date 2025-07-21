@@ -13,11 +13,11 @@ sys.path.insert(0, os.path.abspath('../src'))
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = 'wave_view'
-copyright = '2025, Your Name'
-author = 'Your Name'
-release = '0.1.0'
-version = '0.1.0'
+project = 'yaml2plot'
+copyright = '2025, Jianxun'
+author = 'Jianxun'
+release = '2.0.0'
+version = '2.0.0'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -32,7 +32,7 @@ extensions = [
     'myst_parser',
     'sphinx_autodoc_typehints',
     'sphinx_click',
-    'sphinxcontrib.autodoc_pydantic',
+    # 'autodoc_pydantic',  # Temporarily disabled
 ]
 
 templates_path = ['_templates']
@@ -73,7 +73,7 @@ html_static_path = ['_static']
 
 # Theme options
 html_theme_options = {
-    'canonical_url': '',
+    'canonical_url': 'https://jianxun.github.io/yaml2plot/',
     'analytics_id': '',
     'logo_only': False,
     'display_version': True,

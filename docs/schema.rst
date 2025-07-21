@@ -8,21 +8,21 @@ PlotSpec
 
 The main configuration model that defines all aspects of a plot.
 
-.. autopydantic_model:: wave_view.core.plotspec.PlotSpec
+.. autoclass:: yaml2plot.core.plotspec.PlotSpec
 
 XAxisSpec
 ---------
 
 Defines the X-axis configuration options.
 
-.. autopydantic_model:: wave_view.core.plotspec.XAxisSpec
+.. autoclass:: yaml2plot.core.plotspec.XAxisSpec
 
 YAxisSpec
 ---------
 
 Defines the Y-axis configuration options for each subplot.
 
-.. autopydantic_model:: wave_view.core.plotspec.YAxisSpec
+.. autoclass:: yaml2plot.core.plotspec.YAxisSpec
 
 Usage Examples
 --------------
