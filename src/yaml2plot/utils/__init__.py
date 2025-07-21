@@ -1,1 +1,1 @@
-"""Utility functions for Wave View package."""
+"""Utility functions for yaml2plot package."""

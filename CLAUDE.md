@@ -34,7 +34,7 @@ pytest -v
 black src/ tests/
 
 # Check type hints with MyPy
-mypy src/wave_view
+mypy src/yaml2plot
 
 # Lint with flake8
 flake8 src/ tests/
@@ -209,13 +209,13 @@ Based on `.cursor/rules/development-guidelines.mdc`:
 
 ### Current Project Status
 
-**Version**: 1.1.1  
+**Version**: 2.0.0  
 **Architecture**: v1.0.0 modern API (fully implemented)  
 **Test Coverage**: 61 tests passing with good coverage  
-**Recent Branch**: `housekeeping-cleanup` (consolidated configurations and refactored PlotSpec.to_dict())
+**Recent Branch**: `docs-update-yaml2plot-v2` (PR #19 pending - documentation updates for v2.0.0)
 
 **Next Priorities** (check `context/todo.md` for current sprint):
-- Documentation updates for v1.1.0
+- Documentation updates for v2.0.0
 - Final testing and release preparation
 - Advanced features in backlog
 

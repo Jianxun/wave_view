@@ -1,1 +1,1 @@
-"""Core functionality for Wave View package."""
+"""Core functionality for yaml2plot package."""

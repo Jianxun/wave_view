@@ -1,4 +1,4 @@
-"""Environment / renderer helpers for Wave View.
+"""Environment / renderer helpers for yaml2plot.
 
 These utilities detect whether the code is running inside a Jupyter environment
 and configure Plotly's default renderer accordingly.
