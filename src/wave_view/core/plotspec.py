@@ -107,33 +107,4 @@ class PlotSpec(BaseModel):
         Returns:
             Dict containing clean configuration suitable for standalone plotting functions
         """
-        return {
-            "title": self.title,
-            "raw": self.raw,
-            "x": {
-                "signal": self.x.signal,
-                "label": self.x.label,
-                "scale": self.x.scale,
-                "unit": self.x.unit,
-                "range": self.x.range
-            },
-            "y": [
-                {
-                    "label": y_spec.label,
-                    "signals": y_spec.signals,
-                    "scale": y_spec.scale,
-                    "unit": y_spec.unit,
-                    "range": y_spec.range,
-                    "color": y_spec.color
-                }
-                for y_spec in self.y
-            ],
-            "width": self.width,
-            "height": self.height,
-            "theme": self.theme,
-            "title_x": self.title_x,
-            "title_xanchor": self.title_xanchor,
-            "show_legend": self.show_legend,
-            "grid": self.grid,
-            "show_rangeslider": self.show_rangeslider
-        } 
+        return self.model_dump(by_alias=False) 
