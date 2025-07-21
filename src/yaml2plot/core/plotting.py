@@ -46,7 +46,14 @@ def plot(
         # wv.plot("sim.raw", spec) keep working.
         from ..loader import load_spice_raw  # local import to avoid cycle
 
-        data_dict, _ = load_spice_raw(data)
+        dataset = load_spice_raw(data)
+        # Convert xarray Dataset to dict for backward compatibility with plotting logic
+        # Include both data variables and coordinates
+        data_dict = {}
+        for var in dataset.data_vars:
+            data_dict[var] = dataset[var].values
+        for coord in dataset.coords:
+            data_dict[coord] = dataset.coords[coord].values
         data = data_dict  # type: ignore[assignment]
     elif not isinstance(data, dict):
         raise TypeError(
