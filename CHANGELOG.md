@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.1.0] - 2025-07-19
 
 ### Added
-- **CLI Enhancements**: Introduced `waveview init` subcommand for generating plot specifications, streamlined `waveview plot` for easier usage, and added regex filtering to `waveview signals` for better signal discovery.
+- **CLI Enhancements**: Introduced `y2p init` subcommand for generating plot specifications, streamlined `y2p plot` for easier usage, and added regex filtering to `y2p signals` for better signal discovery.
 
 ### Improved
 - **User Experience**: Enhanced CLI user experience with clearer command usage and improved help text.

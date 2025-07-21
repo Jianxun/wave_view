@@ -19,7 +19,7 @@ make install
 ```bash
 # Run all tests with coverage
 make test
-# Or: pytest --cov=wave_view --cov-report=html --cov-report=term
+# Or: pytest --cov=yaml2plot --cov-report=html --cov-report=term
 
 # Run specific test file
 pytest tests/workflows/test_cli_plot.py -v
@@ -61,7 +61,7 @@ make clean
 
 ## Architecture
 
-Wave View is a Python package for visualizing SPICE simulation waveforms with a focus on Jupyter notebook integration. The architecture follows a modular design:
+yaml2plot is a Python package for creating plots from YAML specifications of SPICE simulation waveforms with a focus on Jupyter notebook integration. The architecture follows a modular design:
 
 ### Core Components
 
@@ -81,7 +81,7 @@ Wave View is a Python package for visualizing SPICE simulation waveforms with a 
 - Automatic environment detection (Jupyter vs standalone Python)
 
 **CLI Interface (`cli.py`)**:
-- `waveview` command-line tool with subcommands:
+- `y2p` command-line tool with subcommands:
   - `init` - Generate YAML plot specs from .raw files
   - `signals` - List and filter available signals
   - `plot` - Create plots from YAML specs
@@ -104,7 +104,7 @@ Key design principles:
 
 ### Project Structure
 ```
-src/wave_view/
+src/yaml2plot/
 ├── __init__.py          # Public API exports
 ├── cli.py               # Command-line interface
 ├── loader.py            # High-level data loading

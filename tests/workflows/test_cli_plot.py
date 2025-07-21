@@ -4,8 +4,8 @@ import tempfile
 
 from click.testing import CliRunner
 
-import wave_view as wv
-from wave_view.cli import cli
+import yaml2plot as wv
+from yaml2plot.cli import cli
 
 
 class TestCLIPlotWorkflow(unittest.TestCase):
@@ -53,4 +53,4 @@ class TestCLIPlotWorkflow(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    unittest.main() 
+    unittest.main()

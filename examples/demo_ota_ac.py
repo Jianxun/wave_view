@@ -1,4 +1,4 @@
-import wave_view as wv
+import yaml2plot as wv
 import numpy as np
 
 spice_file = "./raw_data/tb_ota_5t/test_ac/results.raw"

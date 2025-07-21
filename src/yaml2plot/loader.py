@@ -44,6 +44,7 @@ def _validate_file_path(path: _PathLike) -> Path:
 # Public API
 # ────────────────────────────────────────────────────────────────────────────
 
+
 def load_spice_raw(raw_file: _PathLike) -> Tuple[Dict[str, np.ndarray], Dict[str, Any]]:
     """Load one SPICE *.raw* file and return *(data_dict, metadata)*."""
     file_path = _validate_file_path(raw_file)
@@ -55,7 +56,9 @@ def load_spice_raw(raw_file: _PathLike) -> Tuple[Dict[str, np.ndarray], Dict[str
     return data, metadata
 
 
-def load_spice_raw_batch(raw_files: List[_PathLike]) -> List[Tuple[Dict[str, np.ndarray], Dict[str, Any]]]:
+def load_spice_raw_batch(
+    raw_files: List[_PathLike],
+) -> List[Tuple[Dict[str, np.ndarray], Dict[str, Any]]]:
     """Load many *.raw* files, preserving the order, and return a list of tuples."""
     if raw_files is None:
         raise TypeError("raw_files must be a list of file paths, not None")
@@ -63,4 +66,4 @@ def load_spice_raw_batch(raw_files: List[_PathLike]) -> List[Tuple[Dict[str, np.
     if not isinstance(raw_files, (list, tuple)):
         raise TypeError("raw_files must be a list or tuple of file paths")
 
-    return [load_spice_raw(p) for p in raw_files] 
+    return [load_spice_raw(p) for p in raw_files]

@@ -1,6 +1,6 @@
 import pytest
 from pathlib import Path
-from wave_view.core.plotspec import PlotSpec
+from yaml2plot.core.plotspec import PlotSpec
 
 
 class TestPlotSpecFromYaml:
@@ -87,6 +87,8 @@ class TestPlotSpecFromFile:
 
     def test_from_file_success(self, tmp_path):
         cfg_path = tmp_path / "spec.yml"
-        cfg_path.write_text("x: {signal: time}\ny:\n  - label: V\n    signals: {Out: v(out)}\n")
+        cfg_path.write_text(
+            "x: {signal: time}\ny:\n  - label: V\n    signals: {Out: v(out)}\n"
+        )
         spec = PlotSpec.from_file(cfg_path)
-        assert spec.x.signal == "time" 
+        assert spec.x.signal == "time"

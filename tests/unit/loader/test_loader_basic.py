@@ -3,7 +3,7 @@ import pytest
 from pathlib import Path
 from unittest.mock import patch, MagicMock
 
-from wave_view import loader as wv_loader
+from yaml2plot import loader as wv_loader
 
 
 class TestValidateFilePath:
@@ -42,7 +42,9 @@ class TestLoadSpiceRaw:
     def test_happy_path_returns_data_and_metadata(self, tmp_path):
         f = tmp_path / "sig.raw"
         f.write_text("dummy")
-        with patch.object(wv_loader.WaveDataset, "from_raw", return_value=self._mock_dataset()) as m_from:
+        with patch.object(
+            wv_loader.WaveDataset, "from_raw", return_value=self._mock_dataset()
+        ) as m_from:
             data, meta = wv_loader.load_spice_raw(f)
 
         # Verify mapping built correctly
@@ -64,7 +66,9 @@ class TestLoadSpiceRawBatch:
         for p in (p1, p2):
             p.write_text("D")
 
-        with patch.object(wv_loader, "load_spice_raw", return_value=({"sig": np.array([1])}, {})) as m_load:
+        with patch.object(
+            wv_loader, "load_spice_raw", return_value=({"sig": np.array([1])}, {})
+        ) as m_load:
             results = wv_loader.load_spice_raw_batch([p1, p2])
 
         assert len(results) == 2
@@ -75,4 +79,4 @@ class TestLoadSpiceRawBatch:
     @pytest.mark.parametrize("bad_input", [None, "not-a-list", 123])
     def test_bad_collections_raise(self, bad_input):
         with pytest.raises(TypeError):
-            wv_loader.load_spice_raw_batch(bad_input) 
+            wv_loader.load_spice_raw_batch(bad_input)

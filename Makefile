@@ -16,7 +16,7 @@ dev:
 	pip install -e ".[dev,docs]"
 
 test:
-	pytest --cov=wave_view --cov-report=html --cov-report=term
+	pytest
 
 docs:
 	cd docs && make html

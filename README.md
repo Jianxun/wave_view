@@ -1,19 +1,19 @@
-# Wave View: A Python Toolkit for SPICE Simulation Waveform Visualization
+# yaml2plot: A Python Package for Creating Plots from YAML Specifications
 
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 
-Wave View is a powerful yet lightweight Python toolkit for visualizing SPICE .raw files as interactive Plotly figures with minimal code. It loads simulation data directly into a simple {signal_name: np.ndarray} dictionary, supports declarative multi-axis plots via YAML or CLI overrides, and automatically selects the best renderer for Jupyter, VS Code, or headless environments. With case-insensitive signal lookup and robust multi-strip support, Wave View lets you focus on circuit analysis—not plotting boilerplate.
+yaml2plot is a powerful yet lightweight Python package for creating interactive Plotly figures from YAML specifications and SPICE .raw files with minimal code. It loads simulation data directly into a simple {signal_name: np.ndarray} dictionary, supports declarative multi-axis plots via YAML configurations, and automatically selects the best renderer for Jupyter, VS Code, or headless environments. With case-insensitive signal lookup and robust multi-strip support, yaml2plot lets you focus on circuit analysis—not plotting boilerplate.
 
-![Demo](https://raw.githubusercontent.com/Jianxun/wave_view/main/examples/screenshots/wave_view_demo.png)
+![Demo](https://raw.githubusercontent.com/Jianxun/yaml2plot/main/examples/screenshots/yaml2plot_demo.png)
 
 ## Features
 
 - **Interactive Plotly Visualization**: Modern, web-based plots with zoom, pan, and hover
 - **YAML Configuration**: Flexible, reusable plotting configurations
 - **Simple API**: Plot waveforms with a single function call
-- **Command Line Interface**: Quick plotting from terminal with `waveview plot`
+- **Command Line Interface**: Quick plotting from terminal with `y2p plot`
 - **Automatic Environment Detection**: Auto-detection and inline plotting for Jupyter Notebooks, render in browser when running in standalone Python scripts.
 
 
@@ -22,10 +22,10 @@ Wave View is a powerful yet lightweight Python toolkit for visualizing SPICE .ra
 
 ### Installation
 ```bash
-pip install wave_view
+pip install yaml2plot
 ```
 
-Wave View provides two common workflows for visualizing your SPICE simulations:
+yaml2plot provides two common workflows for visualizing your SPICE simulations:
 
 * **Option A: CLI-First** – The fastest way to get from a ``.raw`` file to an interactive plot. Perfect for quick, one-off visualizations.
 * **Option B: Python API** – The most flexible approach. Ideal for scripting, custom data processing, and embedding plots in notebooks or reports.
@@ -33,44 +33,44 @@ Wave View provides two common workflows for visualizing your SPICE simulations:
 
 ### Option A: CLI-First Workflow
 
-Get from a raw file to a plot in three steps using the ``waveview`` command-line tool.
+Get from a raw file to a plot in three steps using the ``y2p`` command-line tool.
 
 **Step 1: Generate a Plot Specification**
 
-Use ``waveview init`` to create a template ``spec.yaml`` file from your simulation output. It automatically populates the file with the independent variable (like "time") and a few available signals.
+Use ``y2p init`` to create a template ``spec.yaml`` file from your simulation output. It automatically populates the file with the independent variable (like "time") and a few available signals.
 
 ```bash
-waveview init your_simulation.raw > spec.yaml
+y2p init your_simulation.raw > spec.yaml
 ```
 
 **Step 2: Discover Signals**
 
-Find the exact names of the signals you want to plot with ``waveview signals``.
+Find the exact names of the signals you want to plot with ``y2p signals``.
 
 ```bash
 # List the first 10 signals
-waveview signals your_simulation.raw
+y2p signals your_simulation.raw
 
 # List all signals
-waveview signals your_simulation.raw --all
+y2p signals your_simulation.raw --all
 
 # Filter signals using a regular expression
-waveview signals your_simulation.raw --grep "clk"
+y2p signals your_simulation.raw --grep "clk"
 ```
 
 **Step 3: Plot**
 
-Edit your ``spec.yaml`` to include the signals you discovered, then use ``waveview plot`` to generate an interactive HTML file or display the plot directly. The command now supports a self-contained workflow where the raw file is specified directly in the YAML.
+Edit your ``spec.yaml`` to include the signals you discovered, then use ``y2p plot`` to generate an interactive HTML file or display the plot directly. The command now supports a self-contained workflow where the raw file is specified directly in the YAML.
 
 ```bash
 # This command will open a browser window with your plot
-waveview plot spec.yaml
+y2p plot spec.yaml
 
 # You can also override the raw file specified in the YAML
-waveview plot spec.yaml your_simulation.raw
+y2p plot spec.yaml your_simulation.raw
 
 # To save the plot to a file instead
-waveview plot spec.yaml --output my_plot.html
+y2p plot spec.yaml --output my_plot.html
 ```
 
 This approach is fast, requires no Python code, and keeps your plot configuration version-controlled alongside your simulation files.
@@ -81,21 +81,21 @@ For more advanced use cases, the Python API provides full control over data load
 
 The API follows a clear three-step workflow:
 
-1. **Data Loading** – Load the raw ``.raw`` file with ``wave_view.load_spice_raw``.
-2. **Configuration** – Describe what you want to see using ``wave_view.PlotSpec``.
-3. **Plotting** – Call ``wave_view.plot`` to get a Plotly figure.
+1. **Data Loading** – Load the raw ``.raw`` file with ``yaml2plot.load_spice_raw``.
+2. **Configuration** – Describe what you want to see using ``yaml2plot.PlotSpec``.
+3. **Plotting** – Call ``yaml2plot.plot`` to get a Plotly figure.
 
 **Minimal Example**
 
 ```python
-import wave_view as wv
+import yaml2plot as y2p
 
 # 1. Load data from a .raw file
-data, _ = wv.load_spice_raw("your_simulation.raw")
+data, _ = y2p.load_spice_raw("your_simulation.raw")
 print(f"Signals available: {list(data.keys())[:5]}...")
 
 # 2. Configure the plot using a YAML string
-spec = wv.PlotSpec.from_yaml("""
+spec = y2p.PlotSpec.from_yaml("""
 title: "My Simulation Results"
 x:
   signal: "time"
@@ -108,7 +108,7 @@ y:
 """)
 
 # 3. Create and display the plot
-fig = wv.plot(data, spec)
+fig = y2p.plot(data, spec)
 fig.show()
 ```
 
@@ -118,16 +118,16 @@ Because the API gives you direct access to the data as NumPy arrays, you can eas
 
 ```python
 import numpy as np
-import wave_view as wv
+import yaml2plot as y2p
 
 # Load the data
-data, _ = wv.load_spice_raw("your_simulation.raw")
+data, _ = y2p.load_spice_raw("your_simulation.raw")
 
 # Calculate a new, derived signal
 data["diff_voltage"] = data["v(out_p)"] - data["v(out_n)"]
 
 # Create a spec that plots both raw and derived signals
-spec = wv.PlotSpec.from_yaml("""
+spec = y2p.PlotSpec.from_yaml("""
 title: "Differential Output Voltage"
 x:
   signal: "time"
@@ -141,7 +141,7 @@ y:
 """)
 
 # Create and display the plot
-fig = wv.plot(data, spec)
+fig = y2p.plot(data, spec)
 fig.show()
 ```
 

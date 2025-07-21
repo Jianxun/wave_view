@@ -3,9 +3,9 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "wave_view"
-version = "1.1.1"
-description = "A Python package for visualizing SPICE simulation waveforms in Jupyter notebooks"
+name = "yaml2plot"
+version = "2.0.0"
+description = "A Python package for creating plots from YAML specifications of SPICE simulation waveforms"
 readme = "README.md"
 license = "MIT"
 license-files = ["LICENSE"]
@@ -30,7 +30,7 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Framework :: Jupyter",
 ]
-keywords = ["spice", "simulation", "waveform", "visualization", "jupyter", "eda"]
+keywords = ["yaml", "plotting", "spice", "simulation", "waveform", "visualization", "jupyter", "eda"]
 requires-python = ">=3.8"
 dependencies = [
     "plotly>=5.0.0",
@@ -43,7 +43,7 @@ dependencies = [
 ]
 
 [project.scripts]
-waveview = "wave_view.cli:cli"
+y2p = "yaml2plot.cli:cli"
 
 [project.optional-dependencies]
 dev = [
@@ -70,16 +70,16 @@ jupyter = [
 ]
 
 [project.urls]
-"Homepage" = "https://github.com/Jianxun/wave_view"
-"Bug Reports" = "https://github.com/Jianxun/wave_view/issues"
-"Source" = "https://github.com/Jianxun/wave_view"
-"Documentation" = "https://github.com/Jianxun/wave_view/tree/main/docs"
+"Homepage" = "https://github.com/Jianxun/yaml2plot"
+"Bug Reports" = "https://github.com/Jianxun/yaml2plot/issues"
+"Source" = "https://github.com/Jianxun/yaml2plot"
+"Documentation" = "https://github.com/Jianxun/yaml2plot/tree/main/docs"
 
 [tool.setuptools.packages.find]
 where = ["src"]
 
 [tool.setuptools.package-data]
-wave_view = ["py.typed"]
+yaml2plot = ["py.typed"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
@@ -89,7 +89,7 @@ python_functions = ["test_*"]
 addopts = [
     "--strict-markers",
     "--strict-config",
-    "--cov=wave_view",
+    "--cov=yaml2plot",
     "--cov-report=term-missing",
     "--cov-report=html",
     "--cov-report=xml",
@@ -117,7 +117,7 @@ extend-exclude = '''
 profile = "black"
 multi_line_output = 3
 line_length = 88
-known_first_party = ["wave_view"]
+known_first_party = ["yaml2plot"]
 
 [tool.mypy]
 python_version = "3.8"

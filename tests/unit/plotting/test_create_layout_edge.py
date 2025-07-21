@@ -1,7 +1,7 @@
 import pytest
 import unittest
 
-from wave_view.core.plotting import create_layout
+from yaml2plot.core.plotting import create_layout
 
 
 class TestCreateLayoutEdgeCases(unittest.TestCase):
@@ -10,9 +10,7 @@ class TestCreateLayoutEdgeCases(unittest.TestCase):
     def test_single_axis_defaults(self):
         cfg = {
             "x": {"signal": "time"},
-            "y": [
-                {"label": "Voltage", "signals": {"Out": "v(out)"}}
-            ],
+            "y": [{"label": "Voltage", "signals": {"Out": "v(out)"}}],
         }
         layout = create_layout(cfg)
 
@@ -50,35 +48,28 @@ class TestCreateLayoutEdgeCases(unittest.TestCase):
         """Test that log scale and range are correctly propagated to layout."""
         # Test case 1: Log scale and range on X-axis and one Y-axis
         config = {
-            "x": {
-                "signal": "time",
-                "scale": "log",
-                "range": [1e-9, 1e-6]
-            },
+            "x": {"signal": "time", "scale": "log", "range": [1e-9, 1e-6]},
             "y": [
                 {
                     "label": "Voltage",
                     "signals": {"V(out)": "v(out)"},
                     "scale": "log",
-                    "range": [0.1, 1.2]
+                    "range": [0.1, 1.2],
                 },
-                {
-                    "label": "Current",
-                    "signals": {"I(Vdd)": "i(vdd)"}
-                }
-            ]
+                {"label": "Current", "signals": {"I(Vdd)": "i(vdd)"}},
+            ],
         }
-        
+
         layout = create_layout(config)
-        
+
         # Verify X-axis
         self.assertEqual(layout["xaxis"]["type"], "log")
         self.assertEqual(layout["xaxis"]["range"], [1e-9, 1e-6])
-        
+
         # Verify Y-axis 1
         self.assertEqual(layout["yaxis"]["type"], "log")
         self.assertEqual(layout["yaxis"]["range"], [0.1, 1.2])
-        
+
         # Verify Y-axis 2 (no specific settings)
         self.assertEqual(layout["yaxis2"]["type"], "linear")
         self.assertNotIn("range", layout["yaxis2"])
@@ -90,16 +81,16 @@ class TestCreateLayoutEdgeCases(unittest.TestCase):
             "x": {"signal": "time"},
             "y": [
                 {"label": "Voltage", "signals": {"V(out)": "v(out)"}},
-                {"label": "Current", "signals": {"I(Vdd)": "i(vdd)"}}
-            ]
+                {"label": "Current", "signals": {"I(Vdd)": "i(vdd)"}},
+            ],
         }
-        
+
         layout = create_layout(config)
-        
+
         # Verify X-axis
         self.assertEqual(layout["xaxis"]["type"], "linear")
         self.assertNotIn("range", layout["xaxis"])
-        
+
         # Verify Y-axes
         self.assertEqual(layout["yaxis"]["type"], "linear")
         self.assertNotIn("range", layout["yaxis"])
@@ -125,45 +116,27 @@ class TestSIEngineeringNotationEdgeCases(unittest.TestCase):
         """All X-axes should use SI engineering notation for consistent formatting."""
         config = {
             "title": "Frequency Response",
-            "x": {
-                "signal": "frequency",
-                "label": "Frequency (Hz)",
-                "scale": "log"
-            },
-            "y": [
-                {
-                    "label": "Magnitude (dB)",
-                    "signals": {"Output": "v(out)"}
-                }
-            ]
+            "x": {"signal": "frequency", "label": "Frequency (Hz)", "scale": "log"},
+            "y": [{"label": "Magnitude (dB)", "signals": {"Output": "v(out)"}}],
         }
-        
+
         layout = create_layout(config)
-        
+
         # SI engineering notation should be enabled for all X-axes
         self.assertEqual(layout["xaxis"]["exponentformat"], "SI")
         self.assertEqual(layout["xaxis"]["type"], "log")
         self.assertEqual(layout["xaxis"]["title"], "Frequency (Hz)")
-    
+
     def test_time_domain_x_axis_uses_si_notation(self):
         """Time domain X-axis should also use SI engineering notation."""
         config = {
             "title": "Time Domain Analysis",
-            "x": {
-                "signal": "time",
-                "label": "Time (s)",
-                "scale": "linear"
-            },
-            "y": [
-                {
-                    "label": "Voltage (V)",
-                    "signals": {"Output": "v(out)"}
-                }
-            ]
+            "x": {"signal": "time", "label": "Time (s)", "scale": "linear"},
+            "y": [{"label": "Voltage (V)", "signals": {"Output": "v(out)"}}],
         }
-        
+
         layout = create_layout(config)
-        
+
         # SI engineering notation should be enabled for all signals
         self.assertEqual(layout["xaxis"]["exponentformat"], "SI")
         self.assertEqual(layout["xaxis"]["title"], "Time (s)")
@@ -172,27 +145,17 @@ class TestSIEngineeringNotationEdgeCases(unittest.TestCase):
         """All Y-axes should use SI engineering notation."""
         config = {
             "title": "Multi-Axis Analysis",
-                        "x": {
-                "signal": "time",
-                "label": "Time (s)",
-                "scale": "linear"
-            },
+            "x": {"signal": "time", "label": "Time (s)", "scale": "linear"},
             "y": [
-                {
-                    "label": "Voltage (V)",
-                    "signals": {"Output": "v(out)"}
-                },
-                {
-                    "label": "Current (A)",
-                    "signals": {"Input": "i(in)"}
-                }
-            ]
+                {"label": "Voltage (V)", "signals": {"Output": "v(out)"}},
+                {"label": "Current (A)", "signals": {"Input": "i(in)"}},
+            ],
         }
-        
+
         layout = create_layout(config)
-        
+
         # SI engineering notation should be enabled for all Y-axes
         self.assertEqual(layout["yaxis"]["exponentformat"], "SI")
         self.assertEqual(layout["yaxis2"]["exponentformat"], "SI")
         self.assertEqual(layout["yaxis"]["title"], "Voltage (V)")
-        self.assertEqual(layout["yaxis2"]["title"], "Current (A)") 
+        self.assertEqual(layout["yaxis2"]["title"], "Current (A)")

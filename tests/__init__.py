@@ -1,1 +1,1 @@
-"""Tests for Wave View package.""" 
+"""Tests for Wave View package."""
