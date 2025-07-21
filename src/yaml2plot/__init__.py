@@ -1,8 +1,8 @@
 """
 Wave View - SPICE Waveform Visualization Package
 
-A Python package for visualizing SPICE simulation waveforms, designed primarily 
-for Jupyter notebook integration with both simple plotting functions and advanced 
+A Python package for visualizing SPICE simulation waveforms, designed primarily
+for Jupyter notebook integration with both simple plotting functions and advanced
 signal processing capabilities.
 """
 
@@ -23,14 +23,15 @@ from .utils.env import configure_plotly_renderer
 # Plotly imports for user access
 import plotly.io as pio
 
+
 def set_renderer(renderer: str = "auto"):
     """
     Set the Plotly renderer for Wave View plots.
-    
+
     Args:
         renderer: Renderer type - "auto", "browser", "notebook", "plotly_mimetype", etc.
                  "auto" (default) detects environment automatically
-    
+
     Example:
         >>> import wave_view as wv
         >>> wv.set_renderer("notebook")  # Force notebook inline display
@@ -41,22 +42,21 @@ def set_renderer(renderer: str = "auto"):
         configure_plotly_renderer()
     else:
         pio.renderers.default = renderer
-    
+
     print(f"📊 Plotly renderer set to: {pio.renderers.default}")
+
 
 __all__ = [
     # Main API
-    'plot',
-    'load_spice_raw',
-    'load_spice_raw_batch',
-    
+    "plot",
+    "load_spice_raw",
+    "load_spice_raw_batch",
     # Core classes
-    'PlotSpec',
-    'WaveDataset',
-    
+    "PlotSpec",
+    "WaveDataset",
     # Utilities
-    'set_renderer',
-    'pio',  # Give users access to plotly.io
+    "set_renderer",
+    "pio",  # Give users access to plotly.io
 ]
 
 # Configure Plotly renderer automatically on import
@@ -65,4 +65,4 @@ try:
     configure_plotly_renderer()
 except Exception:
     # If auto-detection fails, default to browser (safe fallback)
-    pio.renderers.default = "browser" 
+    pio.renderers.default = "browser"

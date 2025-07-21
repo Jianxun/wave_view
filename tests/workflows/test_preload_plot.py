@@ -1,5 +1,5 @@
 import unittest
-import wave_view as wv
+import yaml2plot as wv
 from pathlib import Path
 import plotly.graph_objects as go
 
@@ -45,4 +45,4 @@ class TestPreloadWorkflow(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    unittest.main() 
+    unittest.main()

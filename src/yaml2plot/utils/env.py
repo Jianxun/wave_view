@@ -40,4 +40,4 @@ def configure_plotly_renderer() -> None:
     """Choose a sensible Plotly default renderer based on environment."""
     if not is_jupyter():
         # In standalone scripts default to browser for best interactivity.
-        pio.renderers.default = "browser" 
+        pio.renderers.default = "browser"

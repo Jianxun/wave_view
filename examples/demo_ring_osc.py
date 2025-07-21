@@ -1,5 +1,5 @@
 # %%
-import wave_view as wv
+import yaml2plot as wv
 
 # Use the test data we have available
 spice_file = "./raw_data/Ring_Oscillator_7stage.raw"

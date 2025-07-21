@@ -1,7 +1,7 @@
 import pytest
 from unittest.mock import patch, MagicMock
 
-from wave_view.core.wavedataset import WaveDataset, MAX_SIGNALS_TO_SHOW
+from yaml2plot.core.wavedataset import WaveDataset, MAX_SIGNALS_TO_SHOW
 
 
 class TestWaveDatasetErrorPaths:
@@ -9,7 +9,7 @@ class TestWaveDatasetErrorPaths:
 
     def _make_dataset_with_signals(self, signal_names):
         """Helper that returns a WaveDataset instance with mocked RawRead."""
-        with patch("wave_view.core.wavedataset.RawRead") as mock_raw_read:
+        with patch("yaml2plot.core.wavedataset.RawRead") as mock_raw_read:
             mock_raw = MagicMock()
             mock_raw.get_trace_names.return_value = signal_names
             mock_raw.get_trace.side_effect = lambda name: [0, 1, 2]  # dummy data
@@ -33,13 +33,13 @@ class TestWaveDatasetErrorPaths:
 
     def test_from_raw_file_not_found(self):
         """from_raw() should propagate FileNotFoundError with custom message."""
-        with patch("wave_view.core.wavedataset.RawRead", side_effect=FileNotFoundError):
+        with patch("yaml2plot.core.wavedataset.RawRead", side_effect=FileNotFoundError):
             with pytest.raises(FileNotFoundError):
                 WaveDataset.from_raw("missing.raw")
 
     def test_from_raw_generic_exception_wrapped(self):
         """Any other exception from RawRead should be wrapped with informative message."""
-        with patch("wave_view.core.wavedataset.RawRead", side_effect=Exception("boom")):
+        with patch("yaml2plot.core.wavedataset.RawRead", side_effect=Exception("boom")):
             with pytest.raises(Exception) as excinfo:
                 WaveDataset.from_raw("bad.raw")
-        assert "boom" in str(excinfo.value) 
+        assert "boom" in str(excinfo.value)

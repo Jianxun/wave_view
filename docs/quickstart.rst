@@ -1,7 +1,7 @@
 Quick Start Guide
 =================
 
-This guide provides two common workflows for using ``waveview`` to visualize your SPICE simulations.
+This guide provides two common workflows for using ``y2p`` to visualize your SPICE simulations.
 
 * **Option A: CLI-First** – The fastest way to get from a ``.raw`` file to an interactive plot. Perfect for quick, one-off visualizations.
 * **Option B: Python API** – The most flexible approach. Ideal for scripting, custom data processing, and embedding plots in notebooks or reports.
@@ -11,42 +11,42 @@ Choose the workflow that best fits your needs.
 Option A: CLI-First Workflow
 ----------------------------
 
-Get from a raw file to a plot in three steps using the ``waveview`` command-line tool.
+Get from a raw file to a plot in three steps using the ``y2p`` command-line tool.
 
 **Step 1: Generate a Plot Specification**
 
-Use ``waveview init`` to create a template ``spec.yaml`` file from your simulation output. It automatically populates the file with the independent variable (like "time") and a few available signals.
+Use ``y2p init`` to create a template ``spec.yaml`` file from your simulation output. It automatically populates the file with the independent variable (like "time") and a few available signals.
 
 .. code-block:: bash
 
-   waveview init your_simulation.raw > spec.yaml
+   y2p init your_simulation.raw > spec.yaml
 
 **Step 2: Discover Signals**
 
-Find the exact names of the signals you want to plot with ``waveview signals``.
+Find the exact names of the signals you want to plot with ``y2p signals``.
 
 .. code-block:: bash
 
    # List the first 10 signals
-   waveview signals your_simulation.raw
+   y2p signals your_simulation.raw
 
    # List all signals
-   waveview signals your_simulation.raw --all
+   y2p signals your_simulation.raw --all
 
    # Filter signals using a regular expression
-   waveview signals your_simulation.raw --grep "v(out)"
+   y2p signals your_simulation.raw --grep "v(out)"
 
 **Step 3: Plot**
 
-Edit your ``spec.yaml`` to include the signals you discovered, then use ``waveview plot`` to generate an interactive HTML file or display the plot directly.
+Edit your ``spec.yaml`` to include the signals you discovered, then use ``y2p plot`` to generate an interactive HTML file or display the plot directly.
 
 .. code-block:: bash
 
    # This command will open a browser window with your plot
-   waveview plot spec.yaml
+   y2p plot spec.yaml
 
    # To save the plot to a file instead
-   waveview plot spec.yaml --output my_plot.html
+   y2p plot spec.yaml --output my_plot.html
 
 This approach is fast, requires no Python code, and keeps your plot configuration version-controlled alongside your simulation files.
 

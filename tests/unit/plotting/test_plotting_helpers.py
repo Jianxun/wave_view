@@ -2,7 +2,7 @@ import numpy as np
 import plotly.graph_objects as go
 import pytest
 
-from wave_view.core.plotting import (
+from yaml2plot.core.plotting import (
     _calculate_y_axis_domains,
     _config_zoom,
     add_waveform,
@@ -82,4 +82,4 @@ class TestAddWaveform:
         assert len(fig.data) == 2
         assert fig.data[1].yaxis == "y2"
         # Extra kwargs should be forwarded (e.g. line color)
-        assert fig.data[1].line.color == "red" 
+        assert fig.data[1].line.color == "red"

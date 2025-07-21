@@ -5,7 +5,7 @@ from unittest.mock import patch, MagicMock
 import pytest
 from click.testing import CliRunner
 
-import wave_view.cli as cli_mod
+import yaml2plot.cli as cli_mod
 
 
 class TestApplyOverrides:
@@ -28,7 +28,10 @@ class TestSaveFigure:
         fig.write_image = MagicMock()
         return fig
 
-    @pytest.mark.parametrize("suffix,writer_attr", [(".html", "write_html"), (".json", "write_json"), (".png", "write_image")])
+    @pytest.mark.parametrize(
+        "suffix,writer_attr",
+        [(".html", "write_html"), (".json", "write_json"), (".png", "write_image")],
+    )
     def test_known_extension_calls_correct_writer(self, tmp_path, suffix, writer_attr):
         fig = self._fake_fig()
         out_file = tmp_path / f"plot{suffix}"
@@ -51,7 +54,9 @@ class TestSignalsCommand:
         data_dict = {f"sig{i}": np.array([i]) for i in range(15)}
         with patch.object(cli_mod, "load_spice_raw", return_value=(data_dict, {})):
             runner = CliRunner()
-            result = runner.invoke(cli_mod.cli, ["signals", str(raw_file), "--limit", "5"])
+            result = runner.invoke(
+                cli_mod.cli, ["signals", str(raw_file), "--limit", "5"]
+            )
         assert result.exit_code == 0
         # Should list only 5 signals and mention more are available
         assert "sig0" in result.output
@@ -65,4 +70,4 @@ class TestSignalsCommand:
             runner = CliRunner()
             result = runner.invoke(cli_mod.cli, ["signals", str(raw_file)])
         assert result.exit_code == 1
-        assert "Error:" in result.output 
+        assert "Error:" in result.output

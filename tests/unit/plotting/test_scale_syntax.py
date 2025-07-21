@@ -1,8 +1,9 @@
 """
 Test both intuitive and legacy scale syntax support.
 """
+
 import unittest
-from wave_view.core.plotting import create_layout
+from yaml2plot.core.plotting import create_layout
 
 
 class TestScaleSyntax(unittest.TestCase):
@@ -23,7 +24,10 @@ class TestScaleSyntax(unittest.TestCase):
 
     def test_default_linear_scale(self):
         """Test that scale defaults to linear."""
-        config = {"x": {"signal": "time"}, "y": [{"label": "V", "signals": {"V": "v(out)"}}]}
+        config = {
+            "x": {"signal": "time"},
+            "y": [{"label": "V", "signals": {"V": "v(out)"}}],
+        }
         layout = create_layout(config)
         self.assertEqual(layout["xaxis"]["type"], "linear")
-        self.assertEqual(layout["yaxis"]["type"], "linear") 
+        self.assertEqual(layout["yaxis"]["type"], "linear")
