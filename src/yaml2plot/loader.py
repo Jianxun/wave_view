@@ -1,4 +1,4 @@
-"""SPICE raw-file loading helpers for Wave View.
+"""SPICE raw-file loading helpers for yaml2plot.
 
 These high-level functions build on `WaveDataset` to give users a quick way to
 obtain *(data_dict, metadata)* tuples either from a single SPICE *.raw* file or

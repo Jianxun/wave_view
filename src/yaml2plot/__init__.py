@@ -1,12 +1,12 @@
 """
-Wave View - SPICE Waveform Visualization Package
+yaml2plot - SPICE Waveform Visualization Package
 
 A Python package for visualizing SPICE simulation waveforms, designed primarily
 for Jupyter notebook integration with both simple plotting functions and advanced
 signal processing capabilities.
 """
 
-__version__ = "1.1.1"
+__version__ = "2.0.0"
 __author__ = "Jianxun Zhu"
 
 # Core classes
@@ -26,17 +26,17 @@ import plotly.io as pio
 
 def set_renderer(renderer: str = "auto"):
     """
-    Set the Plotly renderer for Wave View plots.
+    Set the Plotly renderer for yaml2plot plots.
 
     Args:
         renderer: Renderer type - "auto", "browser", "notebook", "plotly_mimetype", etc.
                  "auto" (default) detects environment automatically
 
     Example:
-        >>> import wave_view as wv
-        >>> wv.set_renderer("notebook")  # Force notebook inline display
-        >>> wv.set_renderer("browser")   # Force browser display
-        >>> wv.set_renderer("auto")      # Auto-detect (default)
+        >>> import yaml2plot as y2p
+        >>> y2p.set_renderer("notebook")  # Force notebook inline display
+        >>> y2p.set_renderer("browser")   # Force browser display
+        >>> y2p.set_renderer("auto")      # Auto-detect (default)
     """
     if renderer == "auto":
         configure_plotly_renderer()

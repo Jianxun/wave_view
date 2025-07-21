@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 """
-Wave View CLI interface.
+yaml2plot CLI interface.
 
 Provides command-line interface for plotting SPICE waveforms using the v1.1.0 API.
 """
