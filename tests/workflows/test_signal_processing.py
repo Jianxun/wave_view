@@ -107,7 +107,7 @@ class TestSignalProcessingWorkflow(unittest.TestCase):
               Normalized: "normalized"
         """)
         
-        fig = y2p.plot(dataset, spec, show=False)
+        fig = y2p.plot(dataset, spec, show=True)
         self.assertIsInstance(fig, go.Figure)
         self.assertEqual(len(fig.data), 3)  # Three traces
 
