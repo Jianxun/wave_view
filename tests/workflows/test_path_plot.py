@@ -1,5 +1,5 @@
 import unittest
-import yaml2plot as wv
+import yaml2plot as y2p
 from pathlib import Path
 import plotly.graph_objects as go
 
@@ -12,9 +12,9 @@ class TestPathPlotWorkflow(unittest.TestCase):
         self.assertTrue(raw_file.exists(), f"Missing fixture {raw_file}")
 
         # Load data then plot (single-liner could wrap later)
-        dataset = wv.load_spice_raw(raw_file)
+        dataset = y2p.load_spice_raw(raw_file)
 
-        spec = wv.PlotSpec.from_yaml(
+        spec = y2p.PlotSpec.from_yaml(
             """
             title: "Ring Oscillator – Path Workflow"
             x:
@@ -26,7 +26,7 @@ class TestPathPlotWorkflow(unittest.TestCase):
             """
         )
 
-        fig = wv.plot(dataset, spec, show=False)
+        fig = y2p.plot(dataset, spec, show=False)
         self.assertIsInstance(fig, go.Figure)
         self.assertEqual(len(fig.data), 1)
         self.assertEqual(fig.data[0].name, "Bus06")

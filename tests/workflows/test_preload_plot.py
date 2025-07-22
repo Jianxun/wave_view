@@ -1,5 +1,5 @@
 import unittest
-import yaml2plot as wv
+import yaml2plot as y2p
 from pathlib import Path
 import plotly.graph_objects as go
 
@@ -10,11 +10,11 @@ class TestPreloadWorkflow(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         raw_file = Path("tests/raw_files/Ring_Oscillator_7stage.raw")
-        dataset = wv.load_spice_raw(raw_file)
+        dataset = y2p.load_spice_raw(raw_file)
         cls.dataset = dataset
 
     def test_first_plot(self):
-        spec = wv.PlotSpec.from_yaml(
+        spec = y2p.PlotSpec.from_yaml(
             """
             title: "Preload – VDD"
             x:
@@ -25,11 +25,11 @@ class TestPreloadWorkflow(unittest.TestCase):
                   VDD: "v(vdd)"
             """
         )
-        fig = wv.plot(self.dataset, spec, show=False)
+        fig = y2p.plot(self.dataset, spec, show=False)
         self.assertIsInstance(fig, go.Figure)
 
     def test_second_plot(self):
-        spec = wv.PlotSpec.from_yaml(
+        spec = y2p.PlotSpec.from_yaml(
             """
             title: "Preload – BUS"
             x:
@@ -40,7 +40,7 @@ class TestPreloadWorkflow(unittest.TestCase):
                   Bus06: "v(bus06)"
             """
         )
-        fig = wv.plot(self.dataset, spec, show=False)
+        fig = y2p.plot(self.dataset, spec, show=False)
         self.assertIsInstance(fig, go.Figure)
 
 

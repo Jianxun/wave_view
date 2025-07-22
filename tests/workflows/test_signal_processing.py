@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-import yaml2plot as wv
+import yaml2plot as y2p
 from pathlib import Path
 import plotly.graph_objects as go
 
@@ -15,7 +15,7 @@ class TestSignalProcessingWorkflow(unittest.TestCase):
         self.assertTrue(raw_file.exists(), f"Missing fixture {raw_file}")
         
         # Load raw data as xarray Dataset
-        dataset = wv.load_spice_raw(raw_file)
+        dataset = y2p.load_spice_raw(raw_file)
         
         # Verify we have AC analysis data with complex signals
         test_signal = "v(out)"  # Use the output signal from OTA AC analysis
@@ -45,7 +45,7 @@ class TestSignalProcessingWorkflow(unittest.TestCase):
         self.assertEqual(dataset["tf_phase"].dims, original_dims)
         
         # Test plotting with derived signals
-        spec = wv.PlotSpec.from_yaml("""
+        spec = y2p.PlotSpec.from_yaml("""
         title: "AC Analysis - Transfer Function"
         x:
           signal: "frequency"
@@ -61,7 +61,7 @@ class TestSignalProcessingWorkflow(unittest.TestCase):
         """)
         
         # Create plot using clean xarray API
-        fig = wv.plot(dataset, spec, show=False)
+        fig = y2p.plot(dataset, spec, show=False)
         
         # Verify plot was created successfully
         self.assertIsInstance(fig, go.Figure)
@@ -77,7 +77,7 @@ class TestSignalProcessingWorkflow(unittest.TestCase):
     def test_frequency_domain_processing(self):
         """Test frequency domain signal processing with xarray Dataset."""
         raw_file = Path("tests/raw_files/Ring_Oscillator_7stage.raw")
-        dataset = wv.load_spice_raw(raw_file)
+        dataset = y2p.load_spice_raw(raw_file)
         
         # Simulate frequency domain processing
         time_signal = "v(bus07)"
@@ -95,7 +95,7 @@ class TestSignalProcessingWorkflow(unittest.TestCase):
         self.assertIn("normalized", dataset.data_vars)
         
         # Test that we can plot multiple derived signals
-        spec = wv.PlotSpec.from_yaml("""
+        spec = y2p.PlotSpec.from_yaml("""
         title: "Multi-signal Processing Test"
         x:
           signal: "time"
@@ -107,7 +107,7 @@ class TestSignalProcessingWorkflow(unittest.TestCase):
               Normalized: "normalized"
         """)
         
-        fig = wv.plot(dataset, spec, show=False)
+        fig = y2p.plot(dataset, spec, show=False)
         self.assertIsInstance(fig, go.Figure)
         self.assertEqual(len(fig.data), 3)  # Three traces
 

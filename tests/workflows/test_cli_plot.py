@@ -4,7 +4,7 @@ import tempfile
 
 from click.testing import CliRunner
 
-import yaml2plot as wv
+import yaml2plot as y2p
 from yaml2plot.cli import cli
 
 
