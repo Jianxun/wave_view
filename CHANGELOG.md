@@ -5,18 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.0.0] - 2025-07-21
+## [2.0.0] - 2025-07-22
 
 ### 🚨 BREAKING CHANGES
 - **Package Rename**: `wave_view` → `yaml2plot` to avoid trademark collision with Synopsys WaveView
-- **CLI Command Change**: `waveview` → `y2p` for improved user experience
+- **CLI Command Change**: `waveview` → `y2p` for improved user experience  
+- **API Migration**: `load_spice_raw()` now returns `xarray.Dataset` instead of `(data_dict, metadata)` tuple
 - **Import Updates**: All imports now use `import yaml2plot as y2p`
+
+### Added
+- **xarray Dataset API**: Modern data structures with self-documenting coordinates and metadata
+- **Enhanced Signal Processing**: Direct Dataset manipulation with automatic dimension preservation
+- **Coordinate Detection**: Intelligent detection of time/frequency coordinates with fallback
+- **Signal Processing Workflows**: New test suite demonstrating AC analysis and derived signal calculations
+- **Type Safety**: Eliminates silent errors from dict-based approach
 
 ### Changed
 - **Package Name**: Complete rename from wave_view to yaml2plot across all components
 - **CLI Interface**: New `y2p` command replaces `waveview` for all operations
+- **Data Loading**: `load_spice_raw()` returns xarray Dataset with coordinates, data variables, and attributes
 - **Module Structure**: All internal modules updated to yaml2plot namespace
-- **Documentation**: Updated all examples and documentation to use new naming
+- **Documentation**: Enhanced with comprehensive CLI and Python API workflows
+- **Import Consistency**: Standardized `import yaml2plot as y2p` across codebase
 
 ### Migration Guide
 For existing users upgrading from wave_view:
@@ -26,10 +36,12 @@ For existing users upgrading from wave_view:
 # Old (v1.x)
 import wave_view as wv
 data, metadata = wv.load_spice_raw("file.raw")
+data["derived"] = calculation  # Silent failures possible
 
 # New (v2.0.0)
 import yaml2plot as y2p
-data, metadata = y2p.load_spice_raw("file.raw")
+dataset = y2p.load_spice_raw("file.raw")  # Returns xarray.Dataset
+dataset["derived"] = calculation  # Self-documenting with proper dimensions
 ```
 
 **CLI Usage**:
@@ -44,10 +56,12 @@ y2p plot config.yaml
 ```
 
 ### Technical Details
-- All 149+ import statements updated across codebase
-- 61 tests passing with 90% coverage maintained
-- Full backward API compatibility within yaml2plot namespace
-- No functional changes to core plotting or data loading capabilities
+- **Dependencies**: Added `xarray>=2023.1.0` for Dataset functionality
+- **Test Coverage**: All 66 tests passing with 91% coverage
+- **Backward Compatibility**: Plotting layer converts Datasets to dicts internally
+- **Signal Ordering**: Coordinates first, then data variables for better x-axis selection
+- **Import Standardization**: Updated all legacy `wv` imports to consistent `y2p`
+- **Type Annotations**: Resolved lint warnings with proper type hints
 
 ## [1.1.1] - 2025-07-19
 
