@@ -91,7 +91,7 @@ The API follows a clear three-step workflow:
 import yaml2plot as y2p
 
 # 1. Load data from a .raw file
-data, _ = y2p.load_spice_raw("your_simulation.raw")
+data = y2p.load_spice_raw("your_simulation.raw")
 print(f"Signals available: {list(data.keys())[:5]}...")
 
 # 2. Configure the plot using a YAML string
