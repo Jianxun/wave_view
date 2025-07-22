@@ -1,13 +1,18 @@
 import numpy as np
 import plotly.graph_objects as go
 import pytest
+import xarray as xr
+from pathlib import Path
+from unittest.mock import patch
 
 from yaml2plot.core.plotting import (
     _calculate_y_axis_domains,
     _config_zoom,
     add_waveform,
     create_figure,
+    plot,
 )
+from yaml2plot.core.plotspec import PlotSpec
 
 
 class TestCalculateYAxisDomains:
@@ -83,3 +88,45 @@ class TestAddWaveform:
         assert fig.data[1].yaxis == "y2"
         # Extra kwargs should be forwarded (e.g. line color)
         assert fig.data[1].line.color == "red"
+
+
+class TestPlotFilePathHandling:
+    """Test plot() function with file path input using xarray Dataset API."""
+    
+    def test_plot_with_file_path_converts_xarray_dataset(self, tmp_path):
+        """Test that plot() correctly handles file paths with new xarray Dataset API."""
+        # Create a mock file
+        test_file = tmp_path / "test.raw"
+        test_file.write_text("dummy")
+        
+        # Create a mock xarray Dataset
+        mock_dataset = xr.Dataset(
+            data_vars={
+                "v(out)": (["time"], np.array([0.0, 0.9, 1.8])),
+                "v(in)": (["time"], np.array([1.8, 1.8, 1.8]))
+            },
+            coords={"time": np.array([0.0, 1e-9, 2e-9])},
+            attrs={"analysis_type": "transient"}
+        )
+        
+        # Create a simple plot spec
+        spec = PlotSpec.from_yaml("""
+        title: "Test Plot"
+        x: {signal: "time"}
+        y:
+          - label: "Voltage (V)"
+            signals: {Output: "v(out)"}
+        """)
+        
+        # Mock load_spice_raw to return xarray Dataset
+        with patch("yaml2plot.loader.load_spice_raw", return_value=mock_dataset):
+            fig = plot(test_file, spec, show=False)
+            
+        # Verify the plot was created correctly
+        assert isinstance(fig, go.Figure)
+        assert len(fig.data) == 1
+        assert fig.data[0].name == "Output"
+        
+        # Verify the data matches our mock dataset
+        np.testing.assert_array_equal(fig.data[0].x, [0.0, 1e-9, 2e-9])
+        np.testing.assert_array_equal(fig.data[0].y, [0.0, 0.9, 1.8])

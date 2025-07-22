@@ -1,16 +1,17 @@
 """SPICE raw-file loading helpers for yaml2plot.
 
 These high-level functions build on `WaveDataset` to give users a quick way to
-obtain *(data_dict, metadata)* tuples either from a single SPICE *.raw* file or
+obtain xarray Dataset objects from single SPICE *.raw* files or
 from a batch of files (e.g. PVT / Monte-Carlo sweeps).
 """
 
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any, Dict, List, Tuple, Union
+from typing import Any, Dict, List, Union
 
 import numpy as np
+import xarray as xr
 
 from .core.wavedataset import WaveDataset
 
@@ -45,21 +46,54 @@ def _validate_file_path(path: _PathLike) -> Path:
 # ────────────────────────────────────────────────────────────────────────────
 
 
-def load_spice_raw(raw_file: _PathLike) -> Tuple[Dict[str, np.ndarray], Dict[str, Any]]:
-    """Load one SPICE *.raw* file and return *(data_dict, metadata)*."""
+def load_spice_raw(raw_file: _PathLike) -> xr.Dataset:
+    """Load one SPICE *.raw* file and return an xarray Dataset."""
     file_path = _validate_file_path(raw_file)
 
     wave_data = WaveDataset.from_raw(str(file_path))
-    data = {sig: wave_data.get_signal(sig) for sig in wave_data.signals}
-    metadata = wave_data.metadata
-
-    return data, metadata
+    
+    # Create xarray Dataset
+    data_vars = {}
+    coords = {}
+    attrs = {}
+    
+    # Get all signals
+    signals = wave_data.signals
+    
+    # Find coordinate axis (time, frequency, or first signal)
+    coord_signal = None
+    dim_name = None
+    
+    if 'time' in [s.lower() for s in signals]:
+        coord_signal = next(s for s in signals if s.lower() == 'time')
+        dim_name = 'time'
+    elif 'frequency' in [s.lower() for s in signals]:
+        coord_signal = next(s for s in signals if s.lower() == 'frequency')
+        dim_name = 'frequency'
+    else:
+        # Fallback: use first signal as coordinate
+        coord_signal = signals[0]
+        dim_name = 'axis'
+    
+    # Add coordinate
+    coord_data = wave_data.get_signal(coord_signal)
+    coords[dim_name] = coord_data
+    
+    # Add all other signals as data variables
+    for signal in signals:
+        if signal != coord_signal:
+            data_vars[signal] = ([dim_name], wave_data.get_signal(signal))
+    
+    # Add metadata as global attributes
+    attrs.update(wave_data.metadata)
+    
+    return xr.Dataset(data_vars=data_vars, coords=coords, attrs=attrs)
 
 
 def load_spice_raw_batch(
     raw_files: List[_PathLike],
-) -> List[Tuple[Dict[str, np.ndarray], Dict[str, Any]]]:
-    """Load many *.raw* files, preserving the order, and return a list of tuples."""
+) -> List[xr.Dataset]:
+    """Load many *.raw* files, preserving the order, and return a list of xarray Datasets."""
     if raw_files is None:
         raise TypeError("raw_files must be a list of file paths, not None")
 

@@ -11,23 +11,30 @@ import numpy as np
 import plotly.graph_objects as go
 from pathlib import Path
 
+try:
+    import xarray as xr
+    HAS_XARRAY = True
+except ImportError:
+    HAS_XARRAY = False
+
 from .plotspec import PlotSpec
 
 
 def plot(
-    data: Union[Dict[str, np.ndarray], str, "Path"],
+    data: Union[Dict[str, np.ndarray], str, "Path", "xr.Dataset"],
     spec: PlotSpec | Dict[str, Any],
     *,
-    processed_data: Optional[Dict[str, np.ndarray]] = None,
     show: bool = True,
 ) -> go.Figure:
     """
     Create Plotly figure from data and PlotSpec configuration.
 
     Args:
-        data: Mapping of signal name → numpy array or raw-file path
+        data: Data source - can be:
+            - Dict mapping signal name → numpy array
+            - Raw file path (str/Path) 
+            - xarray Dataset (preferred for new code)
         spec: PlotSpec configuration object **or** raw configuration ``dict``
-        processed_data: Optional mapping of processed signal name → numpy array
         show: When *True* (default) immediately display the figure via
               ``fig.show()`` – handy for interactive use.  Tests can pass
               ``show=False`` to suppress GUI pop-ups.
@@ -39,24 +46,33 @@ def plot(
         ValueError: If required signals are missing from data
     """
     # ---------------------------------------------
-    # 1) Normalize *data* argument – support file paths
+    # 1) Normalize *data* argument – support file paths and xarray Datasets
     # ---------------------------------------------
+    def _dataset_to_dict(dataset):
+        """Convert xarray Dataset to dict for internal plotting logic."""
+        data_dict = {}
+        # Add all data variables
+        for var in dataset.data_vars:
+            data_dict[var] = dataset[var].values
+        # Add all coordinates (time, frequency, etc.)
+        for coord in dataset.coords:
+            data_dict[coord] = dataset.coords[coord].values
+        return data_dict
+    
     if isinstance(data, (str, Path)):
         # Lazy-load raw file on-demand so docs snippets like
         # wv.plot("sim.raw", spec) keep working.
         from ..loader import load_spice_raw  # local import to avoid cycle
-
-        data_dict, _ = load_spice_raw(data)
-        data = data_dict  # type: ignore[assignment]
+        dataset = load_spice_raw(data)
+        data = _dataset_to_dict(dataset)  # type: ignore[assignment]
+    elif HAS_XARRAY and hasattr(data, 'data_vars') and hasattr(data, 'coords'):
+        # xarray Dataset - convert to dict for internal plotting
+        data = _dataset_to_dict(data)  # type: ignore[assignment]
     elif not isinstance(data, dict):
         raise TypeError(
-            "data must be a dict mapping signal → ndarray or a raw-file path (str/Path)"
+            "data must be a dict, xarray Dataset, or raw-file path (str/Path)"
         )
 
-    # Merge any processed/derived signals directly into the data dict.
-    if processed_data:
-        # Shallow copy to avoid mutating caller-supplied object
-        data = {**data, **processed_data}
 
     # ---------------------------------------------
     # 2) Normalize *spec* argument

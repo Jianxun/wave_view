@@ -7,6 +7,9 @@ from pathlib import Path
 from unittest.mock import patch, MagicMock
 from click.testing import CliRunner
 
+import numpy as np
+import xarray as xr
+
 from yaml2plot.cli import cli
 from yaml2plot.core.plotspec import PlotSpec
 
@@ -50,8 +53,11 @@ y:
 """
         spec_file.write_text(spec_content)
 
-        # Mock the load function to return fake data
-        mock_load.return_value = ({"time": [1, 2, 3], "v1": [1, 2, 3]}, {})
+        # Mock the load function to return fake xarray Dataset
+        data_vars = {"v1": (["time"], np.array([1, 2, 3]))}
+        coords = {"time": np.array([1, 2, 3])}
+        mock_dataset = xr.Dataset(data_vars=data_vars, coords=coords)
+        mock_load.return_value = mock_dataset
         mock_plot.return_value = MagicMock()
 
         runner = CliRunner()
@@ -86,7 +92,11 @@ y:
 """
         spec_file.write_text(spec_content)
 
-        mock_load.return_value = ({"time": [1, 2, 3], "v1": [1, 2, 3]}, {})
+        # Mock the load function to return fake xarray Dataset
+        data_vars = {"v1": (["time"], np.array([1, 2, 3]))}
+        coords = {"time": np.array([1, 2, 3])}
+        mock_dataset = xr.Dataset(data_vars=data_vars, coords=coords)
+        mock_load.return_value = mock_dataset
         mock_plot.return_value = MagicMock()
 
         runner = CliRunner()
@@ -126,7 +136,11 @@ y:
 """
         spec_file.write_text(spec_content)
 
-        mock_load.return_value = ({"time": [1, 2, 3], "v1": [1, 2, 3]}, {})
+        # Mock the load function to return fake xarray Dataset
+        data_vars = {"v1": (["time"], np.array([1, 2, 3]))}
+        coords = {"time": np.array([1, 2, 3])}
+        mock_dataset = xr.Dataset(data_vars=data_vars, coords=coords)
+        mock_load.return_value = mock_dataset
         mock_plot.return_value = MagicMock()
 
         runner = CliRunner()

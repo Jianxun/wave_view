@@ -1,4 +1,6 @@
 import pytest
+import xarray as xr
+import numpy as np
 from click.testing import CliRunner
 from unittest.mock import patch
 from yaml2plot.cli import cli
@@ -12,8 +14,15 @@ def runner():
 @patch("yaml2plot.cli.load_spice_raw")
 def test_init_command_happy_path(mock_load_spice_raw, runner):
     """Test the 'init' command with a standard raw file."""
-    # Arrange
-    mock_load_spice_raw.return_value = ({"time": [], "v(out)": [], "v(in)": []}, {})
+    # Arrange - Mock xarray Dataset
+    mock_dataset = xr.Dataset(
+        data_vars={
+            "v(out)": (["time"], np.array([])),
+            "v(in)": (["time"], np.array([]))
+        },
+        coords={"time": np.array([])}
+    )
+    mock_load_spice_raw.return_value = mock_dataset
 
     with runner.isolated_filesystem():
         with open("dummy.raw", "w") as f:
@@ -34,8 +43,12 @@ def test_init_command_happy_path(mock_load_spice_raw, runner):
 @patch("yaml2plot.cli.load_spice_raw")
 def test_init_command_2_signals(mock_load_spice_raw, runner):
     """Test the 'init' command with a raw file containing 2 signals."""
-    # Arrange
-    mock_load_spice_raw.return_value = ({"time": [], "v(out)": []}, {})
+    # Arrange - Mock xarray Dataset
+    mock_dataset = xr.Dataset(
+        data_vars={"v(out)": (["time"], np.array([]))},
+        coords={"time": np.array([])}
+    )
+    mock_load_spice_raw.return_value = mock_dataset
 
     with runner.isolated_filesystem():
         with open("dummy.raw", "w") as f:
@@ -54,8 +67,12 @@ def test_init_command_2_signals(mock_load_spice_raw, runner):
 @patch("yaml2plot.cli.load_spice_raw")
 def test_init_command_1_signal(mock_load_spice_raw, runner):
     """Test the 'init' command with a raw file containing 1 signal."""
-    # Arrange
-    mock_load_spice_raw.return_value = ({"time": []}, {})
+    # Arrange - Mock xarray Dataset with only coordinate (no data vars)
+    mock_dataset = xr.Dataset(
+        data_vars={},
+        coords={"time": np.array([])}
+    )
+    mock_load_spice_raw.return_value = mock_dataset
 
     with runner.isolated_filesystem():
         with open("dummy.raw", "w") as f:
@@ -73,8 +90,9 @@ def test_init_command_1_signal(mock_load_spice_raw, runner):
 @patch("yaml2plot.cli.load_spice_raw")
 def test_init_command_0_signals(mock_load_spice_raw, runner):
     """Test the 'init' command with a raw file containing 0 signals."""
-    # Arrange
-    mock_load_spice_raw.return_value = ({}, {})
+    # Arrange - Mock xarray Dataset with no data vars or coordinates
+    mock_dataset = xr.Dataset(data_vars={}, coords={})
+    mock_load_spice_raw.return_value = mock_dataset
 
     with runner.isolated_filesystem():
         with open("dummy.raw", "w") as f:

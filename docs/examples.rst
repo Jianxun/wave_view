@@ -4,7 +4,7 @@ Examples
 .. note::
    All code below targets *yaml2plot* **2.0.0**.  The modern workflow is:
 
-   1. ``data, metadata = y2p.load_spice_raw("my.raw")`` – obtain a ``dict`` of NumPy arrays, and a ``dict`` of metadata (placeholders for future features)
+   1. ``data = y2p.load_spice_raw("my.raw")`` – obtain a ``dict`` of NumPy arrays, and a ``dict`` of metadata (placeholders for future features)
    2. ``spec = y2p.PlotSpec.from_yaml(""" ... """)`` – build a PlotSpec (YAML string or file)
    3. ``fig = y2p.plot(data, spec)`` – create the Plotly figure
 
@@ -20,7 +20,7 @@ Plot input and output voltages from an amplifier simulation:
    import yaml2plot as y2p
 
    # Load simulation data
-   data, metadata = y2p.load_spice_raw("amplifier.raw")
+   data = y2p.load_spice_raw("amplifier.raw")
 
    # Simple voltage plot using YAML configuration
    spec = y2p.PlotSpec.from_yaml("""
@@ -36,7 +36,6 @@ Plot input and output voltages from an amplifier simulation:
    """)
 
    fig = y2p.plot(data, spec)
-   fig.show()
 
 Multi-Y-Axis Plot
 -----------------
@@ -45,7 +44,7 @@ Create multiple strips with shared x-axis and rangeslider:
 
 .. code-block:: python
 
-   data, metadata = y2p.load_spice_raw("complete_analysis.raw")
+   data = y2p.load_spice_raw("complete_analysis.raw")
 
    spec = y2p.PlotSpec.from_yaml("""
    title: "Complete Circuit Analysis"
@@ -82,19 +81,11 @@ magnitude and phase analysis for transfer functions and Bode plots:
    import numpy as np
 
    # Load AC analysis data (contains complex numbers)
-   data_ac, metadata = y2p.load_spice_raw("ac_analysis.raw")
+   data = y2p.load_spice_raw("ac_analysis.raw")
    
-   # AC signals are automatically returned as complex numbers
-   frequency = data_ac["frequency"]  # Real (even though stored as complex)
-   v_out = data_ac["v(out)"]         # Complex
-   v_in = data_ac["v(in)"]    # complex128 array
-   
-   print(f"v_out dtype: {v_out.dtype}")  # complex128
-   print(f"Is complex: {np.iscomplexobj(v_out)}")  # True
-
-   tf = v_out/v_in
-   data_ac["tf_db"] = 20*np.log10(np.abs(tf))
-   data_ac["tf_phase"] = np.angle(tf)/np.pi*180
+   tf = data["v(out)"]/data["v(in)"]
+   data["tf_db"] = 20*np.log10(np.abs(tf))
+   data["tf_phase"] = np.angle(tf)/np.pi*180
 
    spec = y2p.PlotSpec.from_yaml("""
    title: "Transfer Function Bode Plot"
@@ -113,7 +104,7 @@ magnitude and phase analysis for transfer functions and Bode plots:
    show_rangeslider: true
    """)
 
-   fig = y2p.plot(data_ac, spec)
+   fig = y2p.plot(data, spec)
 
 Comparison Plots
 ----------------
@@ -122,15 +113,15 @@ Compare results from different simulation runs:
 
 .. code-block:: python
 
+   import xarray as xr
    # Load multiple simulations
-   data1, _ = y2p.load_spice_raw("before_optimization.raw")
-   data2, _ = y2p.load_spice_raw("after_optimization.raw")
+   data1 = y2p.load_spice_raw("before_optimization.raw")
+   data2 = y2p.load_spice_raw("after_optimization.raw")
 
    # Create comparison signals
-   data = {
-       "v_out_before": data1["v(out)"],
-       "v_out_after": data2["v(out)"]
-   }
+   data = xr.Dataset()
+   data["v_out_before"] = data1["v(out)"]
+   data["v_out_after"] = data2["v(out)"]
 
    spec = y2p.PlotSpec.from_yaml("""
    title: "Optimization Comparison"
