@@ -3,6 +3,7 @@ from pathlib import Path
 from unittest.mock import patch, MagicMock
 
 import pytest
+import xarray as xr
 from click.testing import CliRunner
 
 import yaml2plot.cli as cli_mod
@@ -51,17 +52,22 @@ class TestSignalsCommand:
     def test_signals_lists_limited_output(self, tmp_path):
         raw_file = tmp_path / "sim.raw"
         raw_file.write_text("dummy")
-        data_dict = {f"sig{i}": np.array([i]) for i in range(15)}
-        with patch.object(cli_mod, "load_spice_raw", return_value=(data_dict, {})):
+        # Create mock xarray Dataset
+        data_vars = {f"sig{i}": (["time"], np.array([i])) for i in range(15)}
+        coords = {"time": np.array([0.0])}
+        mock_dataset = xr.Dataset(data_vars=data_vars, coords=coords)
+        
+        with patch.object(cli_mod, "load_spice_raw", return_value=mock_dataset):
             runner = CliRunner()
             result = runner.invoke(
                 cli_mod.cli, ["signals", str(raw_file), "--limit", "5"]
             )
         assert result.exit_code == 0
         # Should list only 5 signals and mention more are available
+        # Note: xarray Dataset includes coordinates (time) + data variables (sig0-14) = 16 total
         assert "sig0" in result.output
-        assert "sig4" in result.output
-        assert "... and 10 more signals" in result.output
+        assert "sig3" in result.output  # sig4 is now beyond the limit of 5 due to time coordinate
+        assert "... and 11 more signals" in result.output
 
     def test_signals_handles_loader_exception(self, tmp_path):
         raw_file = tmp_path / "fail.raw"

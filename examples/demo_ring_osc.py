@@ -4,7 +4,7 @@ import yaml2plot as wv
 # Use the test data we have available
 spice_file = "./raw_data/Ring_Oscillator_7stage.raw"
 
-data, metadata = wv.load_spice_raw(spice_file)
+dataset = wv.load_spice_raw(spice_file)
 
 spec = wv.PlotSpec.from_yaml("""
 title: "Ring Oscillator - Key Nodes"
@@ -28,6 +28,6 @@ height: 600
 show_rangeslider: true
 """)
 
-fig1 = wv.plot(data, spec)
+fig1 = wv.plot(dataset, spec)
 
 # %%

@@ -10,8 +10,8 @@ class TestPreloadWorkflow(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         raw_file = Path("tests/raw_files/Ring_Oscillator_7stage.raw")
-        data, _ = wv.load_spice_raw(raw_file)
-        cls.data = data
+        dataset = wv.load_spice_raw(raw_file)
+        cls.dataset = dataset
 
     def test_first_plot(self):
         spec = wv.PlotSpec.from_yaml(
@@ -25,7 +25,7 @@ class TestPreloadWorkflow(unittest.TestCase):
                   VDD: "v(vdd)"
             """
         )
-        fig = wv.plot(self.data, spec, show=False)
+        fig = wv.plot(self.dataset, spec, show=False)
         self.assertIsInstance(fig, go.Figure)
 
     def test_second_plot(self):
@@ -40,7 +40,7 @@ class TestPreloadWorkflow(unittest.TestCase):
                   Bus06: "v(bus06)"
             """
         )
-        fig = wv.plot(self.data, spec, show=False)
+        fig = wv.plot(self.dataset, spec, show=False)
         self.assertIsInstance(fig, go.Figure)
 
 

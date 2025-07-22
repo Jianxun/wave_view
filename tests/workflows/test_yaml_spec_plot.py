@@ -20,7 +20,7 @@ class TestYAMLSpecWorkflow(unittest.TestCase):
 
     def test_yaml_spec_plot(self):
         raw_file = Path("tests/raw_files/Ring_Oscillator_7stage.raw")
-        data, _ = wv.load_spice_raw(raw_file)
+        dataset = wv.load_spice_raw(raw_file)
 
         with tempfile.NamedTemporaryFile("w", suffix=".yml", delete=False) as tmp:
             tmp.write(yaml_content)
@@ -28,7 +28,7 @@ class TestYAMLSpecWorkflow(unittest.TestCase):
 
         try:
             spec = wv.PlotSpec.from_yaml(tmp_path.read_text())
-            fig = wv.plot(data, spec, show=False)
+            fig = wv.plot(dataset, spec, show=False)
             self.assertIsInstance(fig, go.Figure)
         finally:
             tmp_path.unlink(missing_ok=True)

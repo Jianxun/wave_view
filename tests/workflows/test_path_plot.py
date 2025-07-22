@@ -12,7 +12,7 @@ class TestPathPlotWorkflow(unittest.TestCase):
         self.assertTrue(raw_file.exists(), f"Missing fixture {raw_file}")
 
         # Load data then plot (single-liner could wrap later)
-        data, _ = wv.load_spice_raw(raw_file)
+        dataset = wv.load_spice_raw(raw_file)
 
         spec = wv.PlotSpec.from_yaml(
             """
@@ -26,7 +26,7 @@ class TestPathPlotWorkflow(unittest.TestCase):
             """
         )
 
-        fig = wv.plot(data, spec, show=False)
+        fig = wv.plot(dataset, spec, show=False)
         self.assertIsInstance(fig, go.Figure)
         self.assertEqual(len(fig.data), 1)
         self.assertEqual(fig.data[0].name, "Bus06")
