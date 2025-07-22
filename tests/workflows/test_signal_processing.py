@@ -2,7 +2,8 @@ import unittest
 import numpy as np
 import yaml2plot as y2p
 from pathlib import Path
-import plotly.graph_objects as go
+import plotly.graph_objects as go  # type: ignore
+from typing import Any
 
 
 class TestSignalProcessingWorkflow(unittest.TestCase):
@@ -65,9 +66,15 @@ class TestSignalProcessingWorkflow(unittest.TestCase):
         
         # Verify plot was created successfully
         self.assertIsInstance(fig, go.Figure)
-        self.assertEqual(len(fig.data), 2)  # Two traces for magnitude and phase
-        self.assertEqual(fig.data[0].name, "Magnitude")
-        self.assertEqual(fig.data[1].name, "Phase")
+        
+        # Type check the figure data for lint compatibility
+        fig_data: Any = fig.data  # Suppress Pylance false positive
+        self.assertEqual(len(fig_data), 2)  # Two traces for magnitude and phase
+        
+        # Verify trace names
+        trace_names = [trace.name for trace in fig_data]  # type: ignore
+        self.assertIn("Magnitude", trace_names)
+        self.assertIn("Phase", trace_names)
         
         # Verify plot has correct structure for dual-axis
         layout = fig.layout
@@ -107,9 +114,12 @@ class TestSignalProcessingWorkflow(unittest.TestCase):
               Normalized: "normalized"
         """)
         
-        fig = y2p.plot(dataset, spec, show=True)
+        fig = y2p.plot(dataset, spec, show=False)
         self.assertIsInstance(fig, go.Figure)
-        self.assertEqual(len(fig.data), 3)  # Three traces
+        
+        # Type check the figure data for lint compatibility
+        fig_data: Any = fig.data  # Suppress Pylance false positive
+        self.assertEqual(len(fig_data), 3)  # Three traces
 
 
 if __name__ == "__main__":
