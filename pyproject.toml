@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "yaml2plot"
-version = "2.0.0"
+version = "2.0.1"
 description = "A Python package for creating plots from YAML specifications of SPICE simulation waveforms"
 readme = "README.md"
 license = "MIT"
