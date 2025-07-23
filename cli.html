@@ -1,0 +1,300 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CLI Reference &mdash; yaml2plot 2.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+    <link rel="canonical" href="https://jianxun.github.io/yaml2plot/cli.html"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=51b770b3"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Examples" href="examples.html" />
+    <link rel="prev" title="PlotSpec Schema Reference" href="schema.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: white" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            yaml2plot
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User Guide:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick Start Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="schema.html">PlotSpec Schema Reference</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">CLI Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#y2p">y2p</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#y2p-init">init</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#y2p-plot">plot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#y2p-signals">signals</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Development:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: white" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">yaml2plot</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">CLI Reference</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/cli.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="cli-reference">
+<h1>CLI Reference<a class="headerlink" href="#cli-reference" title="Link to this heading"></a></h1>
+<p>This page provides a complete reference for the <code class="docutils literal notranslate"><span class="pre">y2p</span></code> command-line interface. The CLI is built with <a class="reference external" href="https://click.palletsprojects.com/">Click</a> and offers commands for plotting, generating configurations, and inspecting data files.</p>
+<section id="y2p">
+<h2>y2p<a class="headerlink" href="#y2p" title="Link to this heading"></a></h2>
+<p>yaml2plot (y2p) - a CLI tool for creating plots from YAML specifications and SPICE simulation waveforms.</p>
+<p>Examples:</p>
+<blockquote>
+<div><p><cite>y2p init sim.raw &gt; spec.yaml</cite> # Generate a boilerplate spec.yaml file from a raw file</p>
+<p><cite>y2p signals sim.raw</cite> # List available signals in a raw file, edit the spec.yaml file to plot the signals you want</p>
+<p><cite>y2p plot spec.yaml</cite> # Plot the signals in the spec.yaml file</p>
+</div></blockquote>
+<p>Run subcommands with <cite>y2p &lt;subcommand&gt; –help</cite> for more information.
+See the latest Documentation at: [<a class="reference external" href="https://Jianxun.github.io/yaml2plot/">https://Jianxun.github.io/yaml2plot/</a>]</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>y2p<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>COMMAND<span class="w"> </span><span class="o">[</span>ARGS<span class="o">]</span>...
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-y2p-version">
+<span class="sig-name descname"><span class="pre">--version</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-y2p-version" title="Link to this definition"></a></dt>
+<dd><p>Show the version and exit.</p>
+</dd></dl>
+
+<section id="y2p-init">
+<h3>init<a class="headerlink" href="#y2p-init" title="Link to this heading"></a></h3>
+<p>Generate a sample plot_spec.yaml file from a raw file.</p>
+<p>Use the default independent variable as the X axis.</p>
+<p>Use <cite>y2p init sim.raw &gt; spec.yaml</cite> to save the spec.yaml file.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>y2p<span class="w"> </span>init<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>RAW_FILE
+</pre></div>
+</div>
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-y2p-init-arg-RAW_FILE">
+<span class="sig-name descname"><span class="pre">RAW_FILE</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-y2p-init-arg-RAW_FILE" title="Link to this definition"></a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+</section>
+<section id="y2p-plot">
+<h3>plot<a class="headerlink" href="#y2p-plot" title="Link to this heading"></a></h3>
+<p>Plot SPICE waveforms using a specification file.</p>
+<p>The raw file can be specified in three ways (in order of precedence):
+1. –raw option (highest priority)
+2. Second positional argument: y2p plot spec.yaml sim.raw
+3. ‘raw:’ field in the YAML specification file (lowest priority)</p>
+<dl class="simple">
+<dt>Examples:</dt><dd><p>y2p plot spec.yaml                           # Uses raw: field from YAML
+y2p plot spec.yaml sim.raw                   # Uses positional argument
+y2p plot spec.yaml –raw sim.raw             # Uses –raw option
+y2p plot spec.yaml –output plot.html        # Save to file
+y2p plot spec.yaml –width 1200 –height 800 # Override dimensions
+y2p plot spec.yaml –title “My Analysis”     # Override title</p>
+</dd>
+</dl>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>y2p<span class="w"> </span>plot<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>SPEC_FILE<span class="w"> </span><span class="o">[</span>RAW_FILE<span class="o">]</span>
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-y2p-plot-raw">
+<span class="sig-name descname"><span class="pre">--raw</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;raw_override&gt;</span></span><a class="headerlink" href="#cmdoption-y2p-plot-raw" title="Link to this definition"></a></dt>
+<dd><p>Override raw file path (takes precedence over spec file raw: field)</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-y2p-plot-o">
+<span id="cmdoption-y2p-plot-output"></span><span class="sig-name descname"><span class="pre">-o</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--output</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;output_file&gt;</span></span><a class="headerlink" href="#cmdoption-y2p-plot-o" title="Link to this definition"></a></dt>
+<dd><p>Output file path (HTML, PNG, PDF, etc.). If not specified, plot will be displayed.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-y2p-plot-width">
+<span class="sig-name descname"><span class="pre">--width</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;width&gt;</span></span><a class="headerlink" href="#cmdoption-y2p-plot-width" title="Link to this definition"></a></dt>
+<dd><p>Plot width in pixels (overrides spec file)</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-y2p-plot-height">
+<span class="sig-name descname"><span class="pre">--height</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;height&gt;</span></span><a class="headerlink" href="#cmdoption-y2p-plot-height" title="Link to this definition"></a></dt>
+<dd><p>Plot height in pixels (overrides spec file)</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-y2p-plot-title">
+<span class="sig-name descname"><span class="pre">--title</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;title&gt;</span></span><a class="headerlink" href="#cmdoption-y2p-plot-title" title="Link to this definition"></a></dt>
+<dd><p>Plot title (overrides spec file)</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-y2p-plot-theme">
+<span class="sig-name descname"><span class="pre">--theme</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;theme&gt;</span></span><a class="headerlink" href="#cmdoption-y2p-plot-theme" title="Link to this definition"></a></dt>
+<dd><p>Plot theme (overrides spec file)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Options<span class="colon">:</span></dt>
+<dd class="field-odd"><p>plotly | plotly_white | plotly_dark | ggplot2 | seaborn | simple_white</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-y2p-plot-renderer">
+<span class="sig-name descname"><span class="pre">--renderer</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;renderer&gt;</span></span><a class="headerlink" href="#cmdoption-y2p-plot-renderer" title="Link to this definition"></a></dt>
+<dd><p>Plotly renderer to use when displaying plot</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">'auto'</span></code></p>
+</dd>
+<dt class="field-even">Options<span class="colon">:</span></dt>
+<dd class="field-even"><p>auto | browser | notebook | plotly_mimetype | json</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-y2p-plot-arg-SPEC_FILE">
+<span class="sig-name descname"><span class="pre">SPEC_FILE</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-y2p-plot-arg-SPEC_FILE" title="Link to this definition"></a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-y2p-plot-arg-RAW_FILE">
+<span class="sig-name descname"><span class="pre">RAW_FILE</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-y2p-plot-arg-RAW_FILE" title="Link to this definition"></a></dt>
+<dd><p>Optional argument</p>
+</dd></dl>
+
+</section>
+<section id="y2p-signals">
+<h3>signals<a class="headerlink" href="#y2p-signals" title="Link to this heading"></a></h3>
+<p>List available signals in a SPICE raw file.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>y2p<span class="w"> </span>signals<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>RAW_FILE
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-y2p-signals-l">
+<span id="cmdoption-y2p-signals-limit"></span><span class="sig-name descname"><span class="pre">-l</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--limit</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;limit&gt;</span></span><a class="headerlink" href="#cmdoption-y2p-signals-l" title="Link to this definition"></a></dt>
+<dd><p>Limit number of signals to display (default: 10)</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-y2p-signals-a">
+<span id="cmdoption-y2p-signals-all"></span><span class="sig-name descname"><span class="pre">-a</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--all</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-y2p-signals-a" title="Link to this definition"></a></dt>
+<dd><p>Show all signals, ignoring the limit</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-y2p-signals-grep">
+<span class="sig-name descname"><span class="pre">--grep</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;grep&gt;</span></span><a class="headerlink" href="#cmdoption-y2p-signals-grep" title="Link to this definition"></a></dt>
+<dd><p>Filter signals by regular expression</p>
+</dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-y2p-signals-arg-RAW_FILE">
+<span class="sig-name descname"><span class="pre">RAW_FILE</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-y2p-signals-arg-RAW_FILE" title="Link to this definition"></a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+<p>Examples:</p>
+<blockquote>
+<div><p>y2p signals sim.raw</p>
+<p>y2p signals sim.raw –limit 20</p>
+<p>y2p signals sim.raw -a</p>
+<p>y2p signals sim.raw –grep “v(”</p>
+</div></blockquote>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="schema.html" class="btn btn-neutral float-left" title="PlotSpec Schema Reference" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="examples.html" class="btn btn-neutral float-right" title="Examples" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Jianxun.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
