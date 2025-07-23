@@ -68,7 +68,7 @@ The API follows a clear three-step workflow:
    import yaml2plot as y2p
 
    # 1. Load data from a .raw file
-   data, _ = y2p.load_spice_raw("your_simulation.raw")
+   data = y2p.load_spice_raw("your_simulation.raw")
    print(f"Signals available: {list(data.keys())[:5]}...")
 
    # 2. Configure the plot using a YAML string
@@ -98,7 +98,7 @@ Because the API gives you direct access to the data as NumPy arrays, you can eas
    import yaml2plot as y2p
 
    # Load the data
-   data, _ = y2p.load_spice_raw("your_simulation.raw")
+   data = y2p.load_spice_raw("your_simulation.raw")
 
    # Calculate a new, derived signal
    data["diff_voltage"] = data["v(out_p)"] - data["v(out_n)"]

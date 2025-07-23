@@ -4,7 +4,7 @@ Examples
 .. note::
    All code below targets *yaml2plot* **2.0.0**.  The modern workflow is:
 
-   1. ``data = y2p.load_spice_raw("my.raw")`` – obtain a ``dict`` of NumPy arrays, and a ``dict`` of metadata (placeholders for future features)
+   1. ``data = y2p.load_spice_raw("my.raw")`` – obtain an ``xarray.Dataset`` with signals and metadata
    2. ``spec = y2p.PlotSpec.from_yaml(""" ... """)`` – build a PlotSpec (YAML string or file)
    3. ``fig = y2p.plot(data, spec)`` – create the Plotly figure
 

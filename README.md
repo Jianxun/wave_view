@@ -121,7 +121,7 @@ import numpy as np
 import yaml2plot as y2p
 
 # Load the data
-data, _ = y2p.load_spice_raw("your_simulation.raw")
+data = y2p.load_spice_raw("your_simulation.raw")
 
 # Calculate a new, derived signal
 data["diff_voltage"] = data["v(out_p)"] - data["v(out_n)"]

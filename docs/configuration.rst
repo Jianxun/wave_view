@@ -75,7 +75,7 @@ To plot *derived* signals just insert them into the same ``data`` dictionary –
 
    import numpy as np, yaml2plot as y2p
 
-   data, _ = y2p.load_spice_raw("simulation.raw")
+   data = y2p.load_spice_raw("simulation.raw")
    power = data["v(out)"] * data["i(out)"]
 
    # Append the derived signal to the data dict
@@ -104,7 +104,7 @@ For complex analyses you can create multiple PlotSpecs and call :func:`yaml2plot
    voltage_spec = y2p.PlotSpec.from_file("voltage.yaml")
    current_spec = y2p.PlotSpec.from_file("current.yaml")
 
-   data, _ = y2p.load_spice_raw("simulation.raw")
+   data = y2p.load_spice_raw("simulation.raw")
    fig_v = y2p.plot(data, voltage_spec)
    fig_i = y2p.plot(data, current_spec)
 
